@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "cn.anecansaitin.freecamera.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "freecamera.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+    "GameRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
