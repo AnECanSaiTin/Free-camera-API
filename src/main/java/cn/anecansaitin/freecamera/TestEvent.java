@@ -16,22 +16,30 @@ public class TestEvent {
     @SubscribeEvent
     public static void e(ViewportEvent.ComputeFov event) {
         ItemStack item = Minecraft.getInstance().player.getMainHandItem();
-        if (item.is(Items.BONE)) {
-            a -= 0.0055;
-            b += 1;
 
+        if (item.is(Items.NAME_TAG)) {
+//            b -= 0.1;
             FreeCamera.modifier
+                    .enable()
                     .enablePos()
-                    .setPos(0, 1.7, a + 2)
+                    .setPos(0, 74.6, 48)
                     .enableRotate()
-                    .setRotate(0, 180, 0)
-                    .enableFov()
-                    .setFov(b)
-                    .enable();
-        } else if (item.is(Items.NAME_TAG)) {
-            a = 0;
-            b = -30;
-            FreeCamera.modifier.disable();
+                    .setRotate(0, -90, 0)
+                    .enableFirstPersonArmFixed()
+                    .enableGlobalMode();
+        } else if (item.is(Items.DIAMOND)) {
+            b += 0.1;
+            FreeCamera.modifier
+                    .enable()
+                    .enablePos()
+                    .setPos(3, 0, 2)
+                    .enableRotate()
+                    .setRotate(0, (float) b, 0)
+                    .disableFirstPersonArmFixed()
+                    .disableGlobalMode();
+        } else if (item.is(Items.BONE)) {
+            b = 0;
+            FreeCamera.modifier.disable().disableGlobalMode();
         }
     }
 }

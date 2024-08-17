@@ -11,7 +11,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class FreeCamera {
     public static final String MODID = "freecamera";
 
-    public static final CameraModifier.Modifier modifier = CameraModifier.createModifier(MODID, true);
+    public static final CameraModifier.Modifier modifier = CameraModifier.createBackgroundModifier(MODID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredHolder<Item, TestItem> TEST = ITEMS.register("test", TestItem::new);
 

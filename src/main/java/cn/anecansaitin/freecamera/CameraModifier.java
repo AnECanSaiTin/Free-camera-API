@@ -3,8 +3,9 @@ package cn.anecansaitin.freecamera;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -12,6 +13,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
@@ -21,8 +23,6 @@ import java.util.List;
 
 @EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
 public class CameraModifier {
-    public static final CameraModifier INSTANCE = new CameraModifier();
-
     //缓存操作器
     //高优先级
     private static final HashMap<String, Modifier> modifiersH = new HashMap<>();
@@ -39,40 +39,55 @@ public class CameraModifier {
     //玩家移除的背景操作器
     private static final List<String> playerRemovedBackground = new ArrayList<>();
 
-    private final Vector3d selfPos = new Vector3d();
+    //相机全局模式坐标
+    private static final Vector3d globalPos = new Vector3d();
+    //上一次的相机全局模式坐标
+    private static final Vector3d globalPosO = new Vector3d();
+    //相机局部模式坐标
+    private static final Vector3d selfPos = new Vector3d();
     //上一次的相机局部坐标
-    private final Vector3d selfPosO = new Vector3d();
-    private final Vector3f selfRot = new Vector3f();
+    private static final Vector3d selfPosO = new Vector3d();
+
+    //相机旋转
+    private static final Vector3f rotation = new Vector3f();
     //上一次的相机局部旋转
-    private final Vector3d selfRotO = new Vector3d();
-    private double selfFov;
+    private static final Vector3f rotationO = new Vector3f();
+
+    //相机FOV
+    private static double FOV;
     //上一次的相机FOV
-    private double selfFovO;
+    private static double FOV_O;
 
-    private CameraModifier() {
-    }
+    //相机状态常量
+    private static final int ENABLE = 1;
+    private static final int POS_ENABLED = 1 << 1;
+    private static final int ROT_ENABLED = 1 << 2;
+    private static final int FOV_ENABLED = 1 << 3;
+    private static final int FIRST_PERSON_ARM_FIXED = 1 << 4;
+    private static final int GLOBAL_MODE_ENABLED = 1 << 5;
 
-    public void modify() {
-        selfPos.zero();
-        selfRot.zero();
-        selfFov = 70;
-        boolean[] modified = new boolean[4];
+    //相机状态
+    private static int STATE;
+    //上一次相机状态
+    private static int STATE_O;
+
+    public static void modify() {
+        cleanCache();
         //按照玩家指定顺序应用第一个可用操作器
-        applyPlayerOrderModifier(modified);
+        applyPlayerOrderModifier();
 
-        if (!modified[0]) {
+        if (!isStateEnabledOr(ENABLE)) {
             //按照优先级应用第一个可用操作器
-            applyEffectiveModifierFromPositive(modified);
+            applyEffectiveModifierFromPositive();
         }
 
         //应用背景操作器
-        applyBackgroundModifier(modified);
-        //记录上一次的相机局部坐标、旋转、FOV
-        selfPosO.set(selfPos);
-        selfRotO.set(selfRot);
-        selfFovO = selfFov;
+        applyBackgroundModifier();
 
-        if (!modified[0]) {
+        if (!isStateEnabledOr(ENABLE)) {
+            cleanCache();
+            //记录上一次的相机局部坐标、旋转、FOV
+            saveToOld();
             //无任何修改，直接结束
             return;
         }
@@ -81,30 +96,79 @@ public class CameraModifier {
         Entity entity = camera().getEntity();
 
         //这里到底是取头部还是身体的旋转？
-        float yRot = entity.getYRot();
+        float yRot = entity.getYRot() % 360;
 
-        selfPos.rotateY(-(yRot % 360) * Mth.DEG_TO_RAD);
+        //操作坐标
+        applyModifyToPos(partialTick, yRot, entity);
 
-        if (modified[1]) {
-            //加上玩家坐标，考虑了插值
-            selfPos.add(Mth.lerp(partialTick, entity.xo, entity.getX()),
-                    Mth.lerp(partialTick, entity.yo, entity.getY()),
-                    Mth.lerp(partialTick, entity.zo, entity.getZ()));
-            //应用坐标到相机
-            camera().setPosition(selfPos.x, selfPos.y, selfPos.z);
-        }
+        //操作旋转
+        applyModifyToRot(partialTick, yRot);
 
-        if (modified[2]) {
-            camera().setRotation(yRot + selfRot.y, selfRot.x, selfRot.z);
-        }
+        saveToOld();
+    }
 
-        if (!modified[3]) {
-            selfFov = Double.MAX_VALUE;
-            selfFovO = Double.MAX_VALUE;
+    private static void applyPlayerOrderModifier() {
+        //优先从玩家指定排序获取
+        for (int i = playerOrder.size() - 1; i >= 0; i--) {
+            String id = playerOrder.get(i);
+            Modifier modifier = findModifierFromNegativeById(id);
+
+            if (modifier == null || !modifier.isStateEnabledOr(ENABLE) || !modifier.isEffective) {
+                continue;
+            }
+
+            //没有启用任何修改则跳过
+            if (!modifier.isStateEnabledOr(POS_ENABLED | ROT_ENABLED | FOV_ENABLED)) {
+                continue;
+            }
+
+            applyValue(modifier);
+
+            return;
         }
     }
 
-    private void applyBackgroundModifier(boolean[] result) {
+    @Nullable
+    private static Modifier findModifierFromNegativeById(String modId) {
+        Modifier modifier = null;
+
+        for (HashMap<String, Modifier> map : negativeModifiers) {
+            modifier = map.get(modId);
+
+            if (modifier != null) {
+                break;
+            }
+        }
+
+        return modifier;
+    }
+
+    private static void applyEffectiveModifierFromPositive() {
+        for (HashMap<String, Modifier> map : positiveModifiers) {
+            Modifier modifier = getEffectiveModifierFromMap(map);
+
+            if (modifier == null) {
+                continue;
+            }
+
+            applyValue(modifier);
+
+            return;
+        }
+    }
+
+    @Nullable
+    private static Modifier getEffectiveModifierFromMap(HashMap<String, Modifier> map) {
+        for (Modifier modifier : map.values()) {
+            if (modifier.isStateEnabledOr(ENABLE) && modifier.isEffective && (modifier.isStateEnabledOr(POS_ENABLED | ROT_ENABLED | FOV_ENABLED))) {
+                return modifier;
+            }
+        }
+
+        return null;
+    }
+
+    private static void applyBackgroundModifier() {
         //背景修改器会全部相加并应用
         //将玩家移除的背景操作器设为未修改
         for (int i = playerRemovedBackground.size() - 1; i >= 0; i--) {
@@ -121,130 +185,158 @@ public class CameraModifier {
         }
 
         for (Modifier modifier : modifiersB.values()) {
-            if (!modifier.enable || !modifier.isEffective) {
+            if (!modifier.isStateEnabledOr(ENABLE) || !modifier.isEffective) {
                 continue;
             }
 
-            if (!modifier.posEnabled && !modifier.rotEnabled && !modifier.fovEnabled) {
+            if (!modifier.isStateEnabledOr(POS_ENABLED | ROT_ENABLED | FOV_ENABLED)) {
                 continue;
             }
 
-            result[0] = true;
-            result[1] = modifier.posEnabled || result[1];
-            result[2] = modifier.rotEnabled || result[2];
-            result[3] = modifier.fovEnabled || result[3];
+            applyValue(modifier);
+        }
+    }
 
-            if (result[1]) {
+    private static void applyValue(Modifier modifier) {
+        STATE |= modifier.state;
+
+        if (modifier.isStateEnabledOr(POS_ENABLED)) {
+            if (modifier.isStateEnabledOr(GLOBAL_MODE_ENABLED)) {
+                globalPos.add(modifier.pos);
+            } else {
                 selfPos.add(modifier.pos);
-            }
-
-            if (result[2]) {
-                selfRot.add(modifier.rot);
-            }
-
-            if (result[3]) {
-                selfFov += modifier.fov;
             }
         }
 
+        if (isStateEnabledOr(ROT_ENABLED)) {
+            rotation.add(modifier.rot);
+        }
+
+        if (isStateEnabledOr(FOV_ENABLED)) {
+            FOV += modifier.fov;
+        }
     }
 
-    private void applyPlayerOrderModifier(boolean[] result) {
-        //优先从玩家指定排序获取
-        for (int i = playerOrder.size() - 1; i >= 0; i--) {
-            String id = playerOrder.get(i);
-            Modifier modifier = findModifierFromNegativeById(id);
+    private static void saveToOld() {
+        //记录上一次的相机局部坐标、旋转、FOV
+        globalPosO.set(globalPos);
+        selfPosO.set(selfPos);
+        rotationO.set(rotation);
+        FOV_O = FOV;
+        STATE_O = STATE;
+    }
 
-            if (modifier == null || !modifier.enable || !modifier.isEffective) {
-                continue;
-            }
-
-            //没有启用任何修改则跳过
-            if (!modifier.posEnabled && !modifier.rotEnabled && !modifier.fovEnabled) {
-                continue;
-            }
-
-            result[0] = true;
-            result[1] = modifier.posEnabled;
-            result[2] = modifier.rotEnabled;
-            result[3] = modifier.fovEnabled;
-
-            if (result[1]) {
-                selfPos.add(modifier.pos);
-            }
-
-            if (result[2]) {
-                selfRot.add(modifier.rot);
-            }
-
-            if (result[3]) {
-                selfFov += modifier.fov;
-            }
-
+    private static void applyModifyToRot(float partialTick, float yRot) {
+        if (!isStateEnabledOr(ROT_ENABLED)) {
             return;
         }
 
-        result[0] = false;
-    }
+        Vector3f rot;
 
-    @Nullable
-    private Modifier findModifierFromNegativeById(String modId) {
-        Modifier modifier = null;
+        if (isStateEnabledOr(GLOBAL_MODE_ENABLED)) {
+            //全局模式，不应用玩家旋转
+            if (isOldStateEnabledAnd(ENABLE | ROT_ENABLED)) {
+                //如果上次开启了旋转，则要计算插值
+                rot = new Vector3f(
+                        Mth.lerp(partialTick, rotationO.x, rotation.x),
+                        Mth.lerp(partialTick, rotationO.y, rotation.y),
+                        Mth.lerp(partialTick, rotationO.z, rotation.z)
+                );
+            } else {
+                //否则直接使用原始值
+                rot = rotation;
+            }
+        } else {
+            //局部模式应用玩家旋转
+            rot = new Vector3f(0, yRot, 0);
 
-        for (HashMap<String, Modifier> map : negativeModifiers) {
-            modifier = map.get(modId);
-
-            if (modifier != null) {
-                break;
+            if (isOldStateEnabledAnd(ENABLE | ROT_ENABLED)) {
+                //如果上次开启了旋转，则要计算插值
+                rot.add(
+                        Mth.lerp(partialTick, rotationO.x, rotation.x),
+                        Mth.lerp(partialTick, rotationO.y, rotation.y),
+                        Mth.lerp(partialTick, rotationO.z, rotation.z)
+                );
+            } else {
+                //否则直接使用原始值
+                rot.add(rotation);
             }
         }
 
-        return modifier;
+        camera().setRotation(rot.y, rot.x, rot.z);
     }
 
-    private void applyEffectiveModifierFromPositive(boolean[] result) {
-        for (HashMap<String, Modifier> map : positiveModifiers) {
-            Modifier modifier = getEffectiveModifierFromMap(map);
-
-            if (modifier == null) {
-                continue;
-            }
-
-            result[0] = true;
-            result[1] = modifier.posEnabled;
-            result[2] = modifier.rotEnabled;
-            result[3] = modifier.fovEnabled;
-
-            if (result[1]) {
-                selfPos.add(modifier.pos);
-            }
-
-            if (result[2]) {
-                selfRot.add(modifier.rot);
-            }
-
-            if (result[3]) {
-                selfFov += modifier.fov;
-            }
-
+    private static void applyModifyToPos(float partialTick, float yRot, Entity entity) {
+        if (!isStateEnabledOr(POS_ENABLED)) {
             return;
         }
 
-        result[0] = false;
-    }
+        Vector3d pos;
 
-    @Nullable
-    private Modifier getEffectiveModifierFromMap(HashMap<String, Modifier> map) {
-        for (Modifier modifier : map.values()) {
-            if (modifier.enable && modifier.isEffective && (modifier.posEnabled || modifier.rotEnabled || modifier.fovEnabled)) {
-                return modifier;
+        if (isStateEnabledOr(GLOBAL_MODE_ENABLED)) {
+            //全局模式
+            if (isOldStateEnabledAnd(GLOBAL_MODE_ENABLED | ENABLE | POS_ENABLED)) {
+                //如果上次开启了全局模式，则要计算插值
+                pos = new Vector3d(
+                        Mth.lerp(partialTick, globalPosO.x, globalPos.x),
+                        Mth.lerp(partialTick, globalPosO.y, globalPos.y),
+                        Mth.lerp(partialTick, globalPosO.z, globalPos.z)
+                );
+            } else {
+                //否则直接使用原始值
+                pos = new Vector3d(globalPos);
             }
+        } else {
+            //局部模式
+            if (isOldStateEnabledAnd(ENABLE | POS_ENABLED) && !isOldStateEnabledOr(GLOBAL_MODE_ENABLED)) {
+                //如果上次是局部模式，则计算插值
+                pos = new Vector3d(
+                        Mth.lerp(partialTick, selfPosO.x, selfPos.x),
+                        Mth.lerp(partialTick, selfPosO.y, selfPos.y),
+                        Mth.lerp(partialTick, selfPosO.z, selfPos.z)
+                );
+            } else {
+                //否则直接使用原始值
+                pos = new Vector3d(selfPos);
+            }
+
+            //根据玩家旋转来移动坐标
+            pos.rotateY(-yRot * Mth.DEG_TO_RAD);
+            //加上玩家坐标，考虑了插值
+            pos.add(Mth.lerp(partialTick, entity.xo, entity.getX()),
+                    Mth.lerp(partialTick, entity.yo, entity.getY()),
+                    Mth.lerp(partialTick, entity.zo, entity.getZ()));
         }
 
-        return null;
+        //应用坐标到相机
+        camera().setPosition(pos.x, pos.y, pos.z);
     }
 
-    private Camera camera() {
+    private static void cleanCache() {
+        selfPos.zero();
+        globalPos.zero();
+        rotation.zero();
+        FOV = 70;
+        STATE = 0;
+    }
+
+    private static boolean isStateEnabledOr(int state) {
+        return (STATE & state) != 0;
+    }
+
+    private static boolean isStateEnabledAnd(int state) {
+        return (STATE & state) == state;
+    }
+
+    private static boolean isOldStateEnabledOr(int state) {
+        return (STATE_O & state) != 0;
+    }
+
+    private static boolean isOldStateEnabledAnd(int state) {
+        return (STATE_O & state) == state;
+    }
+
+    private static Camera camera() {
         return Minecraft.getInstance().gameRenderer.getMainCamera();
     }
 
@@ -278,25 +370,22 @@ public class CameraModifier {
     public static class Modifier {
         private final String modId;
         private final Vector3d pos = new Vector3d();
-        private boolean posEnabled = false;
         private final Vector3f rot = new Vector3f();
-        private boolean rotEnabled = false;
         private double fov;
-        private boolean fovEnabled = false;
-        private boolean enable = false;
         private boolean isEffective = true;
+        private int state;
 
         private Modifier(String modId) {
             this.modId = modId;
         }
 
         public Modifier enablePos() {
-            posEnabled = true;
+            state |= POS_ENABLED;
             return this;
         }
 
         public Modifier disablePos() {
-            posEnabled = false;
+            state &= ~POS_ENABLED;
             return this;
         }
 
@@ -311,12 +400,12 @@ public class CameraModifier {
         }
 
         public Modifier enableRotate() {
-            rotEnabled = true;
+            state |= ROT_ENABLED;
             return this;
         }
 
         public Modifier disableRotate() {
-            rotEnabled = false;
+            state &= ~ROT_ENABLED;
             return this;
         }
 
@@ -331,12 +420,12 @@ public class CameraModifier {
         }
 
         public Modifier enableFov() {
-            fovEnabled = true;
+            state |= FOV_ENABLED;
             return this;
         }
 
         public Modifier disableFov() {
-            fovEnabled = false;
+            state &= ~FOV_ENABLED;
             return this;
         }
 
@@ -346,13 +435,37 @@ public class CameraModifier {
         }
 
         public Modifier enable() {
-            enable = true;
+            state |= ENABLE;
             return this;
         }
 
         public Modifier disable() {
-            enable = false;
+            state &= ~ENABLE;
             return this;
+        }
+
+        public Modifier enableFirstPersonArmFixed() {
+            state |= FIRST_PERSON_ARM_FIXED;
+            return this;
+        }
+
+        public Modifier disableFirstPersonArmFixed() {
+            state &= ~FIRST_PERSON_ARM_FIXED;
+            return this;
+        }
+
+        public Modifier enableGlobalMode() {
+            state |= GLOBAL_MODE_ENABLED;
+            return this;
+        }
+
+        public Modifier disableGlobalMode() {
+            state &= ~GLOBAL_MODE_ENABLED;
+            return this;
+        }
+
+        private boolean isStateEnabledOr(int state) {
+            return (this.state & state) != 0;
         }
 
         public String getModId() {
@@ -362,14 +475,59 @@ public class CameraModifier {
 
     @SubscribeEvent
     public static void modifyFov(ViewportEvent.ComputeFov event) {
-        if (INSTANCE.selfFov == Double.MAX_VALUE) {
+        if (!isStateEnabledAnd(ENABLE | FOV_ENABLED)) {
             return;
         }
 
-        if (INSTANCE.selfFovO == Double.MAX_VALUE) {
-            INSTANCE.selfFovO = event.getFOV();
+        double fov;
+
+        if (isOldStateEnabledAnd(ENABLE | FOV_ENABLED)) {
+            //上次有FOV修改，需插值
+            fov = Mth.lerp(event.getPartialTick(), FOV_O, FOV);
+        } else {
+            //无需插值，直接应用
+            fov = FOV;
         }
 
-        event.setFOV(Mth.lerp(event.getPartialTick(), INSTANCE.selfFovO, INSTANCE.selfFov));
+        event.setFOV(fov);
+    }
+
+    @SubscribeEvent
+    public static void modifyFirstPersonHand(RenderHandEvent event) {
+        //全局模式下不能固定手臂
+        if (!isStateEnabledAnd(ENABLE | FIRST_PERSON_ARM_FIXED) || isStateEnabledOr(GLOBAL_MODE_ENABLED)) {
+            return;
+        }
+
+        if (event.getHand() != InteractionHand.MAIN_HAND) {
+            return;
+        }
+
+        PoseStack poseStack = event.getPoseStack();
+        float partialTick = event.getPartialTick();
+        LocalPlayer player = Minecraft.getInstance().player;
+
+        //旋转
+        if (isStateEnabledOr(ROT_ENABLED)) {
+            poseStack.mulPose(new Quaternionf().rotateZ(rotation.z * Mth.DEG_TO_RAD).rotateX(rotation.x * Mth.DEG_TO_RAD).rotateY(rotation.y * Mth.DEG_TO_RAD));
+        }
+
+        //坐标
+        if (isStateEnabledOr(POS_ENABLED)) {
+            Vector3d pos;
+            //局部模式
+            if (isOldStateEnabledAnd(ENABLE | POS_ENABLED)) {
+                //上次开启了坐标，计算插值
+                pos = new Vector3d(
+                        Mth.lerp(partialTick, selfPosO.x, selfPos.x),
+                        player.getEyeHeight() - Mth.lerp(partialTick, selfPosO.y, selfPos.y),
+                        Mth.lerp(partialTick, selfPosO.z, selfPos.z));
+            } else {
+                //否则直接使用原始值
+                pos = new Vector3d(selfPos.x, player.getEyeHeight() - selfPos.y, selfPos.z);
+            }
+
+            poseStack.translate(pos.x, pos.y, pos.z);
+        }
     }
 }
