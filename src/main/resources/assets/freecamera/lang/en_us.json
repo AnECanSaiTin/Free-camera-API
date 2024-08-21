@@ -1,0 +1,16 @@
+{
+  "camera_modifier_screen.title": "Camera modifier screen",
+  "camera_modifier_screen.normal_modifier": "Normal modifier",
+  "camera_modifier_screen.normal_modifier.tip1": "Double-click an element to move it into the priority queue",
+  "camera_modifier_screen.normal_modifier.tip2": "Only one is valid, obtain according to priority",
+  "camera_modifier_screen.player_order": "Player order",
+  "camera_modifier_screen.player_order.tip1": "Double-click an element to move it out of the priority queue",
+  "camera_modifier_screen.player_order.tip2": "Select an element and press the up or down key to change the order",
+  "camera_modifier_screen.background_modifier": "Background modifier",
+  "camera_modifier_screen.background_modifier.tip1": "Double-click an element to delete it",
+  "camera_modifier_screen.background_modifier.tip2": "All take effect",
+  "camera_modifier_screen.removed_modifier": "removed modifier",
+  "camera_modifier_screen.removed_modifier.tip1": "Double-click an element to restore it",
+  "camera_modifier_screen.removed_modifier.tip2": "",
+  "key.freecamera.camera_modifier_screen": "Camera Modifier Screen"
+}

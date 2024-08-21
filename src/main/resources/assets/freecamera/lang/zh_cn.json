@@ -1,0 +1,17 @@
+{
+  "camera_modifier_screen.title": "相机操作器",
+  "camera_modifier_screen.normal_modifier": "普通",
+  "camera_modifier_screen.player_order": "优先",
+  "camera_modifier_screen.background_modifier": "背景",
+  "camera_modifier_screen.removed_modifier": "已移除背景",
+  "camera_modifier_screen.normal_modifier.tip1": "双击一个元素以将其移入优先队列",
+  "camera_modifier_screen.normal_modifier.tip2": "仅一个有效，按照优先级获取",
+  "camera_modifier_screen.player_order.tip1": "双击一个元素以将其移出优先队列",
+  "camera_modifier_screen.player_order.tip2": "选中一个元素，按上或下键更改顺序",
+  "camera_modifier_screen.background_modifier.tip1": "双击一个元素以将其删除",
+  "camera_modifier_screen.background_modifier.tip2": "全部生效",
+  "camera_modifier_screen.removed_modifier.tip1": "双击一个元素以恢复使用",
+  "camera_modifier_screen.removed_modifier.tip2": "",
+
+  "key.freecamera.camera_modifier_screen": "相机操作器"
+}

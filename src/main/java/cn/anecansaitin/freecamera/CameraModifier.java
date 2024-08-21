@@ -20,6 +20,7 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
 public class CameraModifier {
@@ -365,6 +366,26 @@ public class CameraModifier {
      */
     public static Modifier createBackgroundModifier(String modID) {
         return modifiersB.computeIfAbsent(modID, Modifier::new);
+    }
+
+    public static Map<String, Modifier> getModifiersH() {
+        return modifiersH;
+    }
+
+    public static Map<String, Modifier> getModifiersL() {
+        return modifiersL;
+    }
+
+    public static Map<String, Modifier> getModifiersB() {
+        return modifiersB;
+    }
+
+    public static List<String> getPlayerOrder() {
+        return playerOrder;
+    }
+
+    public static List<String> getPlayerRemovedBackground() {
+        return playerRemovedBackground;
     }
 
     public static class Modifier {
