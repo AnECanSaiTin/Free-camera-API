@@ -1,7 +1,7 @@
-package cn.anecansaitin.freecamera.client;
+package cn.anecansaitin.freecameraapi.client;
 
-import cn.anecansaitin.freecamera.CameraModifier;
-import cn.anecansaitin.freecamera.ModConf;
+import cn.anecansaitin.freecameraapi.CameraModifier;
+import cn.anecansaitin.freecameraapi.ModConf;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

@@ -1,6 +1,6 @@
-package cn.anecansaitin.freecamera.client;
+package cn.anecansaitin.freecameraapi.client;
 
-import cn.anecansaitin.freecamera.FreeCamera;
+import cn.anecansaitin.freecameraapi.FreeCamera;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;

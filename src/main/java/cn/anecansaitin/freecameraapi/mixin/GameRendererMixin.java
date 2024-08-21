@@ -1,6 +1,6 @@
-package cn.anecansaitin.freecamera.mixin;
+package cn.anecansaitin.freecameraapi.mixin;
 
-import cn.anecansaitin.freecamera.CameraModifier;
+import cn.anecansaitin.freecameraapi.CameraModifier;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;

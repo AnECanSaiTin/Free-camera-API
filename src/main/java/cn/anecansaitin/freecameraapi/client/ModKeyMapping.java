@@ -1,6 +1,6 @@
-package cn.anecansaitin.freecamera.client;
+package cn.anecansaitin.freecameraapi.client;
 
-import cn.anecansaitin.freecamera.FreeCamera;
+import cn.anecansaitin.freecameraapi.FreeCamera;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;

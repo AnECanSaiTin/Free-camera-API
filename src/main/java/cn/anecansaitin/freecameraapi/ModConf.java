@@ -1,4 +1,4 @@
-package cn.anecansaitin.freecamera;
+package cn.anecansaitin.freecameraapi;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
