@@ -13,9 +13,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaternionf;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
+import org.joml.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -452,6 +450,16 @@ public class CameraModifier {
 
         public Modifier setFov(double fov) {
             this.fov = fov;
+            return this;
+        }
+
+        public Modifier move(double x, double y, double z) {
+            Vector3d displacement = new Vector3d(x, y, z)
+                    .rotateY(rot.y * Mth.DEG_TO_RAD)
+                    .rotateX(rot.x * Mth.DEG_TO_RAD)
+                    .rotateZ(rot.z * Mth.DEG_TO_RAD);
+
+            pos.add(displacement);
             return this;
         }
 
