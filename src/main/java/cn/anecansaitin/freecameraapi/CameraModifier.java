@@ -466,12 +466,7 @@ public class CameraModifier {
         public Modifier aimAt(double x, double y, double z) {
             Vector3d aim = new Vector3d(x - pos.x, y - pos.y, z - pos.z);
 
-            if (isStateEnabledOr(GLOBAL_MODE_ENABLED)) {
-                rot.x = (float) -Math.acos(Math.sqrt(aim.x * aim.x + aim.z * aim.z) / aim.length()) * Mth.RAD_TO_DEG;
-            } else {
-                rot.x = (float) Math.acos(Math.sqrt(aim.x * aim.x + aim.z * aim.z) / aim.length()) * Mth.RAD_TO_DEG * (aim.y < 0 ? 1 : -1);
-            }
-
+            rot.x = (float) Math.acos(Math.sqrt(aim.x * aim.x + aim.z * aim.z) / aim.length()) * Mth.RAD_TO_DEG * (aim.y < 0 ? 1 : -1);
             rot.y = (float) -(Mth.atan2(aim.x, aim.z) * Mth.RAD_TO_DEG);
             return this;
         }
