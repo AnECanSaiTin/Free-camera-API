@@ -65,7 +65,7 @@ public class CameraModifier {
     private static final int FOV_ENABLED = 1 << 3;
     private static final int FIRST_PERSON_ARM_FIXED = 1 << 4;
     private static final int GLOBAL_MODE_ENABLED = 1 << 5;
-
+    private static final int LERP = 1 << 6;
     //相机状态
     private static int STATE;
     //上一次相机状态
@@ -235,7 +235,7 @@ public class CameraModifier {
 
         if (isStateEnabledOr(GLOBAL_MODE_ENABLED)) {
             //全局模式，不应用玩家旋转
-            if (isOldStateEnabledAnd(ENABLE | ROT_ENABLED)) {
+            if (isOldStateEnabledAnd(ENABLE | ROT_ENABLED | LERP)) {
                 //如果上次开启了旋转，则要计算插值
                 rot = new Vector3f(
                         Mth.lerp(partialTick, rotationO.x, rotation.x),
@@ -250,7 +250,7 @@ public class CameraModifier {
             //局部模式应用玩家旋转
             rot = new Vector3f(0, yRot, 0);
 
-            if (isOldStateEnabledAnd(ENABLE | ROT_ENABLED)) {
+            if (isOldStateEnabledAnd(ENABLE | ROT_ENABLED | LERP)) {
                 //如果上次开启了旋转，则要计算插值
                 rot.add(
                         Mth.lerp(partialTick, rotationO.x, rotation.x),
@@ -275,7 +275,7 @@ public class CameraModifier {
 
         if (isStateEnabledOr(GLOBAL_MODE_ENABLED)) {
             //全局模式
-            if (isOldStateEnabledAnd(GLOBAL_MODE_ENABLED | ENABLE | POS_ENABLED)) {
+            if (isOldStateEnabledAnd(GLOBAL_MODE_ENABLED | ENABLE | POS_ENABLED | LERP)) {
                 //如果上次开启了全局模式，则要计算插值
                 pos = new Vector3d(
                         Mth.lerp(partialTick, globalPosO.x, globalPos.x),
@@ -288,7 +288,7 @@ public class CameraModifier {
             }
         } else {
             //局部模式
-            if (isOldStateEnabledAnd(ENABLE | POS_ENABLED) && !isOldStateEnabledOr(GLOBAL_MODE_ENABLED)) {
+            if (isOldStateEnabledAnd(ENABLE | POS_ENABLED | LERP) && !isOldStateEnabledOr(GLOBAL_MODE_ENABLED)) {
                 //如果上次是局部模式，则计算插值
                 pos = new Vector3d(
                         Mth.lerp(partialTick, selfPosO.x, selfPos.x),
@@ -414,9 +414,17 @@ public class CameraModifier {
             return this;
         }
 
+        public Modifier setPos(Vector3d pos) {
+            return setPos(pos.x, pos.y, pos.z);
+        }
+
         public Modifier addPos(double x, double y, double z) {
             pos.add(x, y, z);
             return this;
+        }
+
+        public Modifier addPos(Vector3d pos) {
+            return addPos(pos.x, pos.y, pos.z);
         }
 
         public Modifier enableRotation() {
@@ -435,18 +443,15 @@ public class CameraModifier {
         }
 
         public Modifier setRotationYXZ(Vector3f rot) {
-            setRotationYXZ(rot.x, rot.y, rot.z);
-            return this;
+            return setRotationYXZ(rot.x, rot.y, rot.z);
         }
 
         public Modifier setRotationZYX(float xRot, float yRot, float zRot) {
-            setRotationYXZ(eulerZYXToYXZ(xRot, yRot, zRot));
-            return this;
+            return setRotationYXZ(eulerZYXToYXZ(xRot, yRot, zRot));
         }
 
         public Modifier setRotationZYX(Vector3f rot) {
-            setRotationYXZ(eulerZYXToYXZ(rot.x, rot.y, rot.z));
-            return this;
+            return setRotationYXZ(eulerZYXToYXZ(rot.x, rot.y, rot.z));
         }
 
         public Modifier rotateYXZ(float xRot, float yRot, float zRot) {
@@ -551,6 +556,16 @@ public class CameraModifier {
             return this;
         }
 
+        public Modifier enableLerp() {
+            state |= LERP;
+            return this;
+        }
+
+        public Modifier disableLerp() {
+            state &= ~LERP;
+            return this;
+        }
+
         private boolean isStateEnabledOr(int state) {
             return (this.state & state) != 0;
         }
@@ -568,7 +583,7 @@ public class CameraModifier {
 
         double fov;
 
-        if (isOldStateEnabledAnd(ENABLE | FOV_ENABLED)) {
+        if (isOldStateEnabledAnd(ENABLE | FOV_ENABLED | LERP)) {
             //上次有FOV修改，需插值
             fov = Mth.lerp(event.getPartialTick(), FOV_O, FOV);
         } else {
@@ -603,7 +618,7 @@ public class CameraModifier {
         if (isStateEnabledOr(POS_ENABLED)) {
             Vector3d pos;
             //局部模式
-            if (isOldStateEnabledAnd(ENABLE | POS_ENABLED)) {
+            if (isOldStateEnabledAnd(ENABLE | POS_ENABLED | LERP)) {
                 //上次开启了坐标，计算插值
                 pos = new Vector3d(
                         Mth.lerp(partialTick, selfPosO.x, selfPos.x),
