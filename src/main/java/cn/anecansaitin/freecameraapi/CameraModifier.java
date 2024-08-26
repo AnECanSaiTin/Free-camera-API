@@ -439,13 +439,13 @@ public class CameraModifier {
             return this;
         }
 
-        public Modifier setRotationXYZ(float xRot, float yRot, float zRot) {
-            setRotationYXZ(XYZToYXZ(xRot, yRot, zRot));
+        public Modifier setRotationZYX(float xRot, float yRot, float zRot) {
+            setRotationYXZ(eulerZYXToYXZ(xRot, yRot, zRot));
             return this;
         }
 
-        public Modifier setRotationXYZ(Vector3f rot) {
-            setRotationYXZ(XYZToYXZ(rot.x, rot.y, rot.z));
+        public Modifier setRotationZYX(Vector3f rot) {
+            setRotationYXZ(eulerZYXToYXZ(rot.x, rot.y, rot.z));
             return this;
         }
 
@@ -454,13 +454,25 @@ public class CameraModifier {
             return this;
         }
 
-        private Vector3f XYZToYXZ(float x, float y, float z) {
-            if (y == 90f) {
-                y = 90.00001f;
+        private Vector3f eulerZYXToYXZ(float x, float y, float z) {
+            if (x == 90f || x == -90f) {
+                x += 0.00001f;
             }
 
+            if (y == 90f || y == -90f) {
+                y += 0.00001f;
+            }
+
+            if (z == 90f || z == -90f) {
+                z += 0.00001f;
+            }
+
+            x *= Mth.DEG_TO_RAD;
+            y *= Mth.DEG_TO_RAD;
+            z *= Mth.DEG_TO_RAD;
+
             return new Quaternionf()
-                    .rotationXYZ(x, y, z)
+                    .rotationZYX(z, y, x)
                     .getEulerAnglesYXZ(new Vector3f())
                     .mul(Mth.RAD_TO_DEG);
         }
