@@ -419,24 +419,50 @@ public class CameraModifier {
             return this;
         }
 
-        public Modifier enableRotate() {
+        public Modifier enableRotation() {
             state |= ROT_ENABLED;
             return this;
         }
 
-        public Modifier disableRotate() {
+        public Modifier disableRotation() {
             state &= ~ROT_ENABLED;
             return this;
         }
 
-        public Modifier setRotate(float xRot, float yRot, float zRot) {
+        public Modifier setRotationYXZ(float xRot, float yRot, float zRot) {
             rot.set(xRot, yRot, zRot);
             return this;
         }
 
-        public Modifier addRotate(float xRot, float yRot, float zRot) {
+        public Modifier setRotationYXZ(Vector3f rot) {
+            setRotationYXZ(rot.x, rot.y, rot.z);
+            return this;
+        }
+
+        public Modifier setRotationXYZ(float xRot, float yRot, float zRot) {
+            setRotationYXZ(XYZToYXZ(xRot, yRot, zRot));
+            return this;
+        }
+
+        public Modifier setRotationXYZ(Vector3f rot) {
+            setRotationYXZ(XYZToYXZ(rot.x, rot.y, rot.z));
+            return this;
+        }
+
+        public Modifier rotateYXZ(float xRot, float yRot, float zRot) {
             rot.add(xRot, yRot, zRot);
             return this;
+        }
+
+        private Vector3f XYZToYXZ(float x, float y, float z) {
+            if (y == 90f) {
+                y = 90.00001f;
+            }
+
+            return new Quaternionf()
+                    .rotationXYZ(x, y, z)
+                    .getEulerAnglesYXZ(new Vector3f())
+                    .mul(Mth.RAD_TO_DEG);
         }
 
         public Modifier enableFov() {
@@ -469,6 +495,18 @@ public class CameraModifier {
             rot.x = (float) Math.acos(Math.sqrt(aim.x * aim.x + aim.z * aim.z) / aim.length()) * Mth.RAD_TO_DEG * (aim.y < 0 ? 1 : -1);
             rot.y = (float) -(Mth.atan2(aim.x, aim.z) * Mth.RAD_TO_DEG);
             return this;
+        }
+
+        public Vector3d getPos() {
+            return pos;
+        }
+
+        public Vector3f getRot() {
+            return rot;
+        }
+
+        public double getFov() {
+            return fov;
         }
 
         public Modifier enable() {
