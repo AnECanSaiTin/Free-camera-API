@@ -1,9 +1,9 @@
 # Free camera API
-[中文]()
+[中文](md_resource/ZH_README.md)
 
 **Make camera operation easier and more flexible.**
-![Dolly zoom](https://cdn.modrinth.com/data/KCR6bnbY/images/0fd9ede2dfc1818fbb4638bbbf3bd6a0598df4bd.gif)
-![Roll](https://cdn.modrinth.com/data/KCR6bnbY/images/ee51dcdae13dc4714e8f6f1faa7a5e127b2abba1.gif)
+![Dolly zoom](md_resource/zoom.gif)
+![Roll](md_resource/roll.gif)
 ## How to create modifier
 
 ```
