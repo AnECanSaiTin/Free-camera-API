@@ -1,12 +1,15 @@
 package cn.anecansaitin.freecameraapi;
 
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
 import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.quepierts.simpleanimator.api.IAnimateHandler;
 import net.quepierts.simpleanimator.api.animation.AnimationState;
 import net.quepierts.simpleanimator.api.animation.keyframe.VariableHolder;
 import net.quepierts.simpleanimator.core.client.ClientAnimator;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 class CameraForSimpleAnimator {
@@ -21,7 +24,28 @@ class CameraForSimpleAnimator {
             return;
         }
 
-        VariableHolder pos = animator.getVariable("cameraPos");
+        Options options = Minecraft.getInstance().options;
+        String prefix = "t";
+
+        if (animator.hasVariable("mandatory")) {
+            Vector2f mandatory = animator.getVariable("mandatory").getAsVector2f();
+
+            //相机人称强制模式开启
+            if (mandatory.x > 0) {
+                if (mandatory.y > 0 && options.getCameraType() == CameraType.FIRST_PERSON) {
+                    //锁定第三人称
+                    options.setCameraType(CameraType.THIRD_PERSON_BACK);
+                } else if (mandatory.y < 0 && options.getCameraType() != CameraType.FIRST_PERSON) {
+                    //锁定第一人称
+                    options.setCameraType(CameraType.FIRST_PERSON);
+                    prefix = "f";
+                }
+            }
+        } else if (options.getCameraType() == CameraType.FIRST_PERSON) {
+            prefix = "f";
+        }
+
+        VariableHolder pos = animator.getVariable(prefix + "CameraPos");
 
         if (pos == VariableHolder.Immutable.INSTANCE) {
             MODIFIER.disablePos();
@@ -32,7 +56,7 @@ class CameraForSimpleAnimator {
                     .setPos(posVec.x, posVec.y, -posVec.z);
         }
 
-        VariableHolder rot = animator.getVariable("cameraRot");
+        VariableHolder rot = animator.getVariable(prefix + "CameraRot");
 
         if (rot == VariableHolder.Immutable.INSTANCE) {
             MODIFIER.disableRotation();
@@ -42,7 +66,7 @@ class CameraForSimpleAnimator {
                     .setRotationZYX(rot.getAsVector3f());
         }
 
-        VariableHolder zoom = animator.getVariable("cameraZoom");
+        VariableHolder zoom = animator.getVariable(prefix + "CameraZoom");
 
         if (zoom == VariableHolder.Immutable.INSTANCE) {
             MODIFIER.disableFov();

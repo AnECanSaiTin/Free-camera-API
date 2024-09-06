@@ -1,0 +1,56 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"main": {
+			"animation_length": 5,
+			"bones": {
+				"requester_left_arm": {
+					"rotation": {
+						"0.0": [0, 0, -40],
+						"5.0": [0, 0, -40]
+					}
+				},
+				"receiver_right_arm": {
+					"rotation": {
+						"0.0": [-60, 0, 0],
+						"5.0": [-60, 0, 0]
+					}
+				},
+				"requester_var_vec3_tCameraRot_vec3_tCameraPos_tCameraZoom": {
+					"rotation": {
+						"0.0": [0, 90, 0],
+						"5.0": [0, 90, 0]
+					},
+					"position": {
+						"0.0": [24, 18, -6],
+						"5.0": [24, 18, -6]
+					}
+				}
+			}
+		},
+		"invite": {
+			"loop": true,
+			"animation_length": 0.0417,
+			"bones": {
+				"requester_left_arm": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.0417": [0, 0, 0]
+					}
+				}
+			}
+		},
+		"waiting": {
+			"loop": true,
+			"animation_length": 0.0417,
+			"bones": {
+				"requester_left_arm": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.0417": [0, 0, 0]
+					}
+				}
+			}
+		}
+	}
+}
