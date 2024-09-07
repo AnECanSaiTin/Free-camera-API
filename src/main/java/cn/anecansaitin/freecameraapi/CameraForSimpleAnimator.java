@@ -13,17 +13,18 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 class CameraForSimpleAnimator {
-    private static CameraModifier.Modifier MODIFIER = CameraModifier.createModifier("freecameraapi_simple_animator", false).enableLerp();
+    private static CameraModifier.Modifier MODIFIER = CameraModifier.createModifier("freecameraapi_simple_animator", false);
 
     public static void modifyCamera(ViewportEvent.ComputeFov event) {
         LocalPlayer player = Minecraft.getInstance().player;
         ClientAnimator animator = (ClientAnimator) ((IAnimateHandler) player).simpleanimator$getAnimator();
 
-        if (animator.getCurState() == AnimationState.IDLE) {
+        if (animator.getCurState() != AnimationState.LOOP || !(animator.hasVariable("tCameraRot") || animator.hasVariable("fCameraRot"))) {
             MODIFIER.disable();
             return;
         }
 
+        player.setYBodyRot(player.getYHeadRot());
         Options options = Minecraft.getInstance().options;
         String prefix = "t";
 
