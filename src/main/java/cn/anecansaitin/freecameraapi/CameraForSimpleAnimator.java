@@ -13,7 +13,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 class CameraForSimpleAnimator {
-    private static CameraModifier.Modifier MODIFIER = CameraModifier.createModifier("freecameraapi_simple_animator", false);
+    private static CameraModifier.Modifier MODIFIER = CameraModifier.createModifier("freecameraapi_simple_animator", false).enableLerp();
 
     public static void modifyCamera(ViewportEvent.ComputeFov event) {
         LocalPlayer player = Minecraft.getInstance().player;
