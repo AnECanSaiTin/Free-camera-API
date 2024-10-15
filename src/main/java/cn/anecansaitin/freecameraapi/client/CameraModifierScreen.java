@@ -87,14 +87,6 @@ public class CameraModifierScreen extends Screen {
             guiGraphics.hLine(x + 2, x + width - 2, y + height + 2, 0xffff8c94);
             guiGraphics.hLine(x + 2, x + width - 2, y + height + 17, 0xffff8c94);
 
-            if (mouseX > x + 2 && mouseX < x + width - 2 && mouseY > y + height + 2 && mouseY < y + height + 17) {
-                ComponentContents contents = getMessage().getContents();
-
-                if (contents instanceof TranslatableContents c) {
-                    guiGraphics.renderComponentTooltip(font, List.of(Component.translatable(c.getKey() + ".tip1"), Component.translatable(c.getKey() + ".tip2")), mouseX, mouseY);
-                }
-            }
-
             //边框
             guiGraphics.vLine(x, y, y + height, 0xffff8c94);
             guiGraphics.vLine(x + width, y, y + height, 0xffff8c94);
@@ -139,6 +131,14 @@ public class CameraModifierScreen extends Screen {
                 }
 
                 guiGraphics.hLine(x - 2, x + width - 2, y - 2, 0xffffaaa6);
+            }
+
+            if (mouseX > getX() + 2 && mouseX < getX() + getWidth() - 2 && mouseY > getY() + getHeight() + 2 && mouseY < getY() + getHeight() + 17) {
+                ComponentContents contents = getMessage().getContents();
+
+                if (contents instanceof TranslatableContents c) {
+                    guiGraphics.renderComponentTooltip(font, List.of(Component.translatable(c.getKey() + ".tip1"), Component.translatable(c.getKey() + ".tip2")), mouseX, mouseY);
+                }
             }
         }
 
