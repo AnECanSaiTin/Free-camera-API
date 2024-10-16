@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
-public class CameraModifier {
+public class CameraModifierManager {
     //缓存操作器
     //高优先级
     private static final HashMap<String, Modifier> modifiersH = new HashMap<>();
@@ -348,7 +348,7 @@ public class CameraModifier {
      * @param high  True for high priority. More likely to be used, but there is no guarantee that it will definitely be used.
      * @return A modifier named by modID.
      */
-    public static Modifier createModifier(String modID, boolean high) {
+    public static ICameraModifier createModifier(String modID, boolean high) {
         if (high) {
             return modifiersH.computeIfAbsent(modID, Modifier::new);
         } else {
@@ -363,7 +363,7 @@ public class CameraModifier {
      * @param modID You mod's id, but this is not mandatory.
      * @return A background modifier named by modID.
      */
-    public static Modifier createBackgroundModifier(String modID) {
+    public static ICameraModifier createBackgroundModifier(String modID) {
         return modifiersB.computeIfAbsent(modID, Modifier::new);
     }
 
@@ -387,7 +387,7 @@ public class CameraModifier {
         return playerRemovedBackground;
     }
 
-    public static class Modifier {
+    public static class Modifier implements ICameraModifier {
         private final String modId;
         private final Vector3d pos = new Vector3d();
         private final Vector3f rot = new Vector3f();
@@ -399,61 +399,74 @@ public class CameraModifier {
             this.modId = modId;
         }
 
+        @Override
         public Modifier enablePos() {
             state |= POS_ENABLED;
             return this;
         }
 
+        @Override
         public Modifier disablePos() {
             state &= ~POS_ENABLED;
             return this;
         }
 
+        @Override
         public Modifier setPos(double x, double y, double z) {
             pos.set(x, y, z);
             return this;
         }
 
+        @Override
         public Modifier setPos(Vector3d pos) {
             return setPos(pos.x, pos.y, pos.z);
         }
 
+        @Override
         public Modifier addPos(double x, double y, double z) {
             pos.add(x, y, z);
             return this;
         }
 
+        @Override
         public Modifier addPos(Vector3d pos) {
             return addPos(pos.x, pos.y, pos.z);
         }
 
+        @Override
         public Modifier enableRotation() {
             state |= ROT_ENABLED;
             return this;
         }
 
+        @Override
         public Modifier disableRotation() {
             state &= ~ROT_ENABLED;
             return this;
         }
 
+        @Override
         public Modifier setRotationYXZ(float xRot, float yRot, float zRot) {
             rot.set(xRot, yRot, zRot);
             return this;
         }
 
+        @Override
         public Modifier setRotationYXZ(Vector3f rot) {
             return setRotationYXZ(rot.x, rot.y, rot.z);
         }
 
+        @Override
         public Modifier setRotationZYX(float xRot, float yRot, float zRot) {
             return setRotationYXZ(eulerZYXToYXZ(xRot, yRot, zRot));
         }
 
+        @Override
         public Modifier setRotationZYX(Vector3f rot) {
             return setRotationYXZ(eulerZYXToYXZ(rot.x, rot.y, rot.z));
         }
 
+        @Override
         public Modifier rotateYXZ(float xRot, float yRot, float zRot) {
             rot.add(xRot, yRot, zRot);
             return this;
@@ -482,21 +495,25 @@ public class CameraModifier {
                     .mul(Mth.RAD_TO_DEG);
         }
 
+        @Override
         public Modifier enableFov() {
             state |= FOV_ENABLED;
             return this;
         }
 
+        @Override
         public Modifier disableFov() {
             state &= ~FOV_ENABLED;
             return this;
         }
 
+        @Override
         public Modifier setFov(double fov) {
             this.fov = fov;
             return this;
         }
 
+        @Override
         public Modifier move(double x, double y, double z) {
             Vector3d vec = new Vector3d(x, y, z)
                     .rotateX(rot.x * Mth.DEG_TO_RAD)
@@ -506,6 +523,7 @@ public class CameraModifier {
             return this;
         }
 
+        @Override
         public Modifier aimAt(double x, double y, double z) {
             Vector3d aim = new Vector3d(x - pos.x, y - pos.y, z - pos.z);
 
@@ -514,53 +532,64 @@ public class CameraModifier {
             return this;
         }
 
+        @Override
         public Vector3d getPos() {
             return pos;
         }
 
+        @Override
         public Vector3f getRot() {
             return rot;
         }
 
+        @Override
         public double getFov() {
             return fov;
         }
 
+        @Override
         public Modifier enable() {
             state |= ENABLE;
             return this;
         }
 
+        @Override
         public Modifier disable() {
             state &= ~ENABLE;
             return this;
         }
 
+        @Override
         public Modifier enableFirstPersonArmFixed() {
             state |= FIRST_PERSON_ARM_FIXED;
             return this;
         }
 
+        @Override
         public Modifier disableFirstPersonArmFixed() {
             state &= ~FIRST_PERSON_ARM_FIXED;
             return this;
         }
 
+        @Override
         public Modifier enableGlobalMode() {
             state |= GLOBAL_MODE_ENABLED;
             return this;
         }
 
+        @Override
         public Modifier disableGlobalMode() {
             state &= ~GLOBAL_MODE_ENABLED;
             return this;
         }
 
+        @Override
         public Modifier enableLerp() {
             state |= LERP;
             return this;
         }
 
+        @Override
         public Modifier disableLerp() {
             state &= ~LERP;
             return this;
@@ -570,6 +599,7 @@ public class CameraModifier {
             return (this.state & state) != 0;
         }
 
+        @Override
         public String getModId() {
             return modId;
         }

@@ -1,6 +1,6 @@
 package cn.anecansaitin.freecameraapi.client;
 
-import cn.anecansaitin.freecameraapi.CameraModifier;
+import cn.anecansaitin.freecameraapi.CameraModifierManager;
 import cn.anecansaitin.freecameraapi.ModConf;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -48,8 +48,8 @@ public class CameraModifierScreen extends Screen {
     @Override
     public void onClose() {
         super.onClose();
-        ModConf.setPlayerOrder(CameraModifier.getPlayerOrder());
-        ModConf.setRemoved(CameraModifier.getPlayerRemovedBackground());
+        ModConf.setPlayerOrder(CameraModifierManager.getPlayerOrder());
+        ModConf.setRemoved(CameraModifierManager.getPlayerRemovedBackground());
         ModConf.save();
     }
 
@@ -209,11 +209,11 @@ public class CameraModifierScreen extends Screen {
         protected void onDoubleSelected(int index) {
             String id = ids.get(index);
 
-            if (CameraModifier.getPlayerOrder().contains(id)) {
+            if (CameraModifierManager.getPlayerOrder().contains(id)) {
                 return;
             }
 
-            CameraModifier.getPlayerOrder().add(id);
+            CameraModifierManager.getPlayerOrder().add(id);
             list.remove(index);
             ids.remove(index);
             playerOrder.reload();
@@ -236,11 +236,11 @@ public class CameraModifierScreen extends Screen {
         }
 
         private static void loadModifier(List<String> ids, List<MutableComponent> components) {
-            HashMap<String, CameraModifier.Modifier> h = new HashMap<>(CameraModifier.getModifiersH());
-            HashMap<String, CameraModifier.Modifier> l = new HashMap<>(CameraModifier.getModifiersL());
+            HashMap<String, CameraModifierManager.Modifier> h = new HashMap<>(CameraModifierManager.getModifiersH());
+            HashMap<String, CameraModifierManager.Modifier> l = new HashMap<>(CameraModifierManager.getModifiersL());
 
             //剔除已经被玩家指定优先的操作器
-            for (String order : CameraModifier.getPlayerOrder()) {
+            for (String order : CameraModifierManager.getPlayerOrder()) {
                 h.remove(order);
                 l.remove(order);
             }
@@ -266,7 +266,7 @@ public class CameraModifierScreen extends Screen {
 
         @Override
         protected void onDoubleSelected(int index) {
-            CameraModifier.getPlayerOrder().remove(index);
+            CameraModifierManager.getPlayerOrder().remove(index);
             list.remove(index);
             normalModifier.reload();
             onListChanged();
@@ -278,7 +278,7 @@ public class CameraModifierScreen extends Screen {
                 return false;
             }
 
-            List<String> playerOrder = CameraModifier.getPlayerOrder();
+            List<String> playerOrder = CameraModifierManager.getPlayerOrder();
 
             switch (keyCode) {
                 case GLFW.GLFW_KEY_UP -> {
@@ -309,7 +309,7 @@ public class CameraModifierScreen extends Screen {
         }
 
         private static PlayerOrderModifierWidget create(int x, int y, int width, int height) {
-            List<String> playerOrder = CameraModifier.getPlayerOrder();
+            List<String> playerOrder = CameraModifierManager.getPlayerOrder();
             ArrayList<MutableComponent> components = new ArrayList<>();
 
             for (String id : playerOrder) {
@@ -322,7 +322,7 @@ public class CameraModifierScreen extends Screen {
         protected void reload() {
             list.clear();
 
-            for (String id : CameraModifier.getPlayerOrder()) {
+            for (String id : CameraModifierManager.getPlayerOrder()) {
                 list.add(Component.translatable("freecamera.modifier." + id));
             }
 
@@ -343,11 +343,11 @@ public class CameraModifierScreen extends Screen {
         protected void onDoubleSelected(int index) {
             String id = ids.get(index);
 
-            if (CameraModifier.getPlayerRemovedBackground().contains(id)) {
+            if (CameraModifierManager.getPlayerRemovedBackground().contains(id)) {
                 return;
             }
 
-            CameraModifier.getPlayerRemovedBackground().add(id);
+            CameraModifierManager.getPlayerRemovedBackground().add(id);
             list.remove(index);
             ids.remove(index);
             playerRemoved.reload();
@@ -370,10 +370,10 @@ public class CameraModifierScreen extends Screen {
         }
 
         private static void loadModifier(List<String> ids, List<MutableComponent> components) {
-            HashMap<String, CameraModifier.Modifier> b = new HashMap<>(CameraModifier.getModifiersB());
+            HashMap<String, CameraModifierManager.Modifier> b = new HashMap<>(CameraModifierManager.getModifiersB());
 
             //剔除已经被玩家指定优先的操作器
-            for (String order : CameraModifier.getPlayerRemovedBackground()) {
+            for (String order : CameraModifierManager.getPlayerRemovedBackground()) {
                 b.remove(order);
             }
 
@@ -393,14 +393,14 @@ public class CameraModifierScreen extends Screen {
 
         @Override
         protected void onDoubleSelected(int index) {
-            CameraModifier.getPlayerRemovedBackground().remove(index);
+            CameraModifierManager.getPlayerRemovedBackground().remove(index);
             list.remove(index);
             backgroundModifier.reload();
             onListChanged();
         }
 
         private static PlayerRemovedModifierWidget create(int x, int y, int width, int height) {
-            List<String> playerOrder = CameraModifier.getPlayerRemovedBackground();
+            List<String> playerOrder = CameraModifierManager.getPlayerRemovedBackground();
             ArrayList<MutableComponent> components = new ArrayList<>();
 
             for (String id : playerOrder) {
@@ -413,7 +413,7 @@ public class CameraModifierScreen extends Screen {
         protected void reload() {
             list.clear();
 
-            for (String id : CameraModifier.getPlayerRemovedBackground()) {
+            for (String id : CameraModifierManager.getPlayerRemovedBackground()) {
                 list.add(Component.translatable("freecamera.modifier." + id));
             }
 
