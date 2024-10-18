@@ -50,6 +50,8 @@ public interface ICameraModifier {
 
     ICameraModifier disable();
 
+    ICameraModifier disableAll();
+
     ICameraModifier enableFirstPersonArmFixed();
 
     ICameraModifier disableFirstPersonArmFixed();
@@ -61,6 +63,8 @@ public interface ICameraModifier {
     ICameraModifier enableLerp();
 
     ICameraModifier disableLerp();
+
+    ICameraModifier reset();
 
     String getModId();
 }

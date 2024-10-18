@@ -316,7 +316,7 @@ public class CameraModifierManager {
         selfPos.zero();
         globalPos.zero();
         rotation.zero();
-        FOV = 70;
+        FOV = 0;
         STATE = 0;
     }
 
@@ -560,6 +560,12 @@ public class CameraModifierManager {
         }
 
         @Override
+        public ICameraModifier disableAll() {
+            state = 0;
+            return this;
+        }
+
+        @Override
         public Modifier enableFirstPersonArmFixed() {
             state |= FIRST_PERSON_ARM_FIXED;
             return this;
@@ -592,6 +598,15 @@ public class CameraModifierManager {
         @Override
         public Modifier disableLerp() {
             state &= ~LERP;
+            return this;
+        }
+
+        @Override
+        public ICameraModifier reset() {
+            disableAll();
+            pos.zero();
+            rot.zero();
+            fov = 0;
             return this;
         }
 
@@ -641,7 +656,10 @@ public class CameraModifierManager {
 
         //旋转
         if (isStateEnabledOr(ROT_ENABLED)) {
-            poseStack.mulPose(new Quaternionf().rotateZ(rotation.z * Mth.DEG_TO_RAD).rotateX(rotation.x * Mth.DEG_TO_RAD).rotateY(rotation.y * Mth.DEG_TO_RAD));
+            poseStack.mulPose(new Quaternionf().rotateZ(rotation.z * Mth.DEG_TO_RAD)
+                    .rotateX(rotation.x * Mth.DEG_TO_RAD)
+                    .rotateY(rotation.y * Mth.DEG_TO_RAD)
+                    .rotateX(-player.getXRot() * Mth.DEG_TO_RAD));
         }
 
         //坐标
