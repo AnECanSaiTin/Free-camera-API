@@ -58,14 +58,6 @@ public class CameraModifierManager {
     //上一次的相机FOV
     private static double FOV_O;
 
-    //相机状态常量
-    private static final int ENABLE = 1;
-    private static final int POS_ENABLED = 1 << 1;
-    private static final int ROT_ENABLED = 1 << 2;
-    private static final int FOV_ENABLED = 1 << 3;
-    private static final int FIRST_PERSON_ARM_FIXED = 1 << 4;
-    private static final int GLOBAL_MODE_ENABLED = 1 << 5;
-    private static final int LERP = 1 << 6;
     //相机状态
     private static int STATE;
     //上一次相机状态
@@ -76,7 +68,7 @@ public class CameraModifierManager {
         //按照玩家指定顺序应用第一个可用操作器
         applyPlayerOrderModifier();
 
-        if (!isStateEnabledOr(ENABLE)) {
+        if (!isStateEnabledOr(ModifierStates.ENABLE)) {
             //按照优先级应用第一个可用操作器
             applyEffectiveModifierFromPositive();
         }
@@ -84,7 +76,7 @@ public class CameraModifierManager {
         //应用背景操作器
         applyBackgroundModifier();
 
-        if (!isStateEnabledOr(ENABLE)) {
+        if (!isStateEnabledOr(ModifierStates.ENABLE)) {
             cleanCache();
             //记录上一次的相机局部坐标、旋转、FOV
             saveToOld();
@@ -113,12 +105,12 @@ public class CameraModifierManager {
             String id = playerOrder.get(i);
             Modifier modifier = findModifierFromNegativeById(id);
 
-            if (modifier == null || !modifier.isStateEnabledOr(ENABLE) || !modifier.isEffective) {
+            if (modifier == null || !modifier.isStateEnabledOr(ModifierStates.ENABLE) || !modifier.isEffective) {
                 continue;
             }
 
             //没有启用任何修改则跳过
-            if (!modifier.isStateEnabledOr(POS_ENABLED | ROT_ENABLED | FOV_ENABLED)) {
+            if (!modifier.isStateEnabledOr(ModifierStates.POS_ENABLED | ModifierStates.ROT_ENABLED | ModifierStates.FOV_ENABLED)) {
                 continue;
             }
 
@@ -160,7 +152,7 @@ public class CameraModifierManager {
     @Nullable
     private static Modifier getEffectiveModifierFromMap(HashMap<String, Modifier> map) {
         for (Modifier modifier : map.values()) {
-            if (modifier.isStateEnabledOr(ENABLE) && modifier.isEffective && (modifier.isStateEnabledOr(POS_ENABLED | ROT_ENABLED | FOV_ENABLED))) {
+            if (modifier.isStateEnabledOr(ModifierStates.ENABLE) && modifier.isEffective && (modifier.isStateEnabledOr(ModifierStates.POS_ENABLED | ModifierStates.ROT_ENABLED | ModifierStates.FOV_ENABLED))) {
                 return modifier;
             }
         }
@@ -185,11 +177,11 @@ public class CameraModifierManager {
         }
 
         for (Modifier modifier : modifiersB.values()) {
-            if (!modifier.isStateEnabledOr(ENABLE) || !modifier.isEffective) {
+            if (!modifier.isStateEnabledOr(ModifierStates.ENABLE) || !modifier.isEffective) {
                 continue;
             }
 
-            if (!modifier.isStateEnabledOr(POS_ENABLED | ROT_ENABLED | FOV_ENABLED)) {
+            if (!modifier.isStateEnabledOr(ModifierStates.POS_ENABLED | ModifierStates.ROT_ENABLED | ModifierStates.FOV_ENABLED)) {
                 continue;
             }
 
@@ -200,19 +192,19 @@ public class CameraModifierManager {
     private static void applyValue(Modifier modifier) {
         STATE |= modifier.state;
 
-        if (modifier.isStateEnabledOr(POS_ENABLED)) {
-            if (modifier.isStateEnabledOr(GLOBAL_MODE_ENABLED)) {
+        if (modifier.isStateEnabledOr(ModifierStates.POS_ENABLED)) {
+            if (modifier.isStateEnabledOr(ModifierStates.GLOBAL_MODE_ENABLED)) {
                 globalPos.add(modifier.pos);
             } else {
                 selfPos.add(modifier.pos);
             }
         }
 
-        if (isStateEnabledOr(ROT_ENABLED)) {
+        if (isStateEnabledOr(ModifierStates.ROT_ENABLED)) {
             rotation.add(modifier.rot);
         }
 
-        if (isStateEnabledOr(FOV_ENABLED)) {
+        if (isStateEnabledOr(ModifierStates.FOV_ENABLED)) {
             FOV += modifier.fov;
         }
     }
@@ -227,15 +219,15 @@ public class CameraModifierManager {
     }
 
     private static void applyModifyToRot(float partialTick, float yRot) {
-        if (!isStateEnabledOr(ROT_ENABLED)) {
+        if (!isStateEnabledOr(ModifierStates.ROT_ENABLED)) {
             return;
         }
 
         Vector3f rot;
 
-        if (isStateEnabledOr(GLOBAL_MODE_ENABLED)) {
+        if (isStateEnabledOr(ModifierStates.GLOBAL_MODE_ENABLED)) {
             //全局模式，不应用玩家旋转
-            if (isOldStateEnabledAnd(ENABLE | ROT_ENABLED | LERP)) {
+            if (isOldStateEnabledAnd(ModifierStates.ENABLE | ModifierStates.ROT_ENABLED | ModifierStates.LERP)) {
                 //如果上次开启了旋转，则要计算插值
                 rot = new Vector3f(
                         Mth.lerp(partialTick, rotationO.x, rotation.x),
@@ -250,7 +242,7 @@ public class CameraModifierManager {
             //局部模式应用玩家旋转
             rot = new Vector3f(0, yRot, 0);
 
-            if (isOldStateEnabledAnd(ENABLE | ROT_ENABLED | LERP)) {
+            if (isOldStateEnabledAnd(ModifierStates.ENABLE | ModifierStates.ROT_ENABLED | ModifierStates.LERP)) {
                 //如果上次开启了旋转，则要计算插值
                 rot.add(
                         Mth.lerp(partialTick, rotationO.x, rotation.x),
@@ -267,15 +259,15 @@ public class CameraModifierManager {
     }
 
     private static void applyModifyToPos(float partialTick, float yRot, Entity entity) {
-        if (!isStateEnabledOr(POS_ENABLED)) {
+        if (!isStateEnabledOr(ModifierStates.POS_ENABLED)) {
             return;
         }
 
         Vector3d pos;
 
-        if (isStateEnabledOr(GLOBAL_MODE_ENABLED)) {
+        if (isStateEnabledOr(ModifierStates.GLOBAL_MODE_ENABLED)) {
             //全局模式
-            if (isOldStateEnabledAnd(GLOBAL_MODE_ENABLED | ENABLE | POS_ENABLED | LERP)) {
+            if (isOldStateEnabledAnd(ModifierStates.GLOBAL_MODE_ENABLED | ModifierStates.ENABLE | ModifierStates.POS_ENABLED | ModifierStates.LERP)) {
                 //如果上次开启了全局模式，则要计算插值
                 pos = new Vector3d(
                         Mth.lerp(partialTick, globalPosO.x, globalPos.x),
@@ -288,7 +280,7 @@ public class CameraModifierManager {
             }
         } else {
             //局部模式
-            if (isOldStateEnabledAnd(ENABLE | POS_ENABLED | LERP) && !isOldStateEnabledOr(GLOBAL_MODE_ENABLED)) {
+            if (isOldStateEnabledAnd(ModifierStates.ENABLE | ModifierStates.POS_ENABLED | ModifierStates.LERP) && !isOldStateEnabledOr(ModifierStates.GLOBAL_MODE_ENABLED)) {
                 //如果上次是局部模式，则计算插值
                 pos = new Vector3d(
                         Mth.lerp(partialTick, selfPosO.x, selfPos.x),
@@ -401,13 +393,13 @@ public class CameraModifierManager {
 
         @Override
         public Modifier enablePos() {
-            state |= POS_ENABLED;
+            state |= ModifierStates.POS_ENABLED;
             return this;
         }
 
         @Override
         public Modifier disablePos() {
-            state &= ~POS_ENABLED;
+            state &= ~ModifierStates.POS_ENABLED;
             return this;
         }
 
@@ -435,13 +427,13 @@ public class CameraModifierManager {
 
         @Override
         public Modifier enableRotation() {
-            state |= ROT_ENABLED;
+            state |= ModifierStates.ROT_ENABLED;
             return this;
         }
 
         @Override
         public Modifier disableRotation() {
-            state &= ~ROT_ENABLED;
+            state &= ~ModifierStates.ROT_ENABLED;
             return this;
         }
 
@@ -497,13 +489,13 @@ public class CameraModifierManager {
 
         @Override
         public Modifier enableFov() {
-            state |= FOV_ENABLED;
+            state |= ModifierStates.FOV_ENABLED;
             return this;
         }
 
         @Override
         public Modifier disableFov() {
-            state &= ~FOV_ENABLED;
+            state &= ~ModifierStates.FOV_ENABLED;
             return this;
         }
 
@@ -549,13 +541,13 @@ public class CameraModifierManager {
 
         @Override
         public Modifier enable() {
-            state |= ENABLE;
+            state |= ModifierStates.ENABLE;
             return this;
         }
 
         @Override
         public Modifier disable() {
-            state &= ~ENABLE;
+            state &= ~ModifierStates.ENABLE;
             return this;
         }
 
@@ -567,37 +559,37 @@ public class CameraModifierManager {
 
         @Override
         public Modifier enableFirstPersonArmFixed() {
-            state |= FIRST_PERSON_ARM_FIXED;
+            state |= ModifierStates.FIRST_PERSON_ARM_FIXED;
             return this;
         }
 
         @Override
         public Modifier disableFirstPersonArmFixed() {
-            state &= ~FIRST_PERSON_ARM_FIXED;
+            state &= ~ModifierStates.FIRST_PERSON_ARM_FIXED;
             return this;
         }
 
         @Override
         public Modifier enableGlobalMode() {
-            state |= GLOBAL_MODE_ENABLED;
+            state |= ModifierStates.GLOBAL_MODE_ENABLED;
             return this;
         }
 
         @Override
         public Modifier disableGlobalMode() {
-            state &= ~GLOBAL_MODE_ENABLED;
+            state &= ~ModifierStates.GLOBAL_MODE_ENABLED;
             return this;
         }
 
         @Override
         public Modifier enableLerp() {
-            state |= LERP;
+            state |= ModifierStates.LERP;
             return this;
         }
 
         @Override
         public Modifier disableLerp() {
-            state &= ~LERP;
+            state &= ~ModifierStates.LERP;
             return this;
         }
 
@@ -607,6 +599,18 @@ public class CameraModifierManager {
             pos.zero();
             rot.zero();
             fov = 0;
+            return this;
+        }
+
+        @Override
+        public ICameraModifier setState(int state) {
+            this.state = state;
+            return this;
+        }
+
+        @Override
+        public ICameraModifier getState(int[] state) {
+            state[0] = this.state;
             return this;
         }
 
@@ -622,13 +626,13 @@ public class CameraModifierManager {
 
     @SubscribeEvent
     public static void modifyFov(ViewportEvent.ComputeFov event) {
-        if (!isStateEnabledAnd(ENABLE | FOV_ENABLED)) {
+        if (!isStateEnabledAnd(ModifierStates.ENABLE | ModifierStates.FOV_ENABLED)) {
             return;
         }
 
         double fov;
 
-        if (isOldStateEnabledAnd(ENABLE | FOV_ENABLED | LERP)) {
+        if (isOldStateEnabledAnd(ModifierStates.ENABLE | ModifierStates.FOV_ENABLED | ModifierStates.LERP)) {
             //上次有FOV修改，需插值
             fov = Mth.lerp(event.getPartialTick(), FOV_O, FOV);
         } else {
@@ -642,7 +646,7 @@ public class CameraModifierManager {
     @SubscribeEvent
     public static void modifyFirstPersonHand(RenderHandEvent event) {
         //全局模式下不能固定手臂
-        if (!isStateEnabledAnd(ENABLE | FIRST_PERSON_ARM_FIXED) || isStateEnabledOr(GLOBAL_MODE_ENABLED)) {
+        if (!isStateEnabledAnd(ModifierStates.ENABLE | ModifierStates.FIRST_PERSON_ARM_FIXED) || isStateEnabledOr(ModifierStates.GLOBAL_MODE_ENABLED)) {
             return;
         }
 
@@ -655,7 +659,7 @@ public class CameraModifierManager {
         LocalPlayer player = Minecraft.getInstance().player;
 
         //旋转
-        if (isStateEnabledOr(ROT_ENABLED)) {
+        if (isStateEnabledOr(ModifierStates.ROT_ENABLED)) {
             poseStack.mulPose(new Quaternionf().rotateZ(rotation.z * Mth.DEG_TO_RAD)
                     .rotateX(rotation.x * Mth.DEG_TO_RAD)
                     .rotateY(rotation.y * Mth.DEG_TO_RAD)
@@ -663,10 +667,10 @@ public class CameraModifierManager {
         }
 
         //坐标
-        if (isStateEnabledOr(POS_ENABLED)) {
+        if (isStateEnabledOr(ModifierStates.POS_ENABLED)) {
             Vector3d pos;
             //局部模式
-            if (isOldStateEnabledAnd(ENABLE | POS_ENABLED | LERP)) {
+            if (isOldStateEnabledAnd(ModifierStates.ENABLE | ModifierStates.POS_ENABLED | ModifierStates.LERP)) {
                 //上次开启了坐标，计算插值
                 pos = new Vector3d(
                         Mth.lerp(partialTick, selfPosO.x, selfPos.x),
