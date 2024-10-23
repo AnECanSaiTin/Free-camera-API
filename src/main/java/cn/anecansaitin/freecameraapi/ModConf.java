@@ -37,9 +37,9 @@ public class ModConf {
 
     @SubscribeEvent
     public static void onLoad(ModConfigEvent event) {
-        CameraModifier.getPlayerOrder().clear();
-        CameraModifier.getPlayerOrder().addAll(PLAYER_ORDER.get());
-        CameraModifier.getPlayerRemovedBackground().clear();
-        CameraModifier.getPlayerRemovedBackground().addAll(REMOVED.get());
+        CameraModifierManager.getPlayerOrder().clear();
+        CameraModifierManager.getPlayerOrder().addAll(PLAYER_ORDER.get());
+        CameraModifierManager.getPlayerRemovedBackground().clear();
+        CameraModifierManager.getPlayerRemovedBackground().addAll(REMOVED.get());
     }
 }
