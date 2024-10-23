@@ -120,9 +120,9 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 
 dependencies {
-    api "maven.modrinth:modern-ui:3.11.0.4"
-    implementation "io.github.tt432:eyelib:${eyelib_version}"
-
+//    api "maven.modrinth:modern-ui:3.11.0.4"
+//    implementation "io.github.tt432:eyelib:${eyelib_version}"
+    api "maven.modrinth:simpleanimator:neoforge-1.21-1.2.6.1"
     // Example mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

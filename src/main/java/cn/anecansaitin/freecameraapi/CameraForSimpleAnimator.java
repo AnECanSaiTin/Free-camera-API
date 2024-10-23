@@ -13,7 +13,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 class CameraForSimpleAnimator {
-    private static CameraModifier.Modifier MODIFIER = CameraModifier.createModifier("freecameraapi_simple_animator", false);
+    private static final ICameraModifier MODIFIER = CameraModifierManager.createModifier("freecameraapi_simple_animator", false);
 
     public static void modifyCamera(ViewportEvent.ComputeFov event) {
         LocalPlayer player = Minecraft.getInstance().player;
@@ -74,7 +74,7 @@ class CameraForSimpleAnimator {
         } else {
             MODIFIER.enable()
                     .enableFov()
-                    .setFov((zoom.get() - 1) * 100);
+                    .setFov((zoom.get() - 1) * 100 + 70);
         }
     }
 }
