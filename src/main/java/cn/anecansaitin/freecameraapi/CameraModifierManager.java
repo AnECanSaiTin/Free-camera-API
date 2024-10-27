@@ -640,7 +640,7 @@ public class CameraModifierManager {
             fov = FOV;
         }
 
-        event.setFOV(fov);
+        event.setFOV((float) fov);
     }
 
     @SubscribeEvent

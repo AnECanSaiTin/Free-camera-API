@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.1-beta'
+    id 'net.neoforged.moddev' version '1.0.21'
 }
 
 version = 'neo-' + minecraft_version + '-' + mod_version
@@ -120,8 +120,8 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 
 dependencies {
-    api "maven.modrinth:modern-ui:3.11.0.4"
-    implementation "io.github.tt432:eyelib:${eyelib_version}"
+//    api "maven.modrinth:modern-ui:3.11.0.4"
+//    implementation "io.github.tt432:eyelib:${eyelib_version}"
 
     // Example mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
