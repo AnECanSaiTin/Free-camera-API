@@ -65,23 +65,21 @@ public class FreeMode {
         }
 
         move.mul(SPEED);
-        int distance = 16 * (Minecraft.getInstance().options.renderDistance().get() - 2);
+        int distance = 16 * (Minecraft.getInstance().options.renderDistance().get() - 1);
 
         if (MOVE_MODE) {
             //向准心位置移动
             modifier.move(move.x, 0, move.z);
             Vector3d modifierPos = modifier.getPos();
+            double xSqr = modifierPos.x * modifierPos.x;
+            double zSqr = modifierPos.z * modifierPos.z;
 
-            if (modifierPos.x > distance) {
-                modifierPos.x = distance;
-            } else if (modifierPos.x < -distance) {
-                modifierPos.x = -distance;
-            }
-
-            if (modifierPos.z > distance) {
-                modifierPos.z = distance;
-            } else if (modifierPos.z < -distance) {
-                modifierPos.z = -distance;
+            if (xSqr + zSqr > distance * distance) {
+                double currentDistance = Math.sqrt(xSqr + zSqr);
+                double factor = distance / currentDistance;
+                modifierPos.x *= factor;
+                modifierPos.z *= factor;
+                modifier.setPos(modifierPos.x, modifierPos.y, modifierPos.z);
             }
 
             modifier.addPos(0, move.y, 0);
@@ -90,17 +88,14 @@ public class FreeMode {
             //类创造模式移动
             move.rotateY(-rot.y * Mth.DEG_TO_RAD);
             pos.add(move);
+            float xSqr = pos.x * pos.x;
+            float zSqr = pos.z * pos.z;
 
-            if (pos.x > distance) {
-                pos.x = distance;
-            } else if (pos.x < -distance) {
-                pos.x = -distance;
-            }
-
-            if (pos.z > distance) {
-                pos.z = distance;
-            } else if (pos.z < -distance) {
-                pos.z = -distance;
+            if (xSqr + zSqr > distance * distance) {
+                double currentDistance = Math.sqrt(xSqr + zSqr);
+                double factor = distance / currentDistance;
+                pos.x *= (float) factor;
+                pos.z *= (float) factor;
             }
 
             modifier.setPos(pos.x, pos.y, pos.z);
