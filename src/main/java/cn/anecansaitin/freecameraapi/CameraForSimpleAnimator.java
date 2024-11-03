@@ -3,7 +3,11 @@ package cn.anecansaitin.freecameraapi;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.quepierts.simpleanimator.api.IAnimateHandler;
 import net.quepierts.simpleanimator.api.animation.AnimationState;
@@ -14,6 +18,7 @@ import org.joml.Vector3f;
 
 class CameraForSimpleAnimator {
     private static final ICameraModifier MODIFIER = CameraModifierManager.createModifier("freecameraapi_simple_animator", false);
+    private static PlayerModel<AbstractClientPlayer> model;
 
     public static void modifyCamera(ViewportEvent.ComputeFov event) {
         LocalPlayer player = Minecraft.getInstance().player;
@@ -24,6 +29,13 @@ class CameraForSimpleAnimator {
             return;
         }
 
+        //因为在做超出渲染范围的动画，需要手动调用
+        if (model == null) {
+            EntityRenderer<? super LocalPlayer> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(player);
+            model = ((PlayerRenderer)renderer).getModel();
+        }
+
+        model.setupAnim(player, 0, 0, 0, 0, 0);
         player.setYBodyRot(player.getYHeadRot());
         Options options = Minecraft.getInstance().options;
         String prefix = "t";
