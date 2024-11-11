@@ -2,8 +2,8 @@
 
 **让相机操作更简单灵活！**
 
-![Dolly zoom](zoom.gif)
-![Roll](roll.gif)
+![Dolly zoom](md_resource/zoom.gif)
+![Roll](md_resource/roll.gif)
 
 ## 如何创建修改器
 
@@ -24,7 +24,7 @@ CameraModifier.createBackgroundModifier("background id")
 //在任何你想进行相机修改的类里
 //通常可以在 EventViewportEvent.ComputeFov 事件中处理
 
-CameraModifier.Modifier modifier;
+ICameraModifier modifier;
 
 modifier
         .enable() //启用修改器

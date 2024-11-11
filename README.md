@@ -1,5 +1,5 @@
 # Free camera API
-[中文](md_resource/ZH_README.md)
+[中文](README_ZH)
 
 **Make camera operation easier and more flexible.**
 ![Dolly zoom](md_resource/zoom.gif)
@@ -22,7 +22,7 @@ CameraModifier.createBackgroundModifier("background id")
 //in some class you want to modify camera
 //Suggest making modifications by subscribing to eventViewportEvent.ComputeFov
 
-CameraModifier.Modifier modifier;
+ICameraModifier modifier;
 
 modifier
         .enable() //Enable modifier
