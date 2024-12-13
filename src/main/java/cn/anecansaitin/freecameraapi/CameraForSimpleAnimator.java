@@ -29,13 +29,13 @@ class CameraForSimpleAnimator {
             return;
         }
 
-        //因为在做超出渲染范围的动画，需要手动调用
-        if (model == null) {
-            EntityRenderer<? super LocalPlayer> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(player);
-            model = ((PlayerRenderer)renderer).getModel();
-        }
-
-        model.setupAnim(player, 0, 0, 0, 0, 0);
+//        //因为在做超出渲染范围的动画，需要手动调用
+//        if (model == null) {
+//            EntityRenderer<? super LocalPlayer> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(player);
+//            model = ((PlayerRenderer) renderer).getModel();
+//        }
+//
+//        model.setupAnim(player, 0, 0, 0, 0, 0);
         player.setYBodyRot(player.getYHeadRot());
         Options options = Minecraft.getInstance().options;
         String prefix = "t";
@@ -74,9 +74,11 @@ class CameraForSimpleAnimator {
         if (rot == VariableHolder.Immutable.INSTANCE) {
             MODIFIER.disableRotation();
         } else {
+            Vector3f vector3f = rot.getAsVector3f();
+            vector3f.mul(1, 1, -1);
             MODIFIER.enable()
                     .enableRotation()
-                    .setRotationZYX(rot.getAsVector3f());
+                    .setRotationXYZ(vector3f);
         }
 
         VariableHolder zoom = animator.getVariable(prefix + "CameraZoom");

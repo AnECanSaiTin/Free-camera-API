@@ -28,6 +28,8 @@ public interface ICameraModifier {
 
     ICameraModifier setRotationZYX(Vector3f rot);
 
+    ICameraModifier setRotationXYZ(Vector3f rot);
+
     ICameraModifier rotateYXZ(float xRot, float yRot, float zRot);
 
     ICameraModifier enableFov();

@@ -459,24 +459,17 @@ public class CameraModifierManager {
         }
 
         @Override
+        public ICameraModifier setRotationXYZ(Vector3f rot) {
+            return setRotationYXZ(eulerXYZToYXZ(rot.x, rot.y, rot.z));
+        }
+
+        @Override
         public Modifier rotateYXZ(float xRot, float yRot, float zRot) {
             rot.add(xRot, yRot, zRot);
             return this;
         }
 
         private Vector3f eulerZYXToYXZ(float x, float y, float z) {
-            if (x == 90f || x == -90f) {
-                x += 0.00001f;
-            }
-
-            if (y == 90f || y == -90f) {
-                y += 0.00001f;
-            }
-
-            if (z == 90f || z == -90f) {
-                z += 0.00001f;
-            }
-
             x *= Mth.DEG_TO_RAD;
             y *= Mth.DEG_TO_RAD;
             z *= Mth.DEG_TO_RAD;
@@ -486,6 +479,17 @@ public class CameraModifierManager {
                     .getEulerAnglesYXZ(new Vector3f())
                     .mul(Mth.RAD_TO_DEG);
         }
+
+        private Vector3f eulerXYZToYXZ(float x, float y, float z) {
+            x *= Mth.DEG_TO_RAD;
+            y *= Mth.DEG_TO_RAD;
+            z *= Mth.DEG_TO_RAD;
+
+            return new Quaternionf()
+                    .rotationXYZ(x, y, z)
+                    .getEulerAnglesYXZ(new Vector3f())
+                    .mul(Mth.RAD_TO_DEG);
+       }
 
         @Override
         public Modifier enableFov() {

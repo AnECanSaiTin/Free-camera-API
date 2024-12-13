@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(MouseHandler.class)
 public abstract class MouseHandlerMixin {
     @WrapWithCondition(method = "turnPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;turn(DD)V"))
-    public boolean wrap$onMove(LocalPlayer instance, double yRot, double xRot) {
+    public boolean freecameraapi$$onMove(LocalPlayer instance, double yRot, double xRot) {
         MouseMoveEvent event = new MouseMoveEvent(xRot, yRot);
         NeoForge.EVENT_BUS.post(event);
         return !event.isCanceled();

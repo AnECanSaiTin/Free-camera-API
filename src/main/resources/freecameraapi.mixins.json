@@ -5,10 +5,12 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "freecamera.refmap.json",
   "mixins": [
+
   ],
   "client": [
     "GameRendererMixin",
-    "MouseHandlerMixin"
+    "MouseHandlerMixin",
+    "client.EntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

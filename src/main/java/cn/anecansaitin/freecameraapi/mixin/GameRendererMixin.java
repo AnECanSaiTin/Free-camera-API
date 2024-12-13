@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class GameRendererMixin {
     @Inject(method = "renderLevel",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setup(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/entity/Entity;ZZF)V", shift = At.Shift.AFTER))
-    private void inject$cameraModifierSetup(DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void freecameraapi$cameraModifierSetup(DeltaTracker deltaTracker, CallbackInfo ci) {
         CameraModifierManager.modify();
     }
 }
