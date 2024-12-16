@@ -1,5 +1,5 @@
 # Free camera API
-[中文](README_ZH)
+[中文](README_ZH.md)
 
 **Make camera operation easier and more flexible.**
 ![Dolly zoom](md_resource/zoom.gif)

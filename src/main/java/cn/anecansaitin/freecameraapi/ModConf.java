@@ -37,6 +37,10 @@ public class ModConf {
 
     @SubscribeEvent
     public static void onLoad(ModConfigEvent event) {
+        if (event.getConfig().getSpec() != SPEC) {
+            return;
+        }
+
         CameraModifierManager.getPlayerOrder().clear();
         CameraModifierManager.getPlayerOrder().addAll(PLAYER_ORDER.get());
         CameraModifierManager.getPlayerRemovedBackground().clear();
