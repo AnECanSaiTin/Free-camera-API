@@ -465,18 +465,6 @@ public class CameraModifierManager {
         }
 
         private Vector3f eulerZYXToYXZ(float x, float y, float z) {
-            if (x == 90f || x == -90f) {
-                x += 0.00001f;
-            }
-
-            if (y == 90f || y == -90f) {
-                y += 0.00001f;
-            }
-
-            if (z == 90f || z == -90f) {
-                z += 0.00001f;
-            }
-
             x *= Mth.DEG_TO_RAD;
             y *= Mth.DEG_TO_RAD;
             z *= Mth.DEG_TO_RAD;
