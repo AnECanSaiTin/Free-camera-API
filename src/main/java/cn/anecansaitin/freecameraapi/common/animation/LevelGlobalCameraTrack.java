@@ -1,4 +1,4 @@
-package cn.anecansaitin.freecameraapi.common;
+package cn.anecansaitin.freecameraapi.common.animation;
 
 import java.util.HashMap;
 
