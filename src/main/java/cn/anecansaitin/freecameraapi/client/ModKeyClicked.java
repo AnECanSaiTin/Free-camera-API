@@ -18,9 +18,5 @@ public class ModKeyClicked {
         while (ModKeyMapping.CAMERA_MODIFIER_SCREEN_KEY.get().consumeClick()) {
             GUI_OPENER.accept(null);
         }
-
-        while (ModKeyMapping.SAVE_GLOBAL_CAMERA_POINT.get().consumeClick()) {
-
-        }
     }
 }
