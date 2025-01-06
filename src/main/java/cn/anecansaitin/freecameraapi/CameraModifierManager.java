@@ -63,6 +63,8 @@ public class CameraModifierManager {
     //上一次相机状态
     private static int STATE_O;
 
+    private static final Vector3f ROT_RESULT = new Vector3f();
+
     public static void modify() {
         cleanCache();
         //按照玩家指定顺序应用第一个可用操作器
@@ -255,7 +257,8 @@ public class CameraModifierManager {
             }
         }
 
-        ((ICameraMixinExtend) camera()).setRotation(rot.y, rot.x, rot.z);
+        ROT_RESULT.set(rot);
+//        ((ICameraMixinExtend) camera()).setRotation(rot.y, rot.x, rot.z);
     }
 
     private static void applyModifyToPos(float partialTick, float yRot, Entity entity) {
@@ -633,6 +636,16 @@ public class CameraModifierManager {
         }
 
         event.setFOV((float) fov);
+    }
+
+    @SubscribeEvent
+    public static void modifyCamera(ViewportEvent.ComputeCameraAngles event) {
+        modify();
+        if (isStateEnabledAnd(ModifierStates.ENABLE | ModifierStates.ROT_ENABLED)) {
+            event.setPitch(ROT_RESULT.x);
+            event.setYaw(ROT_RESULT.y);
+            event.setRoll(ROT_RESULT.z);
+        }
     }
 
     @SubscribeEvent

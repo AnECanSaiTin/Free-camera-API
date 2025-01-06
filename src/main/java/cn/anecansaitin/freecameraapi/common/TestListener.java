@@ -11,10 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
 public class TestListener {
     private static final ICameraModifier modifier = CameraModifierManager
-            .createModifier("test", true)
-            .enablePos()
-            .enableFov()
-            .enableRotation();
+            .createModifier("test", true);
 
     @SubscribeEvent
     public static void on(ViewportEvent.ComputeFov event) {
