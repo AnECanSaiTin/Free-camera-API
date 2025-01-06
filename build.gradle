@@ -19,7 +19,7 @@ mixin {
     config "${mod_id}.mixins.json"
 }
 
-version = mod_version
+version = "forge-"+ minecraft_version + "-" + mod_version
 group = mod_group_id
 
 base {
