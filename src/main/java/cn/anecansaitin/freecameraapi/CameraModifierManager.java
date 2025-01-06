@@ -7,11 +7,11 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderHandEvent;
-import net.neoforged.neoforge.client.event.ViewportEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.ViewportEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 import org.joml.Math;
@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
 public class CameraModifierManager {
     //缓存操作器
     //高优先级
@@ -84,7 +84,7 @@ public class CameraModifierManager {
             return;
         }
 
-        float partialTick = camera().getPartialTickTime();
+        float partialTick = getPartialTickTime();
         Entity entity = camera().getEntity();
 
         //这里到底是取头部还是身体的旋转？
@@ -255,7 +255,7 @@ public class CameraModifierManager {
             }
         }
 
-        camera().setRotation(rot.y, rot.x, rot.z);
+        ((ICameraMixinExtend) camera()).setRotation(rot.y, rot.x, rot.z);
     }
 
     private static void applyModifyToPos(float partialTick, float yRot, Entity entity) {
@@ -330,6 +330,10 @@ public class CameraModifierManager {
 
     private static Camera camera() {
         return Minecraft.getInstance().gameRenderer.getMainCamera();
+    }
+
+    private static float getPartialTickTime() {
+        return Minecraft.getInstance().getFrameTime();
     }
 
     /**

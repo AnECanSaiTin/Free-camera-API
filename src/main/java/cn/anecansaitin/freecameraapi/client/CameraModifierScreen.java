@@ -81,7 +81,7 @@ public class CameraModifierScreen extends Screen {
             int height = getHeight();
 
             //底部文本
-            guiGraphics.drawScrollingString(font, getMessage(), x + 5, x + width - 5, y + height + 5, 0xffffffff);
+            guiGraphics.drawString(font, getMessage(), x + 5, y + height + 5, 0xffffffff);
             guiGraphics.vLine(x + 2, y + height + 2, y + height + 17, 0xffff8c94);
             guiGraphics.vLine(x + width - 2, y + height + 2, y + height + 17, 0xffff8c94);
             guiGraphics.hLine(x + 2, x + width - 2, y + height + 2, 0xffff8c94);
@@ -117,9 +117,9 @@ public class CameraModifierScreen extends Screen {
                         //选中时突出
                         guiGraphics.fill(x - 1, y - 1, x + width - 2, y + 9, 0x77ffffff);
                         literal.withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD);
-                        guiGraphics.drawScrollingString(font, literal, x, x + width - 2, y, 0xffffffff);
+                        guiGraphics.drawString(font, literal, x, y, 0xffffffff);
                     } else {
-                        guiGraphics.drawScrollingString(font, literal, x, x + width - 2, y, 0xffffffff);
+                        guiGraphics.drawString(font, literal, x, y, 0xffffffff);
                     }
 
                     guiGraphics.hLine(x - 2, x + width - 2, y - 2, 0xffffaaa6);
@@ -143,8 +143,8 @@ public class CameraModifierScreen extends Screen {
         }
 
         @Override
-        public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-            roll = Math.clamp(roll - scrollY, 0, Math.max(list.size() - maxCount, 0));
+        public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
+            roll = org.joml.Math.clamp(roll - pDelta, 0, Math.max(list.size() - maxCount, 0));
             return true;
         }
 
