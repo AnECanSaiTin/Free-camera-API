@@ -8,13 +8,13 @@ public interface ICameraModifier {
 
     ICameraModifier disablePos();
 
-    ICameraModifier setPos(double x, double y, double z);
+    ICameraModifier setPos(float x, float y, float z);
 
-    ICameraModifier setPos(Vector3d pos);
+    ICameraModifier setPos(Vector3f pos);
 
     ICameraModifier addPos(double x, double y, double z);
 
-    ICameraModifier addPos(Vector3d pos);
+    ICameraModifier addPos(Vector3f pos);
 
     ICameraModifier enableRotation();
 
@@ -34,17 +34,17 @@ public interface ICameraModifier {
 
     ICameraModifier disableFov();
 
-    ICameraModifier setFov(double fov);
+    ICameraModifier setFov(float fov);
 
-    ICameraModifier move(double x, double y, double z);
+    ICameraModifier move(float x, float y, float z);
 
-    ICameraModifier aimAt(double x, double y, double z);
+    ICameraModifier aimAt(float x, float y, float z);
 
     Vector3d getPos();
 
     Vector3f getRot();
 
-    double getFov();
+    float getFov();
 
     /**
      * Enable modifier.<br/>

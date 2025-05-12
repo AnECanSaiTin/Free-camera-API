@@ -383,7 +383,7 @@ public class CameraModifierManager {
         private final String modId;
         private final Vector3d pos = new Vector3d();
         private final Vector3f rot = new Vector3f();
-        private double fov;
+        private float fov;
         private boolean isEffective = true;
         private int state;
 
@@ -404,13 +404,13 @@ public class CameraModifierManager {
         }
 
         @Override
-        public Modifier setPos(double x, double y, double z) {
+        public Modifier setPos(float x, float y, float z) {
             pos.set(x, y, z);
             return this;
         }
 
         @Override
-        public Modifier setPos(Vector3d pos) {
+        public Modifier setPos(Vector3f pos) {
             return setPos(pos.x, pos.y, pos.z);
         }
 
@@ -421,7 +421,7 @@ public class CameraModifierManager {
         }
 
         @Override
-        public Modifier addPos(Vector3d pos) {
+        public Modifier addPos(Vector3f pos) {
             return addPos(pos.x, pos.y, pos.z);
         }
 
@@ -488,13 +488,13 @@ public class CameraModifierManager {
         }
 
         @Override
-        public Modifier setFov(double fov) {
+        public Modifier setFov(float fov) {
             this.fov = fov;
             return this;
         }
 
         @Override
-        public Modifier move(double x, double y, double z) {
+        public Modifier move(float x, float y, float z) {
             Vector3d vec = new Vector3d(x, y, z)
                     .rotateX(rot.x * Mth.DEG_TO_RAD)
                     .rotateY(-rot.y * Mth.DEG_TO_RAD)
@@ -504,7 +504,7 @@ public class CameraModifierManager {
         }
 
         @Override
-        public Modifier aimAt(double x, double y, double z) {
+        public Modifier aimAt(float x, float y, float z) {
             Vector3d aim = new Vector3d(x - pos.x, y - pos.y, z - pos.z);
 
             rot.x = (float) Math.acos(Math.sqrt(aim.x * aim.x + aim.z * aim.z) / aim.length()) * Mth.RAD_TO_DEG * (aim.y < 0 ? 1 : -1);
@@ -523,7 +523,7 @@ public class CameraModifierManager {
         }
 
         @Override
-        public double getFov() {
+        public float getFov() {
             return fov;
         }
 
