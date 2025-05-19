@@ -1,5 +1,6 @@
 package cn.anecansaitin.freecameraapi;
 
+import cn.anecansaitin.freecameraapi.common.ModConf;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;

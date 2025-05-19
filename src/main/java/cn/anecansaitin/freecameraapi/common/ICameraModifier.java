@@ -1,4 +1,4 @@
-package cn.anecansaitin.freecameraapi;
+package cn.anecansaitin.freecameraapi.common;
 
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -64,10 +64,6 @@ public interface ICameraModifier {
      */
     ICameraModifier disableAll();
 
-    ICameraModifier enableFirstPersonArmFixed();
-
-    ICameraModifier disableFirstPersonArmFixed();
-
     ICameraModifier enableGlobalMode();
 
     ICameraModifier disableGlobalMode();
@@ -75,6 +71,8 @@ public interface ICameraModifier {
     ICameraModifier enableLerp();
 
     ICameraModifier disableLerp();
+
+    ICameraModifier setToVanilla();
 
     /**
      * Disable all state. Set pos, rotation, fov to zero.<br/>
@@ -102,5 +100,5 @@ public interface ICameraModifier {
      */
     ICameraModifier getState(int[] dest);
 
-    String getModId();
+    String getId();
 }

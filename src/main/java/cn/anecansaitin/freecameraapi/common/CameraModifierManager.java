@@ -1,16 +1,14 @@
-package cn.anecansaitin.freecameraapi;
+package cn.anecansaitin.freecameraapi.common;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import cn.anecansaitin.freecameraapi.FreeCamera;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
@@ -387,7 +385,7 @@ public class CameraModifierManager {
         private boolean isEffective = true;
         private int state;
 
-        private Modifier(String modId) {
+        public Modifier(String modId) {
             this.modId = modId;
         }
 
@@ -546,18 +544,6 @@ public class CameraModifierManager {
         }
 
         @Override
-        public Modifier enableFirstPersonArmFixed() {
-            state |= ModifierStates.FIRST_PERSON_ARM_FIXED;
-            return this;
-        }
-
-        @Override
-        public Modifier disableFirstPersonArmFixed() {
-            state &= ~ModifierStates.FIRST_PERSON_ARM_FIXED;
-            return this;
-        }
-
-        @Override
         public Modifier enableGlobalMode() {
             state |= ModifierStates.GLOBAL_MODE_ENABLED;
             return this;
@@ -578,6 +564,15 @@ public class CameraModifierManager {
         @Override
         public Modifier disableLerp() {
             state &= ~ModifierStates.LERP;
+            return this;
+        }
+
+        @Override
+        public ICameraModifier setToVanilla() {
+            Camera camera = camera();
+            Vec3 position = camera.getPosition();
+            pos.set(position.x, position.y, position.z);
+            rot.set(camera.getXRot(), camera.getYRot(), camera.getRoll());
             return this;
         }
 
@@ -607,7 +602,7 @@ public class CameraModifierManager {
         }
 
         @Override
-        public String getModId() {
+        public String getId() {
             return modId;
         }
     }
@@ -629,47 +624,5 @@ public class CameraModifierManager {
         }
 
         event.setFOV((float) fov);
-    }
-
-    @SubscribeEvent
-    public static void modifyFirstPersonHand(RenderHandEvent event) {
-        //全局模式下不能固定手臂
-        if (!isStateEnabledAnd(ModifierStates.ENABLE | ModifierStates.FIRST_PERSON_ARM_FIXED) || isStateEnabledOr(ModifierStates.GLOBAL_MODE_ENABLED)) {
-            return;
-        }
-
-        if (event.getHand() != InteractionHand.MAIN_HAND) {
-            return;
-        }
-
-        PoseStack poseStack = event.getPoseStack();
-        float partialTick = event.getPartialTick();
-        LocalPlayer player = Minecraft.getInstance().player;
-
-        //旋转
-        if (isStateEnabledOr(ModifierStates.ROT_ENABLED)) {
-            poseStack.mulPose(new Quaternionf().rotateZ(rotation.z * Mth.DEG_TO_RAD)
-                    .rotateX(rotation.x * Mth.DEG_TO_RAD)
-                    .rotateY(rotation.y * Mth.DEG_TO_RAD)
-                    .rotateX(-player.getXRot() * Mth.DEG_TO_RAD));
-        }
-
-        //坐标
-        if (isStateEnabledOr(ModifierStates.POS_ENABLED)) {
-            Vector3d pos;
-            //局部模式
-            if (isOldStateEnabledAnd(ModifierStates.ENABLE | ModifierStates.POS_ENABLED | ModifierStates.LERP)) {
-                //上次开启了坐标，计算插值
-                pos = new Vector3d(
-                        Mth.lerp(partialTick, selfPosO.x, selfPos.x),
-                        player.getEyeHeight() - Mth.lerp(partialTick, selfPosO.y, selfPos.y),
-                        Mth.lerp(partialTick, selfPosO.z, selfPos.z));
-            } else {
-                //否则直接使用原始值
-                pos = new Vector3d(selfPos.x, player.getEyeHeight() - selfPos.y, selfPos.z);
-            }
-
-            poseStack.translate(pos.x, pos.y, pos.z);
-        }
     }
 }

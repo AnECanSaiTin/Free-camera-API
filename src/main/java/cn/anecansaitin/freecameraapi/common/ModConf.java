@@ -1,5 +1,6 @@
-package cn.anecansaitin.freecameraapi;
+package cn.anecansaitin.freecameraapi.common;
 
+import cn.anecansaitin.freecameraapi.FreeCamera;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -17,7 +18,7 @@ public class ModConf {
 //            .comment("")
             .defineList("removed", List.of(), null, ModConf::validate);
 
-    static final ModConfigSpec SPEC = BUILDER.build();
+    public static final ModConfigSpec SPEC = BUILDER.build();
 
     private static boolean validate(Object obj) {
         return obj instanceof String;
