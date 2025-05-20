@@ -3,7 +3,6 @@
   "minVersion": "0.8",
   "package": "cn.anecansaitin.freecameraapi.mixin",
   "compatibilityLevel": "JAVA_21",
-  "refmap": "freecamera.refmap.json",
   "mixins": [
   ],
   "client": [

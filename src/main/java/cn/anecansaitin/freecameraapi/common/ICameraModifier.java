@@ -94,11 +94,16 @@ public interface ICameraModifier {
      */
     ICameraModifier setState(int state);
 
-    /**
-     * @param dest state save into int[0]. 状态会保存到int[0]中。
-     *
-     */
-    ICameraModifier getState(int[] dest);
+    int getState();
+
+    default boolean isStateEnabledOr(int state) {
+        return (getState() & state) != 0;
+    }
+
+    default boolean isActive() {
+        int state = getState();
+        return state >= 1 && isStateEnabledOr(ModifierStates.ENABLE) && isStateEnabledOr(ModifierStates.POS_ENABLED | ModifierStates.ROT_ENABLED | ModifierStates.FOV_ENABLED);
+    }
 
     String getId();
 }

@@ -592,13 +592,8 @@ public class CameraModifierManager {
         }
 
         @Override
-        public ICameraModifier getState(int[] state) {
-            state[0] = this.state;
-            return this;
-        }
-
-        private boolean isStateEnabledOr(int state) {
-            return (this.state & state) != 0;
+        public int getState() {
+            return state;
         }
 
         @Override
