@@ -6,13 +6,11 @@ import cn.anecansaitin.freecameraapi.api.CameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.ClientInput;
+import net.minecraft.client.player.Input;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.neoforged.api.distmarker.Dist;
@@ -85,14 +83,13 @@ public class ZoomPlugin implements ICameraPlugin {
         }
 
         instance.forward.zero();
-
-        ClientInput clientInput = event.getInput();
-        Input input = clientInput.keyPresses;
-        instance.forward.add(input.left() ? 1 : 0, input.jump() ? 1 : 0, input.forward() ? 1 : 0);
-        instance.forward.sub(input.right() ? 1 : 0, input.shift() ? 1 : 0, input.backward() ? 1 : 0);
-
-        clientInput.moveVector = Vec2.ZERO;
-        clientInput.keyPresses = Input.EMPTY;
+        Input input = event.getInput();
+        instance.forward.add(input.left ? 1 : 0, input.jumping ? 1 : 0, input.up ? 1 : 0);
+        instance.forward.sub(input.right ? 1 : 0, input.shiftKeyDown ? 1 : 0, input.down ? 1 : 0);
+        input.leftImpulse = 0;
+        input.forwardImpulse = 0;
+        input.jumping = false;
+        input.shiftKeyDown = false;
     }
 
     private static boolean disabled() {
@@ -139,7 +136,7 @@ public class ZoomPlugin implements ICameraPlugin {
                 to = new Vec3(extend(oldPos, newPos, length));
 
         for (int i = 0; i < 3; i++) {
-            BlockHitResult blockHitResult = level.clipIncludingBorder(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
+            BlockHitResult blockHitResult = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
 
             if (blockHitResult.getType() != HitResult.Type.BLOCK) {
                 return;

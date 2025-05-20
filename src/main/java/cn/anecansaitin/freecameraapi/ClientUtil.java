@@ -10,8 +10,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 @SuppressWarnings("unused")
@@ -38,7 +36,7 @@ public final class ClientUtil {
     }
 
     public static float partialTicks() {
-        return MC.getDeltaTracker().getGameTimeDeltaPartialTick(true);
+        return MC.getTimer().getGameTimeDeltaPartialTick(true);
     }
 
     public static Vector3f playerEyePos(Vector3f dest) {
