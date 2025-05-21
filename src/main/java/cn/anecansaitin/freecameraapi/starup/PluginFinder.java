@@ -2,6 +2,7 @@ package cn.anecansaitin.freecameraapi.starup;
 
 import cn.anecansaitin.freecameraapi.common.ModifierPriority;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.modscan.ModAnnotation;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 import oshi.util.tuples.Triplet;
@@ -23,7 +24,13 @@ public class PluginFinder {
                     }
 
                     String id = annotation.annotationData().get("id").toString();
-                    ModifierPriority priority = (ModifierPriority) annotation.annotationData().get("priority");
+                    ModAnnotation.EnumHolder priorityHolder = (ModAnnotation.EnumHolder) annotation.annotationData().get("priority");
+                    ModifierPriority priority = ModifierPriority.NORMAL;
+
+                    if (priorityHolder != null) {
+                        priority  = ModifierPriority.valueOf(priorityHolder.value());
+                    }
+
                     String name = annotation.memberName();
                     IPlugin plugin = Class
                             .forName(name)
@@ -31,6 +38,7 @@ public class PluginFinder {
                             .getDeclaredConstructor()
                             .newInstance();
                     plugins.add(new Triplet<>(id, plugin, priority));
+                    break;
                 }
             }
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
