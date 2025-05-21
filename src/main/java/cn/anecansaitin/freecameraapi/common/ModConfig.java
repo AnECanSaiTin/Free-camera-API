@@ -9,14 +9,14 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import java.util.List;
 
 @EventBusSubscriber(modid = FreeCamera.MODID, bus = EventBusSubscriber.Bus.MOD)
-public class ModConf {
+public class ModConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     private static final ModConfigSpec.ConfigValue<List<? extends String>> PLAYER_ORDER = BUILDER
 //            .comment("")
-            .defineList("order", List.of(), null, ModConf::validate);
+            .defineList("order", List.of(), null, ModConfig::validate);
     private static final ModConfigSpec.ConfigValue<List<? extends String>> REMOVED = BUILDER
 //            .comment("")
-            .defineList("removed", List.of(), null, ModConf::validate);
+            .defineList("removed", List.of(), null, ModConfig::validate);
 
     public static final ModConfigSpec SPEC = BUILDER.build();
 
@@ -37,14 +37,11 @@ public class ModConf {
     }
 
     @SubscribeEvent
-    public static void onLoad(ModConfigEvent event) {
+    public static void onLoad(ModConfigEvent.Loading event) {
         if (event.getConfig().getSpec() != SPEC) {
             return;
         }
 
-        CameraModifierManager.getPlayerOrder().clear();
-        CameraModifierManager.getPlayerOrder().addAll(PLAYER_ORDER.get());
-        CameraModifierManager.getPlayerRemovedBackground().clear();
-        CameraModifierManager.getPlayerRemovedBackground().addAll(REMOVED.get());
+        ModifierRegistry.INSTANCE.freeze((List<String>) PLAYER_ORDER.get(), (List<String>) REMOVED.get());
     }
 }

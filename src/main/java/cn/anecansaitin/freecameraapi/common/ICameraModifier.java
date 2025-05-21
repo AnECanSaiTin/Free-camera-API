@@ -1,6 +1,5 @@
 package cn.anecansaitin.freecameraapi.common;
 
-import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 public interface ICameraModifier {
@@ -12,7 +11,7 @@ public interface ICameraModifier {
 
     ICameraModifier setPos(Vector3f pos);
 
-    ICameraModifier addPos(double x, double y, double z);
+    ICameraModifier addPos(float x, float y, float z);
 
     ICameraModifier addPos(Vector3f pos);
 
@@ -40,7 +39,7 @@ public interface ICameraModifier {
 
     ICameraModifier aimAt(float x, float y, float z);
 
-    Vector3d getPos();
+    Vector3f getPos();
 
     Vector3f getRot();
 
@@ -102,7 +101,7 @@ public interface ICameraModifier {
 
     default boolean isActive() {
         int state = getState();
-        return state >= 1 && isStateEnabledOr(ModifierStates.ENABLE) && isStateEnabledOr(ModifierStates.POS_ENABLED | ModifierStates.ROT_ENABLED | ModifierStates.FOV_ENABLED);
+        return state >= 1 && isStateEnabledOr(ModifierStates.ENABLE) && isStateEnabledOr(ModifierStates.POS | ModifierStates.ROT | ModifierStates.FOV);
     }
 
     String getId();

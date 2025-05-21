@@ -1,29 +1,13 @@
 package cn.anecansaitin.freecameraapi.client;
 
-import cn.anecansaitin.freecameraapi.common.CameraModifierManager;
-import cn.anecansaitin.freecameraapi.common.ModConf;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.contents.TranslatableContents;
-import org.lwjgl.glfw.GLFW;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class CameraModifierScreen extends Screen {
     public CameraModifierScreen() {
         super(Component.translatable("camera_modifier_screen.title"));
     }
-
+/*
     @Override
     protected void init() {
         NormalModifierWidget normal = NormalModifierWidget.create(5, 15, 60, 151);
@@ -419,5 +403,5 @@ public class CameraModifierScreen extends Screen {
 
             onListChanged();
         }
-    }
+    }*/
 }

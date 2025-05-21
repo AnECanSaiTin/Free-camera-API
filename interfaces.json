@@ -1,0 +1,5 @@
+{
+  "net/minecraft/client/Camera": [
+    "cn/anecansaitin/freecameraapi/mixin/ICameraExtend"
+  ]
+}
