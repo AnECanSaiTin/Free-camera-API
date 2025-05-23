@@ -1,5 +1,6 @@
 package cn.anecansaitin.freecameraapi.common;
 
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector3f;
 
 public interface ICameraModifier {
@@ -104,5 +105,5 @@ public interface ICameraModifier {
         return state >= 1 && isStateEnabledOr(ModifierStates.ENABLE) && isStateEnabledOr(ModifierStates.POS | ModifierStates.ROT | ModifierStates.FOV);
     }
 
-    String getId();
+    ResourceLocation getId();
 }

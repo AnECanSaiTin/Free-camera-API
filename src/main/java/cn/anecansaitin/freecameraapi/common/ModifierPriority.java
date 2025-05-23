@@ -5,5 +5,5 @@ public enum ModifierPriority {
     HIGH,
     NORMAL,
     LOW,
-    LOWEST; //Last to execute
+    LOWEST //Last to execute
 }

@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Math;
 import org.joml.Vector3f;
 
 import static cn.anecansaitin.freecameraapi.common.ModifierStates.*;
@@ -97,9 +98,16 @@ public class ModifierManager {
             return;
         }
 
-        float yRot = player().getYRot() % 360;
-        pos.rotateY(yRot * Mth.DEG_TO_RAD);
-        rot.add(0, yRot, 0);
+        float yRot = player().getViewYRot(camera().getPartialTickTime()) % 360;
+
+        if (modifier.isStateEnabledOr(POS)) {
+            Vec3 playerPos = player().position();
+            pos.add((float) playerPos.x, (float) playerPos.y, (float) playerPos.z);
+        }
+
+        if (modifier.isStateEnabledOr(ROT)) {
+            rot.add(0, yRot, 0);
+        }
     }
 
     private void applyLerp(ICameraModifier modifier) {

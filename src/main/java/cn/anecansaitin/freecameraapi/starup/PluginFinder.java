@@ -1,6 +1,9 @@
 package cn.anecansaitin.freecameraapi.starup;
 
 import cn.anecansaitin.freecameraapi.common.ModifierPriority;
+import cn.anecansaitin.freecameraapi.common.ModifierRegistry;
+import cn.anecansaitin.freecameraapi.starup.exception.CameraPluginInitializeException;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.modscan.ModAnnotation;
 import net.neoforged.neoforgespi.language.ModFileScanData;
@@ -11,39 +14,55 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PluginFinder {
-    public static List<Triplet<String ,IPlugin, ModifierPriority>> find() {
+public final class PluginFinder {
+    public static void loadPlugin() {
+        for (Triplet<ResourceLocation, IPlugin, ModifierPriority> triplet : PluginFinder.find()) {
+            ModifierRegistry.INSTANCE.register(triplet.getA(), triplet.getB(), triplet.getC());
+        }
+    }
+
+    private static List<Triplet<ResourceLocation, IPlugin, ModifierPriority>> find() {
         Type type = Type.getType(CameraPlugin.class);
-        ArrayList<Triplet<String ,IPlugin, ModifierPriority>> plugins = new ArrayList<>();
+        ArrayList<Triplet<ResourceLocation, IPlugin, ModifierPriority>> plugins = new ArrayList<>();
 
-        try {
-            for (ModFileScanData data : ModList.get().getAllScanData()) {
-                for (ModFileScanData.AnnotationData annotation : data.getAnnotations()) {
-                    if (!annotation.annotationType().equals(type)) {
-                        continue;
-                    }
 
-                    String id = annotation.annotationData().get("id").toString();
+        List<ModFileScanData> allScanData = ModList.get().getAllScanData();
+        for (int i = 0, allScanDataSize = allScanData.size(); i < allScanDataSize; i++) {
+            ModFileScanData data = allScanData.get(i);
+
+            for (ModFileScanData.AnnotationData annotation : data.getAnnotations()) {
+                if (!annotation.annotationType().equals(type)) {
+                    continue;
+                }
+
+                String name = null;
+
+                try {
+                    String namespace = ModList.get().getMods().get(i).getNamespace();
+                    ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, annotation.annotationData().get("value").toString());
                     ModAnnotation.EnumHolder priorityHolder = (ModAnnotation.EnumHolder) annotation.annotationData().get("priority");
                     ModifierPriority priority = ModifierPriority.NORMAL;
 
                     if (priorityHolder != null) {
-                        priority  = ModifierPriority.valueOf(priorityHolder.value());
+                        priority = ModifierPriority.valueOf(priorityHolder.value());
                     }
 
-                    String name = annotation.memberName();
+                    name = annotation.memberName();
                     IPlugin plugin = Class
                             .forName(name)
                             .asSubclass(IPlugin.class)
                             .getDeclaredConstructor()
                             .newInstance();
                     plugins.add(new Triplet<>(id, plugin, priority));
-                    break;
+
+                } catch (ClassNotFoundException e) {
+                    throw CameraPluginInitializeException.classNotFound(name);
+                } catch (NoSuchMethodException e) {
+                    throw CameraPluginInitializeException.noSuchMethod(name);
+                } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+                    throw CameraPluginInitializeException.invocationTarget(name);
                 }
             }
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
-                 IllegalAccessException e) {
-            throw new RuntimeException(e);
         }
 
         return plugins;

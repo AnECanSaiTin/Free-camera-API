@@ -13,6 +13,9 @@
   "camera_modifier_screen.removed_modifier.tip1": "双击一个元素以恢复使用",
   "camera_modifier_screen.removed_modifier.tip2": "",
 
+  "freecameraapi.configuration.order": "优先级",
+  "freecameraapi.configuration.removed": "移除",
+
   "key.categories.free_camera": "自由相机API",
   "key.freecamera.camera_modifier_screen": "相机操作器"
 }

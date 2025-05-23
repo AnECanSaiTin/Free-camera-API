@@ -12,6 +12,8 @@
   "camera_modifier_screen.removed_modifier": "removed modifier",
   "camera_modifier_screen.removed_modifier.tip1": "Double-click an element to restore it",
   "camera_modifier_screen.removed_modifier.tip2": "",
+  "freecameraapi.configuration.order": "Order",
+  "freecameraapi.configuration.removed": "Removed",
   "key.categories.free_camera": "Free Camera API",
   "key.freecamera.camera_modifier_screen": "Camera Modifier Screen"
 }
