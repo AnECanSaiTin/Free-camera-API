@@ -11,7 +11,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 
 @EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
-public class ManagerTick {
+public class ManagerTicker {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void tick(ViewportEvent.ComputeFov event) {
         Camera camera = event.getCamera();

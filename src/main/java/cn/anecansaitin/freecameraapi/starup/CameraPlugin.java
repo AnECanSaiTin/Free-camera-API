@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 public @interface CameraPlugin {
-    String id();
+    /// CameraPlugin id.
+    String value();
     ModifierPriority priority() default ModifierPriority.NORMAL;
 }

@@ -3,11 +3,12 @@ package cn.anecansaitin.freecameraapi.common;
 import cn.anecansaitin.freecameraapi.starup.IPlugin;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Math;
 import org.joml.Quaternionf;
-import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -15,8 +16,8 @@ import java.util.*;
 
 public class ModifierRegistry {
     public static final ModifierRegistry INSTANCE = new ModifierRegistry();
-    private Map<ModifierPriority, List<ICameraModifier>> priorityMap;
-    private final Map<String, ICameraModifier> modifierMap;
+    private final Map<ModifierPriority, List<ICameraModifier>> priorityMap;
+    private final Map<ResourceLocation, ICameraModifier> modifierMap;
     private final List<ICameraModifier> modifierList;
     private final List<ICameraModifier> removedList;
     private final Map<ICameraModifier, IPlugin> plugins;
@@ -34,11 +35,11 @@ public class ModifierRegistry {
         }
     }
 
-    public void register(String id, IPlugin plugin) {
+    public void register(ResourceLocation id, IPlugin plugin) {
         register(id, plugin, ModifierPriority.NORMAL);
     }
 
-    public void register(String id, IPlugin plugin, ModifierPriority priority) {
+    public void register(ResourceLocation id, IPlugin plugin, ModifierPriority priority) {
         register(plugin, priority, new Modifier(id));
     }
 
@@ -47,11 +48,14 @@ public class ModifierRegistry {
             throw new IllegalStateException("ModifierRegistry is frozen");
         }
 
-        if (!modifierMap.containsKey(modifier.getId())) {
-            modifierMap.put(modifier.getId(), modifier);
-            priorityMap.get(priority).add(modifier);
-            plugins.put(modifier, plugin);
+        if (modifierMap.containsKey(modifier.getId())) {
+            throw new IllegalArgumentException("Modifier with id " + modifier.getId() + " already registered");
         }
+
+        modifierMap.put(modifier.getId(), modifier);
+        priorityMap.get(priority).add(modifier);
+        plugins.put(modifier, plugin);
+        plugin.initialize(modifier);
     }
 
     public void freeze(List<String> order, List<String> removed) {
@@ -64,12 +68,15 @@ public class ModifierRegistry {
         setOrderById(order, removed);
     }
 
+    public void resetOrder(List<String> order, List<String> removed) {
+        sort();
+        setOrderById(order, removed);
+    }
+
     private void sort() {
         for (ModifierPriority priority : ModifierPriority.values()) {
             modifierList.addAll(priorityMap.get(priority));
         }
-
-        priorityMap = null;
     }
 
     private void setOrderById(List<String> order, List<String> removed) {
@@ -77,7 +84,7 @@ public class ModifierRegistry {
         ArrayList<ICameraModifier> removedList = new ArrayList<>();
 
         for (String id : order) {
-            ICameraModifier modifier = modifierMap.get(id);
+            ICameraModifier modifier = modifierMap.get(ResourceLocation.parse(id));
 
             if (modifier == null) {
                 continue;
@@ -87,7 +94,7 @@ public class ModifierRegistry {
         }
 
         for (String id : removed) {
-            ICameraModifier modifier = modifierMap.get(id);
+            ICameraModifier modifier = modifierMap.get(ResourceLocation.parse(id));
 
             if (modifier == null) {
                 continue;
@@ -114,21 +121,23 @@ public class ModifierRegistry {
     }
 
     /// 从已移除取回修改器
-    public void moveBack(int index,  int newIndex) {
+    public void moveBack(int index, int newIndex) {
         modifierList.add(newIndex, modifierList.remove(index));
     }
 
-    public List<ICameraModifier> getModifiers() {
-        return modifierList;
-    }
+    public List<ICameraModifier> getAllMoModifiers() {
+        ArrayList<ICameraModifier> modifiers = new ArrayList<>();
 
-    public List<ICameraModifier> getRemovedModifiers() {
-        return removedList;
+        for (List<ICameraModifier> value : priorityMap.values()) {
+            modifiers.addAll(value);
+        }
+
+        return modifiers;
     }
 
     public void updateController() {
         for (ICameraModifier modifier : modifierList) {
-            plugins.get(modifier).update(modifier);
+            plugins.get(modifier).update();
         }
     }
 
@@ -144,14 +153,14 @@ public class ModifierRegistry {
     }
 
     private static class Modifier implements ICameraModifier {
-        private final String modId;
+        private final ResourceLocation id;
         private final Vector3f pos = new Vector3f();
         private final Vector3f rot = new Vector3f();
         private float fov;
         private int state;
 
-        public Modifier(String modId) {
-            this.modId = modId;
+        public Modifier(ResourceLocation id) {
+            this.id = id;
         }
 
         @Override
@@ -268,9 +277,9 @@ public class ModifierRegistry {
 
         @Override
         public Modifier aimAt(float x, float y, float z) {
-            Vector3d aim = new Vector3d(x - pos.x, y - pos.y, z - pos.z);
+            Vector3f aim = new Vector3f(x - pos.x, y - pos.y, z - pos.z);
 
-            rot.x = (float) org.joml.Math.acos(Math.sqrt(aim.x * aim.x + aim.z * aim.z) / aim.length()) * Mth.RAD_TO_DEG * (aim.y < 0 ? 1 : -1);
+            rot.x = Math.acos(Math.sqrt(aim.x * aim.x + aim.z * aim.z) / aim.length()) * Mth.RAD_TO_DEG * (aim.y < 0 ? 1 : -1);
             rot.y = (float) -(Mth.atan2(aim.x, aim.z) * Mth.RAD_TO_DEG);
             return this;
         }
@@ -336,8 +345,18 @@ public class ModifierRegistry {
         public ICameraModifier setToVanilla() {
             Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
             Vec3 position = camera.getPosition();
-            pos.set(position.x, position.y, position.z);
-            rot.set(camera.getXRot(), camera.getYRot(), camera.getRoll());
+
+            if (isStateEnabledOr(ModifierStates.GLOBAL_MODE)) {
+                pos.set(position.x, position.y, position.z);
+                rot.set(camera.getXRot(), camera.getYRot(), camera.getRoll());
+            } else {
+                LocalPlayer player = Minecraft.getInstance().player;
+                Vec3 playerPos = player.position();
+                float viewYRot = player.getViewYRot(camera.getPartialTickTime());
+                pos.set(position.x - playerPos.x, position.y - playerPos.y, position.z - playerPos.z);
+                rot.set(camera.getXRot(), camera.getYRot() - viewYRot, camera.getRoll());
+            }
+
             fov = camera.getFov();
             return this;
         }
@@ -363,8 +382,8 @@ public class ModifierRegistry {
         }
 
         @Override
-        public String getId() {
-            return modId;
+        public ResourceLocation getId() {
+            return id;
         }
     }
 }
