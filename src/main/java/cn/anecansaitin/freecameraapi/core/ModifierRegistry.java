@@ -1,7 +1,7 @@
 package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
-import cn.anecansaitin.freecameraapi.api.IPlugin;
+import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -21,7 +21,7 @@ public class ModifierRegistry {
     private final Map<ResourceLocation, ICameraModifier> modifierMap;
     private final List<ICameraModifier> modifierList;
     private final List<ICameraModifier> removedList;
-    private final Map<ICameraModifier, IPlugin> plugins;
+    private final Map<ICameraModifier, ICameraPlugin> plugins;
     private boolean frozen = false;
 
     private ModifierRegistry() {
@@ -36,15 +36,15 @@ public class ModifierRegistry {
         }
     }
 
-    public void register(ResourceLocation id, IPlugin plugin) {
+    public void register(ResourceLocation id, ICameraPlugin plugin) {
         register(id, plugin, ModifierPriority.NORMAL);
     }
 
-    public void register(ResourceLocation id, IPlugin plugin, ModifierPriority priority) {
+    public void register(ResourceLocation id, ICameraPlugin plugin, ModifierPriority priority) {
         register(plugin, priority, new Modifier(id));
     }
 
-    public void register(IPlugin plugin, ModifierPriority priority, ICameraModifier modifier) {
+    public void register(ICameraPlugin plugin, ModifierPriority priority, ICameraModifier modifier) {
         if (frozen) {
             throw new IllegalStateException("ModifierRegistry is frozen");
         }

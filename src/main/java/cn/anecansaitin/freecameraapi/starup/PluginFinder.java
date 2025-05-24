@@ -1,7 +1,8 @@
 package cn.anecansaitin.freecameraapi.starup;
 
+import cn.anecansaitin.freecameraapi.FreeCamera;
 import cn.anecansaitin.freecameraapi.api.CameraPlugin;
-import cn.anecansaitin.freecameraapi.api.IPlugin;
+import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
 import cn.anecansaitin.freecameraapi.core.ModifierPriority;
 import cn.anecansaitin.freecameraapi.core.ModifierRegistry;
 import net.minecraft.resources.ResourceLocation;
@@ -17,18 +18,21 @@ import java.util.List;
 
 public final class PluginFinder {
     public static void loadPlugin() {
-        for (Triplet<ResourceLocation, IPlugin, ModifierPriority> triplet : PluginFinder.find()) {
+        for (Triplet<ResourceLocation, ICameraPlugin, ModifierPriority> triplet : PluginFinder.find()) {
             ModifierRegistry.INSTANCE.register(triplet.getA(), triplet.getB(), triplet.getC());
         }
     }
 
-    private static List<Triplet<ResourceLocation, IPlugin, ModifierPriority>> find() {
+    private static List<Triplet<ResourceLocation, ICameraPlugin, ModifierPriority>> find() {
         Type type = Type.getType(CameraPlugin.class);
-        ArrayList<Triplet<ResourceLocation, IPlugin, ModifierPriority>> plugins = new ArrayList<>();
-
-
+        ArrayList<Triplet<ResourceLocation, ICameraPlugin, ModifierPriority>> plugins = new ArrayList<>();
         List<ModFileScanData> allScanData = ModList.get().getAllScanData();
+
         for (int i = 0, allScanDataSize = allScanData.size(); i < allScanDataSize; i++) {
+            if (ModList.get().getMods().get(i).getModId().equals(FreeCamera.MODID)) {
+                continue;
+            }
+
             ModFileScanData data = allScanData.get(i);
 
             for (ModFileScanData.AnnotationData annotation : data.getAnnotations()) {
@@ -49,9 +53,9 @@ public final class PluginFinder {
                     }
 
                     name = annotation.memberName();
-                    IPlugin plugin = Class
+                    ICameraPlugin plugin = Class
                             .forName(name)
-                            .asSubclass(IPlugin.class)
+                            .asSubclass(ICameraPlugin.class)
                             .getDeclaredConstructor()
                             .newInstance();
                     plugins.add(new Triplet<>(id, plugin, priority));
