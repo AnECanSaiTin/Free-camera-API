@@ -1,8 +1,9 @@
 package cn.anecansaitin.freecameraapi.starup;
 
-import cn.anecansaitin.freecameraapi.common.ModifierPriority;
-import cn.anecansaitin.freecameraapi.common.ModifierRegistry;
-import cn.anecansaitin.freecameraapi.starup.exception.CameraPluginInitializeException;
+import cn.anecansaitin.freecameraapi.api.CameraPlugin;
+import cn.anecansaitin.freecameraapi.api.IPlugin;
+import cn.anecansaitin.freecameraapi.core.ModifierPriority;
+import cn.anecansaitin.freecameraapi.core.ModifierRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.modscan.ModAnnotation;

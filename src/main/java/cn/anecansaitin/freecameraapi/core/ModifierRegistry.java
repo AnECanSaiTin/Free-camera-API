@@ -1,6 +1,7 @@
-package cn.anecansaitin.freecameraapi.common;
+package cn.anecansaitin.freecameraapi.core;
 
-import cn.anecansaitin.freecameraapi.starup.IPlugin;
+import cn.anecansaitin.freecameraapi.api.ICameraModifier;
+import cn.anecansaitin.freecameraapi.api.IPlugin;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

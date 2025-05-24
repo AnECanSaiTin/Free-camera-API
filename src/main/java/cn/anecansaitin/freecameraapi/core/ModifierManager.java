@@ -1,14 +1,14 @@
-package cn.anecansaitin.freecameraapi.common;
+package cn.anecansaitin.freecameraapi.core;
 
+import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Math;
 import org.joml.Vector3f;
 
-import static cn.anecansaitin.freecameraapi.common.ModifierStates.*;
+import static cn.anecansaitin.freecameraapi.core.ModifierStates.*;
 
 public class ModifierManager {
     public static final ModifierManager INSTANCE = new ModifierManager();

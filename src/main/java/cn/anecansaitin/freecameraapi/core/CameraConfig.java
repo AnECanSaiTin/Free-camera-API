@@ -1,6 +1,7 @@
-package cn.anecansaitin.freecameraapi.common;
+package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.FreeCamera;
+import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

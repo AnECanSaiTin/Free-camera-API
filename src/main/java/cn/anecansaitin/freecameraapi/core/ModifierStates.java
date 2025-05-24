@@ -1,4 +1,4 @@
-package cn.anecansaitin.freecameraapi.common;
+package cn.anecansaitin.freecameraapi.core;
 
 public class ModifierStates {
     //相机状态常量

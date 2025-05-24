@@ -1,8 +1,6 @@
-package cn.anecansaitin.freecameraapi.client;
+package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.FreeCamera;
-import cn.anecansaitin.freecameraapi.common.ModifierManager;
-import cn.anecansaitin.freecameraapi.common.ModifierRegistry;
 import net.minecraft.client.Camera;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;

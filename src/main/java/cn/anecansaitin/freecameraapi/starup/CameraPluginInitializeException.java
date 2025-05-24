@@ -1,4 +1,4 @@
-package cn.anecansaitin.freecameraapi.starup.exception;
+package cn.anecansaitin.freecameraapi.starup;
 
 public class CameraPluginInitializeException extends RuntimeException {
     public CameraPluginInitializeException(String message) {
