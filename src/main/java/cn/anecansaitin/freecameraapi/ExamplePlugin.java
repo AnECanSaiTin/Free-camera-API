@@ -20,7 +20,7 @@ public class ExamplePlugin implements ICameraPlugin {
 
     @Override
     public void update() {
-        modifier.setPos(1,5,0)
-                .move(0,0,0);
+        modifier.setToVanilla()
+                /*.move(0,0,-5)*/;
     }
 }

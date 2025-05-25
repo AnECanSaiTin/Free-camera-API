@@ -269,8 +269,8 @@ public class ModifierRegistry {
         @Override
         public Modifier move(float x, float y, float z) {
             Vector3f vec = new Vector3f(x, y, z)
-                    .rotateY(rot.y * Mth.DEG_TO_RAD)
                     .rotateX(rot.x * Mth.DEG_TO_RAD)
+                    .rotateY(rot.y * Mth.DEG_TO_RAD)
                     .rotateZ(rot.z * Mth.DEG_TO_RAD);
             pos.add(vec);
             return this;
@@ -364,7 +364,7 @@ public class ModifierRegistry {
                 rot.set(camera.getXRot(), camera.getYRot(), camera.getRoll());
             } else {
                 LocalPlayer player = Minecraft.getInstance().player;
-                Vec3 playerPos = player.position();
+                Vec3 playerPos = player.getPosition(camera.getPartialTickTime());
                 float viewYRot = player.getViewYRot(camera.getPartialTickTime());
                 pos.set(position.x - playerPos.x, position.y - playerPos.y, position.z - playerPos.z);
                 rot.set(camera.getXRot(), camera.getYRot() - viewYRot, camera.getRoll());
