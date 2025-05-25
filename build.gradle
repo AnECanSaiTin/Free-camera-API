@@ -189,12 +189,12 @@ publishing {
 }
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
-idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
-    }
-}
+//idea {
+//    module {
+//        downloadSources = true
+//        downloadJavadoc = true
+//    }
+//}
 
 tasks.register("renderDoc", Exec) {
     def javaExecTask = tasks.withType(JavaExec).named("runClient").get()

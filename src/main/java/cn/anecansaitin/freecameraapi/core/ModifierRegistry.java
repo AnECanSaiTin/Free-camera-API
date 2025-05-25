@@ -269,8 +269,8 @@ public class ModifierRegistry {
         @Override
         public Modifier move(float x, float y, float z) {
             Vector3f vec = new Vector3f(x, y, z)
+                    .rotateY(rot.y * Mth.DEG_TO_RAD)
                     .rotateX(rot.x * Mth.DEG_TO_RAD)
-                    .rotateY(-rot.y * Mth.DEG_TO_RAD)
                     .rotateZ(rot.z * Mth.DEG_TO_RAD);
             pos.add(vec);
             return this;
@@ -339,6 +339,18 @@ public class ModifierRegistry {
         @Override
         public Modifier disableLerp() {
             state &= ~ModifierStates.LERP;
+            return this;
+        }
+
+        @Override
+        public ICameraModifier enableObstacle() {
+            state |= ModifierStates.OBSTACLE;
+            return this;
+        }
+
+        @Override
+        public ICameraModifier disableObstacle() {
+            state &= ~ModifierStates.OBSTACLE;
             return this;
         }
 

@@ -12,14 +12,15 @@ public class ExamplePlugin implements ICameraPlugin {
     @Override
     public void initialize(ICameraModifier modifier) {
         this.modifier = modifier;
-        modifier.enable();
+        modifier.enable()
+                .enablePos()
+                .enableLerp()
+                .enableObstacle();
     }
 
     @Override
     public void update() {
-        modifier
-                .enableRotation()
-                .setToVanilla()
-                .rotateYXZ(0, 0, 180);
+        modifier.setPos(1,5,0)
+                .move(0,0,0);
     }
 }

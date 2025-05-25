@@ -134,6 +134,12 @@ public interface ICameraModifier {
     /// Disables interpolation calculation.
     ICameraModifier disableLerp();
 
+    /// Enables default obstacle avoidance.
+    ICameraModifier enableObstacle();
+
+    /// Disables default obstacle avoidance.
+    ICameraModifier disableObstacle();
+
     /// Reverts to vanilla camera settings.
     ICameraModifier setToVanilla();
 

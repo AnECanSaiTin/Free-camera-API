@@ -29,9 +29,9 @@ public final class PluginFinder {
         List<ModFileScanData> allScanData = ModList.get().getAllScanData();
 
         for (int i = 0, allScanDataSize = allScanData.size(); i < allScanDataSize; i++) {
-            if (ModList.get().getMods().get(i).getModId().equals(FreeCamera.MODID)) {
+            /*if (ModList.get().getMods().get(i).getModId().equals(FreeCamera.MODID)) {
                 continue;
-            }
+            }*/
 
             ModFileScanData data = allScanData.get(i);
 

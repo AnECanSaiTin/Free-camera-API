@@ -5,6 +5,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -65,6 +67,7 @@ public class ModifierManager {
         applyRot(modifier);
         applyFov(modifier);
         applyGlobal(modifier);
+        applyObstacle(modifier);
         applyLerp(modifier);
         setCamera();
     }
@@ -110,6 +113,47 @@ public class ModifierManager {
         }
     }
 
+    private void applyObstacle(ICameraModifier modifier) {
+        if (!modifier.isStateEnabledOr(OBSTACLE)) {
+            return;//todo 测试
+        }
+
+        Vector3f
+                origin = player().getEyePosition(camera().getPartialTickTime()).toVector3f(),
+                direction = pos.sub(origin, new Vector3f());
+        float
+                size = 0.1F,
+                max = direction.length(),
+                length = max;
+
+        for (int i = 0; i < 8; i++) {
+            float
+                    x = size * (float) ((i & 1) * 2 - 1),
+                    y = size * (float) ((i >> 1 & 1) * 2 - 1),
+                    z = size * (float) ((i >> 2 & 1) * 2 - 1);
+
+            Vec3
+                    begin = new Vec3(origin.x + x, origin.y + y, origin.z + z),
+                    end = new Vec3(pos.x + x, pos.y + y, pos.z + z);
+
+            HitResult hitresult = player().level().clip(new ClipContext(begin, end, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, player()));
+
+            if (hitresult.getType() != HitResult.Type.MISS) {
+                float distance = (float) hitresult.getLocation().distanceToSqr(origin.x, origin.y, origin.z);
+
+                if (distance < Mth.square(max)) {
+                    max = Mth.sqrt(distance);
+                }
+            }
+        }
+
+        if (max == length) {
+            return;
+        }
+
+        pos.set(direction.normalize(max).add(origin));
+    }
+
     private void applyLerp(ICameraModifier modifier) {
         if (!modifier.isStateEnabledOr(LERP) || !isOldStateEnabledOr(LERP)) {
             return;
@@ -140,8 +184,8 @@ public class ModifierManager {
 
     private void setCamera() {
         Camera camera = camera();
-        camera.setPosition(pos.x, pos.y, pos.z);
         camera.setRotation(rot.y, rot.x, rot.z);
+        camera.setPosition(pos.x, pos.y, pos.z);
         camera.setFov(fov);
     }
 
