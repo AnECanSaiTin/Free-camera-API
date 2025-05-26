@@ -143,6 +143,9 @@ public interface ICameraModifier {
     /// Reverts to vanilla camera settings.
     ICameraModifier setToVanilla();
 
+    /// Sets position, rotation, and FOV to zero.
+    ICameraModifier clean();
+
     /// Resets all parameters and states.
     ///
     /// Disables all states. Sets position, rotation, and FOV to zero.

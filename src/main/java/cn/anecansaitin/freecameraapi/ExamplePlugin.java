@@ -4,6 +4,7 @@ import cn.anecansaitin.freecameraapi.api.CameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import cn.anecansaitin.freecameraapi.core.ModifierPriority;
+import net.minecraft.client.Minecraft;
 
 @CameraPlugin(value = "example", priority = ModifierPriority.LOWEST)
 public class ExamplePlugin implements ICameraPlugin {
@@ -14,13 +15,11 @@ public class ExamplePlugin implements ICameraPlugin {
         this.modifier = modifier;
         modifier.enable()
                 .enablePos()
-                .enableLerp()
                 .enableObstacle();
     }
 
     @Override
     public void update() {
-        modifier.setToVanilla()
-                /*.move(0,0,-5)*/;
+        modifier.setPos(0,2,270);
     }
 }

@@ -105,8 +105,7 @@ public class ModifierManager {
 
         if (modifier.isStateEnabledOr(POS)) {
             Vec3 playerPos = player().getPosition(camera().getPartialTickTime());
-            pos.rotateY(yRot * Mth.DEG_TO_RAD)
-                    .add((float) playerPos.x, (float) playerPos.y, (float) playerPos.z);
+            pos.rotateY(yRot * Mth.DEG_TO_RAD).add((float) playerPos.x, (float) playerPos.y, (float) playerPos.z);
         }
 
         if (modifier.isStateEnabledOr(ROT)) {

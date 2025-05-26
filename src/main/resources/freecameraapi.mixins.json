@@ -6,7 +6,8 @@
   "mixins": [
   ],
   "client": [
-    "CameraMixin"
+    "CameraMixin",
+    "ClientChunkCacheMixin"
   ],
   "injectors": {
     "defaultRequire": 1
