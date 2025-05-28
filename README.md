@@ -1,4 +1,6 @@
 # Free camera API
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/AnECanSaiTin/Free-camera-API)
+
 [中文](README_ZH.md)
 
 **Make camera operation easier and more flexible.**

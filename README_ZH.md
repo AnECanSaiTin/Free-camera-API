@@ -1,5 +1,7 @@
 # 自由相机API
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/AnECanSaiTin/Free-camera-API)
+
 **让相机操作更简单灵活！**
 
 ![Dolly zoom](md_resource/zoom.gif)
