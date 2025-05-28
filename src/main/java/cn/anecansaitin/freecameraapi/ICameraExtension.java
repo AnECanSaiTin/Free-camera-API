@@ -1,6 +1,6 @@
 package cn.anecansaitin.freecameraapi;
 
-public interface ICameraExtend {
+public interface ICameraExtension {
     default void setFov(float fov) {
     }
 

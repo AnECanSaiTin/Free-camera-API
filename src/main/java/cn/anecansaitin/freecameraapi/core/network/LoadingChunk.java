@@ -1,6 +1,7 @@
 package cn.anecansaitin.freecameraapi.core.network;
 
 import cn.anecansaitin.freecameraapi.FreeCamera;
+import cn.anecansaitin.freecameraapi.core.ModTicketController;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
@@ -29,6 +30,6 @@ public record LoadingChunk(ChunkPos pos) implements CustomPacketPayload {
 
     public static void handle(LoadingChunk pack, IPayloadContext context) {
         ServerLevel level = (ServerLevel) context.player().level();
-        level.getChunkSource().addRegionTicket(CAMERA_TICKET, pack.pos, 2, pack.pos, true);
+        ModTicketController.TICKET_CONTROLLER.forceChunk(level, context.player(), pack.pos.x, pack.pos.z, false, false);
     }
 }

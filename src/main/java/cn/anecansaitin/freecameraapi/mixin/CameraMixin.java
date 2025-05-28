@@ -1,12 +1,12 @@
 package cn.anecansaitin.freecameraapi.mixin;
 
-import cn.anecansaitin.freecameraapi.ICameraExtend;
+import cn.anecansaitin.freecameraapi.ICameraExtension;
 import net.minecraft.client.Camera;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Camera.class)
-public abstract class CameraMixin implements ICameraExtend {
+public abstract class CameraMixin implements ICameraExtension {
     @Unique
     private float freeCameraAPI$fov;
 
