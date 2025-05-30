@@ -11,11 +11,17 @@ public class ModPayload {
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1.0.0");
-        registrar.optional()
+        registrar
+                .optional()
                 .playToServer(
                         LoadingChunk.TYPE,
                         LoadingChunk.CODEC,
                         LoadingChunk::handle
+                )
+                .playToServer(
+                        UnloadingChunk.TYPE,
+                        UnloadingChunk.CODEC,
+                        UnloadingChunk::handle
                 );
     }
 }

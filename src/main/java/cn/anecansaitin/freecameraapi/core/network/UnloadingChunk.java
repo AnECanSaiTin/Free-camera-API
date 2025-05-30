@@ -17,24 +17,18 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Comparator;
 
-public record LoadingChunk(ChunkPos pos) implements CustomPacketPayload {
-    public static final Type<LoadingChunk> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(FreeCamera.MODID, "loading_chunk"));
-    public static final StreamCodec<ByteBuf, LoadingChunk> CODEC = StreamCodec.composite(ChunkPos.STREAM_CODEC, (pack) -> pack.pos, LoadingChunk::new);
-//    private static final TicketType<ChunkPos> CAMERA_TICKET = TicketType.create(FreeCamera.MODID + ":camera", Comparator.comparingLong(ChunkPos::toLong), 20 * 60);
-
-    public LoadingChunk(BlockPos pos) {
-        this(new ChunkPos(pos));
-    }
+public record UnloadingChunk() implements CustomPacketPayload {
+    public static final Type<UnloadingChunk> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(FreeCamera.MODID, "unloading_chunk"));
+    public static final StreamCodec<ByteBuf, UnloadingChunk> CODEC = StreamCodec.unit(new UnloadingChunk());
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
-    public static void handle(LoadingChunk pack, IPayloadContext context) {
+    public static void handle(UnloadingChunk pack, IPayloadContext context) {
         Player player = context.player();
-        ServerLevel level = (ServerLevel) player.level();
-//        player.setData(ModAttachment.CAMERA_CHUNK, new CameraChunk(true, pack.pos.x, pack.pos.z));
-        ModTicketController.TICKET_CONTROLLER.forceChunk(level, player, pack.pos.x, pack.pos.z, true, true);
+        player.setData(ModAttachment.CAMERA_CHUNK, new CameraChunk());
+        ModTicketController.ticketHelper.removeAllTickets(player.getUUID());
     }
 }

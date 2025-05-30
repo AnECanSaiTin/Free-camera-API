@@ -15,7 +15,9 @@ public class ExamplePlugin implements ICameraPlugin {
         this.modifier = modifier;
         modifier.disable()
                 .enablePos()
-                .enableObstacle();
+                .enableRotation()
+                .enableObstacle()
+                .enableGlobalMode();
     }
 
     @Override

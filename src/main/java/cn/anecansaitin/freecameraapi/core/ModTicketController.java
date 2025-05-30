@@ -6,16 +6,21 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
 import net.neoforged.neoforge.common.world.chunk.TicketController;
+import net.neoforged.neoforge.common.world.chunk.TicketHelper;
+
+import java.util.UUID;
 
 @EventBusSubscriber(modid = FreeCamera.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ModTicketController {
     public static final TicketController TICKET_CONTROLLER = new TicketController(ResourceLocation.fromNamespaceAndPath(FreeCamera.MODID, "ticket_controller"), (level, helper) -> {
-        for (var uuid : helper.getEntityTickets().keySet()) {
-            if (level.getEntity(uuid) == null) {
-                helper.removeAllTickets(uuid);
-            }
+        ticketHelper = helper;
+
+        for (UUID uuid : helper.getEntityTickets().keySet()) {
+            helper.removeAllTickets(uuid);
         }
     });
+
+    public static TicketHelper ticketHelper;
 
     @SubscribeEvent
     public static void register(RegisterTicketControllersEvent event) {

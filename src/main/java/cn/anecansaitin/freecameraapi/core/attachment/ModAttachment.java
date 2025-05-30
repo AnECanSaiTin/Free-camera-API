@@ -8,8 +8,6 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class ModAttachment {
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, FreeCamera.MODID);
-//    public static final DeferredHolder<>
-    static {
-//    DeferredHolder<AttachmentType<?>, CameraChunk> cameraChunk = ATTACHMENT_TYPES.register("camera_chunk", CameraChunk::new);
-}
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<CameraChunk>> CAMERA_CHUNK = ATTACHMENT_TYPES.register("camera_chunk", () -> AttachmentType.builder(CameraChunk::new).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<CameraChunk>> CAMERA_CHUNK_OLD = ATTACHMENT_TYPES.register("camera_chunk_old", () -> AttachmentType.builder(CameraChunk::new).build());
 }
