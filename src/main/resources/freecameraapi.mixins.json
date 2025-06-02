@@ -8,7 +8,8 @@
   ],
   "client": [
     "CameraMixin",
-    "ClientChunkCacheMixin"
+    "ClientChunkCacheMixin",
+    "LevelRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
