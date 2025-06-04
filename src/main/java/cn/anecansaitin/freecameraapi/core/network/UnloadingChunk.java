@@ -28,7 +28,7 @@ public record UnloadingChunk() implements CustomPacketPayload {
 
     public static void handle(UnloadingChunk pack, IPayloadContext context) {
         Player player = context.player();
-        player.setData(ModAttachment.CAMERA_CHUNK, new CameraChunk());
+//        player.setData(ModAttachment.CAMERA_CHUNK, new CameraChunk());
         ModTicketController.ticketHelper.removeAllTickets(player.getUUID());
     }
 }

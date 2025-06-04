@@ -1,6 +1,6 @@
 package cn.anecansaitin.freecameraapi.mixin;
 
-import cn.anecansaitin.freecameraapi.core.attachment.CameraChunk;
+import cn.anecansaitin.freecameraapi.core.attachment.CameraData;
 import cn.anecansaitin.freecameraapi.core.attachment.ModAttachment;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -18,33 +18,29 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ChunkMap.class)
 public abstract class ChunkMapMixin {
     @Shadow
-    private int serverViewDistance;
-
-    @Shadow
     protected abstract void markChunkPendingToSend(ServerPlayer player, ChunkPos pos);
 
     @Inject(method = "updateChunkTracking", at = @At(value = "HEAD"))
     private void freeCameraAPI$onUpdateChunkTracking(ServerPlayer player, CallbackInfo ci) {
         // 发送相机附近的区块信息到客户端
-        CameraChunk data = player.getData(ModAttachment.CAMERA_CHUNK);
+        CameraData data = player.getData(ModAttachment.CAMERA_DATA);
 
-        if (!data.enable()) {
-            if (data.update()) {
+        if (!data.enable) {
+            if (data.update) {
                 // 玩家退出相机视角并恢复到正常视角后，再次发送玩家周围方块信息，避免区块渲染缺失
                 player.getChunkTrackingView().forEach(chunkPos -> markChunkPendingToSend(player, chunkPos));
-                player.setData(ModAttachment.CAMERA_CHUNK, data.updated());
+                data.update = false;
             }
 
             return;
         }
 
-        if (!data.update()) {
+        if (!data.update) {
             return;
         }
 
-        CameraChunk oldData = player.getData(ModAttachment.CAMERA_CHUNK_OLD);
-        ChunkTrackingView.difference(oldData, data, chunkPos -> markChunkPendingToSend(player, chunkPos), chunkPos -> {});
-        player.setData(ModAttachment.CAMERA_CHUNK, data.updated());
+        ChunkTrackingView.difference(data.oldView, data.currentView, chunkPos -> markChunkPendingToSend(player, chunkPos), chunkPos -> {});
+        data.update = false;
     }
 
     @ModifyExpressionValue(method = "onChunkReadyToSend", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ChunkTrackingView;contains(Lnet/minecraft/world/level/ChunkPos;)Z"))
@@ -54,21 +50,21 @@ public abstract class ChunkMapMixin {
             return true;
         }
 
-        CameraChunk data = player.getData(ModAttachment.CAMERA_CHUNK);
+        CameraData data = player.getData(ModAttachment.CAMERA_DATA);
 
-        if (!data.enable()) {
+        if (!data.enable) {
             return false;
         }
 
-        return data.contains(pos);
+        return data.currentView.contains(pos);
     }
 
     @Inject(method = "isChunkTracked", at = @At("HEAD"), cancellable = true)
     private void freeCameraAPI$onIsChunkTracked(ServerPlayer player, int x, int z, CallbackInfoReturnable<Boolean> cir) {
         // 让相机范围内区块保持更新
-        CameraChunk data = player.getData(ModAttachment.CAMERA_CHUNK);
+        CameraData data = player.getData(ModAttachment.CAMERA_DATA);
 
-        if (!data.enable() || !data.contains(x, z)) {
+        if (!data.enable || !data.currentView.contains(x, z)) {
             return;
         }
 
