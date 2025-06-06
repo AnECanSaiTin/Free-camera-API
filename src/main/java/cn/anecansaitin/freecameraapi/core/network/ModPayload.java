@@ -14,14 +14,9 @@ public class ModPayload {
         registrar
                 .optional()
                 .playToServer(
-                        LoadingChunk.TYPE,
-                        LoadingChunk.CODEC,
-                        LoadingChunk::handle
-                )
-                .playToServer(
-                        UnloadingChunk.TYPE,
-                        UnloadingChunk.CODEC,
-                        UnloadingChunk::handle
+                        CameraPoseUpdate.TYPE,
+                        CameraPoseUpdate.CODEC,
+                        CameraPoseUpdate::handle
                 );
     }
 }

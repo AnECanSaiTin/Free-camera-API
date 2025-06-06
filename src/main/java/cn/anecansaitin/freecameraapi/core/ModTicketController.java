@@ -2,6 +2,8 @@ package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.FreeCamera;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
@@ -25,5 +27,13 @@ public class ModTicketController {
     @SubscribeEvent
     public static void register(RegisterTicketControllersEvent event) {
         event.register(TICKET_CONTROLLER);
+    }
+
+    public static void addChunk(ServerLevel level, Entity owner, int x, int y) {
+        TICKET_CONTROLLER.forceChunk(level, owner, x, y, true, true);
+    }
+
+    public static void removeAllChunk(UUID owner) {
+        ticketHelper.removeAllTickets(owner);
     }
 }

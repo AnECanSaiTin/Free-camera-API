@@ -21,17 +21,22 @@ public abstract class TrackedEntityMixin {
     Entity entity;
 
     @ModifyVariable(method = "updatePlayer", name = "flag", at = @At(value = "JUMP", opcode = Opcodes.IFEQ, shift = At.Shift.BEFORE, ordinal = 2))
-    public boolean freeCameraAPI$modifyFlag(boolean original, ServerPlayer player, @Local(ordinal = 0) double viewDistance) {
+    public boolean freeCameraAPI$modifyFlag(boolean original, ServerPlayer player, @Local(ordinal = 0) double radius) {
         // 让相机范围内的实体能更新
-        if (ChunkTest.INSTANCE.isInCamera()) {
-            CameraData data = player.getData(ModAttachment.CAMERA_DATA);
+        if (!ChunkTest.INSTANCE.isInCamera()) {
+            return original;
+        }
 
-            if (data.enable) {
-                Vec3 relativePosToCamera = entity.position().subtract(data.x, data.y, data.z);
+        CameraData data = player.getData(ModAttachment.CAMERA_DATA);
 
-                if (relativePosToCamera.x >= -viewDistance && relativePosToCamera.x <= viewDistance && relativePosToCamera.z >= -viewDistance && data.z <= viewDistance)
-                    return true;
-            }
+        if (!data.enable) {
+            return original;
+        }
+
+        Vec3 distance = entity.position().subtract(data.x, data.y, data.z);
+
+        if (distance.x >= -radius && distance.x <= radius && distance.z >= -radius && data.z <= radius) {
+            return true;
         }
 
         return original;

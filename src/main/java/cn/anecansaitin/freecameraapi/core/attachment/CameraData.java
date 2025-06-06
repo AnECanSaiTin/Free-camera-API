@@ -1,21 +1,42 @@
 package cn.anecansaitin.freecameraapi.core.attachment;
 
+import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ChunkTrackingView;
 import net.minecraft.world.level.ChunkPos;
 
 import java.util.function.Consumer;
 
 public class CameraData {
-    public boolean update;
     public boolean enable;
+    public boolean update;
     public float x;
     public float y;
     public float z;
-    public ChunkTrackingView currentView;
-    public ChunkTrackingView oldView;
+    public CameraChunkTrackingView currentView;
+    public CameraChunkTrackingView oldView;
+
+    public void update(boolean enable, boolean update, float x, float y, float z, int radius) {
+        this.enable = enable;
+
+        if (!enable) {
+            return;
+        }
+
+        this.update = update;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        int newX = SectionPos.blockToSectionCoord(x);
+        int newZ = SectionPos.blockToSectionCoord(z);
+
+        if (currentView.x - newX + currentView.z - newZ == 0) {
+            return;
+        }
+
+        updateView(newX, newZ, radius);
+    }
 
     public void updateView(int x, int z, int radius) {
-        update = true;
         oldView = currentView;
         currentView = new CameraChunkTrackingView(x, z, radius);
     }
