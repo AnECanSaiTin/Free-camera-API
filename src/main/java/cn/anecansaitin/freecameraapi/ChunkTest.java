@@ -21,11 +21,15 @@ public class ChunkTest {
             return;
         }
 
+        cameraStorage.viewCenterX = nvx;
+        cameraStorage.viewCenterZ = nvz;
         PacketDistributor.sendToServer(new CameraPoseUpdate(true, true, x, y, z, 2));
     }
 
     public void testClose() {
         inCamera = false;
+        cameraStorage.viewCenterX = Integer.MAX_VALUE;
+        cameraStorage.viewCenterZ = Integer.MAX_VALUE;
         PacketDistributor.sendToServer(new CameraPoseUpdate(false, false, 0, 0, 0, 0));
     }
 }
