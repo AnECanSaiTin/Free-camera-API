@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class LevelRendererMixin {
     @Redirect(method = "setupRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ViewArea;repositionCamera(Lnet/minecraft/core/SectionPos;)V"))
     public void freeCameraAPI$setupRender(ViewArea instance, SectionPos pos) {
-        if (ChunkTest.INSTANCE.isInCamera()) {
+        if (ChunkTest.INSTANCE.inCamera) {
             return;
         }
 

@@ -40,14 +40,16 @@ public abstract class ClientChunkCacheMixin {
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
     public void an$onInit(ClientLevel level, int viewDistance, CallbackInfo ci) {
-        ChunkTest.INSTANCE.setCameraStorage(self().new Storage(Math.max(2, viewDistance) + 3));
+        ChunkTest.INSTANCE.cameraStorage = self().new Storage(Math.max(2, viewDistance) + 3);
+        ChunkTest.INSTANCE.cameraStorage.viewCenterX = Integer.MAX_VALUE;
+        ChunkTest.INSTANCE.cameraStorage.viewCenterZ = Integer.MAX_VALUE;
     }
 
     @Inject(method = "updateViewRadius", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientChunkCache$Storage;<init>(Lnet/minecraft/client/multiplayer/ClientChunkCache;I)V"))
     public void freeCameraAPI$onUpdateViewRadius(int viewDistance, CallbackInfo ci) {
         // 可视范围更新时，同步更新相机的storage
         ClientChunkCache.Storage storage = self().new Storage(Math.max(2, viewDistance) + 3);
-        ClientChunkCache.Storage cameraStorage = ChunkTest.INSTANCE.getCameraStorage();
+        ClientChunkCache.Storage cameraStorage = ChunkTest.INSTANCE.cameraStorage;
         storage.viewCenterX = cameraStorage.viewCenterX;
         storage.viewCenterZ = cameraStorage.viewCenterZ;
 
@@ -67,13 +69,13 @@ public abstract class ClientChunkCacheMixin {
             storage.replace(storage.getIndex(pos.x, pos.z), chunk);
         }
 
-        ChunkTest.INSTANCE.setCameraStorage(storage);
+        ChunkTest.INSTANCE.cameraStorage = storage;
     }
 
     @Inject(method = "drop", at = @At(value = "HEAD"))
     public void freeCameraAPI$onDrop(ChunkPos pos, CallbackInfo ci) {
         // 丢弃相机范围内的区块
-        ClientChunkCache.Storage cameraStorage = ChunkTest.INSTANCE.getCameraStorage();
+        ClientChunkCache.Storage cameraStorage = ChunkTest.INSTANCE.cameraStorage;
 
         if (!cameraStorage.inRange(pos.x, pos.z)) {
             return;
@@ -93,9 +95,9 @@ public abstract class ClientChunkCacheMixin {
     @Inject(method = "replaceWithPacketData", at = @At(value = "HEAD"), cancellable = true)
     private void freeCameraAPI$onReplace(int x, int z, FriendlyByteBuf buffer, CompoundTag tag, Consumer<ClientboundLevelChunkPacketData.BlockEntityTagOutput> consumer, CallbackInfoReturnable<LevelChunk> cir) {
         // 更新区块数据
-        ClientChunkCache.Storage cameraStorage = ChunkTest.INSTANCE.getCameraStorage();
+        ClientChunkCache.Storage cameraStorage = ChunkTest.INSTANCE.cameraStorage;
 
-        if (!ChunkTest.INSTANCE.isInCamera() || !cameraStorage.inRange(x, z)) {
+        if (!ChunkTest.INSTANCE.inCamera || !cameraStorage.inRange(x, z)) {
             return;
         }
 
@@ -119,9 +121,9 @@ public abstract class ClientChunkCacheMixin {
     @Inject(method = "getChunk(IILnet/minecraft/world/level/chunk/status/ChunkStatus;Z)Lnet/minecraft/world/level/chunk/LevelChunk;", at = @At("TAIL"), cancellable = true)
     private void freeCameraAPI$onGetChunk(int x, int z, ChunkStatus requiredStatus, boolean load, CallbackInfoReturnable<LevelChunk> callback) {
         // 添加对相机缓存区块的获取
-        ClientChunkCache.Storage cameraStorage = ChunkTest.INSTANCE.getCameraStorage();
+        ClientChunkCache.Storage cameraStorage = ChunkTest.INSTANCE.cameraStorage;
 
-        if (!ChunkTest.INSTANCE.isInCamera() || !cameraStorage.inRange(x, z)) {
+        if (!ChunkTest.INSTANCE.inCamera || !cameraStorage.inRange(x, z)) {
             return;
         }
 

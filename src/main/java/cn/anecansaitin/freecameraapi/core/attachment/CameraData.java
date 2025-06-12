@@ -12,8 +12,8 @@ public class CameraData {
     public float x;
     public float y;
     public float z;
-    public CameraChunkTrackingView currentView;
-    public CameraChunkTrackingView oldView;
+    public CameraChunkTrackingView currentView = new CameraChunkTrackingView(Integer.MAX_VALUE, Integer.MAX_VALUE, 0);
+    public CameraChunkTrackingView oldView = currentView;
 
     public void update(boolean enable, boolean update, float x, float y, float z, int radius) {
         this.enable = enable;
