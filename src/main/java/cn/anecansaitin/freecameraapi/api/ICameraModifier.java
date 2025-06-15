@@ -143,6 +143,12 @@ public interface ICameraModifier {
     /// Reverts to vanilla camera settings.
     ICameraModifier setToVanilla();
 
+    /// Enables chunk loading.
+    ICameraModifier enableChunkLoader();
+
+    /// Disables chunk loading.
+    ICameraModifier disableChunkLoader();
+
     /// Sets position, rotation, and FOV to zero.
     ICameraModifier clean();
 

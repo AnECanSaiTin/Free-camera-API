@@ -9,4 +9,5 @@ public class ModifierStates {
     public static final int OBSTACLE = 1 << 4;
     public static final int GLOBAL_MODE = 1 << 5;
     public static final int LERP = 1 << 6;
+    public static final int CHUNK_LOADER = 1 << 7;
 }

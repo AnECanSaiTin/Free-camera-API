@@ -1,13 +1,17 @@
 package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
+import cn.anecansaitin.freecameraapi.core.network.CameraPoseUpdate;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientChunkCache;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.SectionPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
 
 import static cn.anecansaitin.freecameraapi.core.ModifierStates.*;
@@ -115,7 +119,7 @@ public class ModifierManager {
 
     private void applyObstacle(ICameraModifier modifier) {
         if (!modifier.isStateEnabledOr(OBSTACLE)) {
-            return;//todo 测试
+            return;
         }
 
         Vector3f
@@ -155,13 +159,13 @@ public class ModifierManager {
     }
 
     private void applyLerp(ICameraModifier modifier) {
-        if (!modifier.isStateEnabledOr(LERP) || !isOldStateEnabledOr(LERP)) {
+        if (!modifier.isStateEnabledOr(LERP) || !isStateEnabledOr(stateO, LERP)) {
             return;
         }
 
         float delta = camera().getPartialTickTime();
 
-        if (isOldStateEnabledOr(POS)) {
+        if (isStateEnabledOr(stateO, POS)) {
             pos.set(
                     Mth.lerp(delta, posO.x, pos.x),
                     Mth.lerp(delta, posO.y, pos.y),
@@ -169,7 +173,7 @@ public class ModifierManager {
             );
         }
 
-        if (isOldStateEnabledOr(ROT)) {
+        if (isStateEnabledOr(stateO, ROT)) {
             rot.set(
                     Mth.lerp(delta, rotO.x, rot.x),
                     Mth.lerp(delta, rotO.y, rot.y),
@@ -177,7 +181,7 @@ public class ModifierManager {
             );
         }
 
-        if (isOldStateEnabledOr(FOV)) {
+        if (isStateEnabledOr(stateO, FOV)) {
             fov = Mth.lerp(delta, fovO, fov);
         }
     }
@@ -197,7 +201,62 @@ public class ModifierManager {
         return Minecraft.getInstance().player;
     }
 
-    private boolean isOldStateEnabledOr(int state) {
-        return (stateO & state) != 0;
+    public boolean isStateEnabledAnd(int state, int mask) {
+        return (state & mask) == mask;
+    }
+
+    private boolean isStateEnabledOr(int state, int mask) {
+        return (state & mask) != 0;
+    }
+
+    /* ------------------------------------额外区块加载功能---------------------------------------- */
+    private ClientChunkCache.Storage cameraStorage;
+    // todo 临时半径
+    private int radius = 2;
+    private boolean preTick;
+
+    public ClientChunkCache.Storage cameraStorage() {
+        return cameraStorage;
+    }
+
+    public void cameraStorage(ClientChunkCache.Storage storage) {
+        cameraStorage = storage;
+    }
+
+    public boolean chunkLoader() {
+        return isStateEnabledAnd(state, CHUNK_LOADER | ENABLE);
+    }
+
+    public void updateChunkLoader() {
+        if (!chunkLoader()) {
+            if (preTick) {
+                preTick = false;
+                PacketDistributor.sendToServer(new CameraPoseUpdate(false, false, 0, 0, 0, 0));
+                cameraStorage.viewCenterX = Integer.MAX_VALUE;
+                cameraStorage.viewCenterZ = Integer.MAX_VALUE;
+            }
+
+            return;
+        }
+
+        if (!preTick) {
+            PacketDistributor.sendToServer(new CameraPoseUpdate(true, true, pos.x, pos.y, pos.z, radius));
+            preTick = true;
+            return;
+        }
+
+        int vx = cameraStorage.viewCenterX;
+        int vz = cameraStorage.viewCenterZ;
+        int nvx = SectionPos.blockToSectionCoord(pos.x);
+        int nvz = SectionPos.blockToSectionCoord(pos.z);
+
+        if (vx == nvx && vz == nvz) {
+            PacketDistributor.sendToServer(new CameraPoseUpdate(true, false, pos.x, pos.y, pos.z, radius));
+            return;
+        }
+
+        cameraStorage.viewCenterX = nvx;
+        cameraStorage.viewCenterZ = nvz;
+        PacketDistributor.sendToServer(new CameraPoseUpdate(true, true, pos.x, pos.y, pos.z, radius));
     }
 }

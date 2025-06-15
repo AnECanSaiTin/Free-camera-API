@@ -11,7 +11,7 @@ import org.joml.Math;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-class Modifier implements ICameraModifier {
+public class Modifier implements ICameraModifier {
     private final ResourceLocation id;
     private final Vector3f pos = new Vector3f();
     private final Vector3f rot = new Vector3f();
@@ -230,6 +230,18 @@ class Modifier implements ICameraModifier {
         }
 
         fov = camera.getFov();
+        return this;
+    }
+
+    @Override
+    public ICameraModifier enableChunkLoader() {
+        state |= ModifierStates.CHUNK_LOADER;
+        return this;
+    }
+
+    @Override
+    public ICameraModifier disableChunkLoader() {
+        state &= ~ModifierStates.CHUNK_LOADER;
         return this;
     }
 

@@ -1,6 +1,6 @@
 package cn.anecansaitin.freecameraapi.mixin;
 
-import cn.anecansaitin.freecameraapi.ChunkTest;
+import cn.anecansaitin.freecameraapi.core.ModifierManager;
 import cn.anecansaitin.freecameraapi.core.attachment.CameraData;
 import cn.anecansaitin.freecameraapi.core.attachment.ModAttachment;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -23,7 +23,7 @@ public abstract class TrackedEntityMixin {
     @ModifyVariable(method = "updatePlayer", name = "flag", at = @At(value = "JUMP", opcode = Opcodes.IFEQ, shift = At.Shift.BEFORE, ordinal = 2))
     public boolean freeCameraAPI$modifyFlag(boolean original, ServerPlayer player, @Local(ordinal = 0) double radius) {
         // 让相机范围内的实体能更新
-        if (!ChunkTest.INSTANCE.inCamera) {
+        if (!ModifierManager.INSTANCE.chunkLoader()) {
             return original;
         }
 
