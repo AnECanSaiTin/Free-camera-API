@@ -14,9 +14,24 @@ public class ModPayload {
         registrar
                 .optional()
                 .playToServer(
-                        CameraPoseUpdate.TYPE,
-                        CameraPoseUpdate.CODEC,
-                        CameraPoseUpdate::handle
+                        CameraState.TYPE,
+                        CameraState.CODEC,
+                        CameraState::handle
+                )
+                .playToServer(
+                        CameraPos.TYPE,
+                        CameraPos.CODEC,
+                        CameraPos::handle
+                )
+                .playToClient(
+                        CameraEnable.TYPE,
+                        CameraEnable.CODEC,
+                        CameraEnable::handle
+                )
+                .playToClient(
+                        CameraDisable.TYPE,
+                        CameraDisable.CODEC,
+                        CameraDisable::handle
                 );
     }
 }
