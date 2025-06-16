@@ -97,7 +97,7 @@ public abstract class ClientChunkCacheMixin {
         // 更新区块数据
         ClientChunkCache.Storage cameraStorage = ModifierManager.INSTANCE.cameraStorage();
 
-        if (!ModifierManager.INSTANCE.chunkLoader() || !cameraStorage.inRange(x, z)) {
+        if (!ModifierManager.INSTANCE.loadingChunk() || !cameraStorage.inRange(x, z)) {
             return;
         }
 
@@ -123,7 +123,7 @@ public abstract class ClientChunkCacheMixin {
         // 添加对相机缓存区块的获取
         ClientChunkCache.Storage cameraStorage = ModifierManager.INSTANCE.cameraStorage();
 
-        if (!ModifierManager.INSTANCE.chunkLoader() || !cameraStorage.inRange(x, z)) {
+        if (!ModifierManager.INSTANCE.loadingChunk() || !cameraStorage.inRange(x, z)) {
             return;
         }
 

@@ -15,25 +15,31 @@ public class CameraData {
     public CameraChunkTrackingView currentView = new CameraChunkTrackingView(Integer.MAX_VALUE, Integer.MAX_VALUE, 0);
     public CameraChunkTrackingView oldView = currentView;
 
-    public void update(boolean enable, boolean update, float x, float y, float z, int radius) {
+    public boolean update(boolean enable, boolean update, float x, float y, float z, int radius) {
         this.enable = enable;
 
         if (!enable) {
-            return;
+            return false;
         }
 
         this.update = update;
         this.x = x;
         this.y = y;
         this.z = z;
+
+        if (!update) {
+            return false;
+        }
+
         int newX = SectionPos.blockToSectionCoord(x);
         int newZ = SectionPos.blockToSectionCoord(z);
 
         if (currentView.x - newX + currentView.z - newZ == 0) {
-            return;
+            return false;
         }
 
         updateView(newX, newZ, radius);
+        return true;
     }
 
     public void updateView(int x, int z, int radius) {

@@ -213,7 +213,7 @@ public class ModifierManager {
     private ClientChunkCache.Storage cameraStorage;
     // todo 临时半径
     private int radius = 2;
-    private boolean preTick;
+    private boolean chunkLoaderPrepared;
 
     public ClientChunkCache.Storage cameraStorage() {
         return cameraStorage;
@@ -223,15 +223,15 @@ public class ModifierManager {
         cameraStorage = storage;
     }
 
-    public boolean chunkLoader() {
-        return isStateEnabledAnd(state, CHUNK_LOADER | ENABLE);
+    public boolean loadingChunk() {
+        return chunkLoaderPrepared;
     }
 
     public void updateChunkLoader() {
-        if (!chunkLoader()) {
-            if (preTick) {
-                preTick = false;
-                PacketDistributor.sendToServer(new CameraPoseUpdate(false, false, 0, 0, 0, 0));
+        if (!isStateEnabledAnd(state, CHUNK_LOADER | ENABLE)) {
+            if (chunkLoaderPrepared) {
+                chunkLoaderPrepared = false;
+                PacketDistributor.sendToServer(new CameraPoseUpdate(false, true, 0, 0, 0, 0));
                 cameraStorage.viewCenterX = Integer.MAX_VALUE;
                 cameraStorage.viewCenterZ = Integer.MAX_VALUE;
             }
@@ -239,9 +239,9 @@ public class ModifierManager {
             return;
         }
 
-        if (!preTick) {
+        if (!chunkLoaderPrepared) {
             PacketDistributor.sendToServer(new CameraPoseUpdate(true, true, pos.x, pos.y, pos.z, radius));
-            preTick = true;
+            chunkLoaderPrepared = true;
             return;
         }
 
