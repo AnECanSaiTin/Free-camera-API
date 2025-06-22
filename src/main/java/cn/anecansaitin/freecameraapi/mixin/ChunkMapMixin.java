@@ -4,9 +4,11 @@ import cn.anecansaitin.freecameraapi.core.attachment.CameraData;
 import cn.anecansaitin.freecameraapi.core.attachment.ModAttachment;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkTrackingView;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,7 +23,7 @@ public abstract class ChunkMapMixin {
     protected abstract void markChunkPendingToSend(ServerPlayer player, ChunkPos pos);
 
     @Inject(method = "updateChunkTracking", at = @At(value = "HEAD"))
-    private void freeCameraAPI$onUpdateChunkTracking(ServerPlayer player, CallbackInfo ci) {
+    private void freeCameraAPI$updateChunkTracking(ServerPlayer player, CallbackInfo ci) {
         // 发送相机附近的区块信息到客户端
         CameraData data = player.getData(ModAttachment.CAMERA_DATA);
 
@@ -39,7 +41,8 @@ public abstract class ChunkMapMixin {
             return;
         }
 
-        ChunkTrackingView.difference(data.oldView, data.currentView, chunkPos -> markChunkPendingToSend(player, chunkPos), chunkPos -> {});
+        ChunkTrackingView.difference(player.getChunkTrackingView(), data.currentView, chunkPos -> markChunkPendingToSend(player, chunkPos), chunkPos -> {
+        });
         data.update = false;
     }
 
@@ -60,7 +63,7 @@ public abstract class ChunkMapMixin {
     }
 
     @Inject(method = "isChunkTracked", at = @At("HEAD"), cancellable = true)
-    private void freeCameraAPI$onIsChunkTracked(ServerPlayer player, int x, int z, CallbackInfoReturnable<Boolean> cir) {
+    private void freeCameraAPI$isChunkTracked(ServerPlayer player, int x, int z, CallbackInfoReturnable<Boolean> cir) {
         // 让相机范围内区块保持更新
         CameraData data = player.getData(ModAttachment.CAMERA_DATA);
 
@@ -72,4 +75,31 @@ public abstract class ChunkMapMixin {
             cir.setReturnValue(true);
         }
     }
+
+    @Inject(method = "dropChunk", at = @At("HEAD"), cancellable = true)
+    private static void freeCameraAPI$onDropChunk(ServerPlayer player, ChunkPos pos, CallbackInfo ci) {
+        // 确保玩家在相机范围内区块不被丢弃
+        CameraData data = player.getData(ModAttachment.CAMERA_DATA);
+
+        if (!data.enable || !data.currentView.contains(pos)) {
+            return;
+        }
+
+        ci.cancel();
+    }
+
+/*    @ModifyExpressionValue(method = "tick()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/SectionPos;of(Lnet/minecraft/world/level/entity/EntityAccess;)Lnet/minecraft/core/SectionPos;"))
+    protected SectionPos tick(SectionPos original, @Local ChunkMap.TrackedEntity entity){
+        if (!(entity.entity instanceof Player)) {
+            return original;
+        }
+
+        CameraData data = entity.entity.getData(ModAttachment.CAMERA_DATA);
+
+        if (!data.enable) {
+            return original;
+        }
+
+        return SectionPos.of(data.currentView.x(), SectionPos.posToSectionCoord(data.y), data.currentView.z());
+    }*/
 }

@@ -13,7 +13,7 @@ public class ExamplePlugin implements ICameraPlugin {
     @Override
     public void initialize(ICameraModifier modifier) {
         this.modifier = modifier;
-        modifier.disable()
+        modifier.enable()
                 .enablePos()
                 .enableRotation()
                 .enableGlobalMode()
@@ -22,6 +22,6 @@ public class ExamplePlugin implements ICameraPlugin {
 
     @Override
     public void update() {
-        modifier.setPos(1, 64, -314).setRotationYXZ(90, 180, 0);
+        modifier.setPos(-30, 64, -314).setRotationYXZ(90, 180, 0);
     }
 }

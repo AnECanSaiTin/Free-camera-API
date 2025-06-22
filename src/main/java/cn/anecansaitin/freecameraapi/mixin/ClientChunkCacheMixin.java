@@ -1,6 +1,7 @@
 package cn.anecansaitin.freecameraapi.mixin;
 
 import cn.anecansaitin.freecameraapi.core.ModifierManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientChunkCache;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;

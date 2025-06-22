@@ -10,6 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -58,8 +59,9 @@ public record CameraPoseUpdate(boolean enable, boolean update, float x, float y,
                     }
                 }
             }
-        } else {
+        } else if (pack.update){
             ModTicketController.removeAllChunk(player.getUUID());
+            ((ServerLevel) player.level()).getChunkSource().chunkMap.move((ServerPlayer) player);
         }
     }
 }
