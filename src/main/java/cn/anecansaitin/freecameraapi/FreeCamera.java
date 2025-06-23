@@ -14,7 +14,6 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 public class FreeCamera {
     public static final String MODID = "freecameraapi";
 
-
     public FreeCamera(IEventBus modEventBus, ModContainer modContainer) {
         PluginFinder.loadPlugin();
         modContainer.registerConfig(ModConfig.Type.CLIENT, CameraConfig.SPEC);

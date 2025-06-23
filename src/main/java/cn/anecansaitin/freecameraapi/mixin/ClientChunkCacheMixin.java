@@ -1,15 +1,14 @@
 package cn.anecansaitin.freecameraapi.mixin;
 
 import cn.anecansaitin.freecameraapi.core.ModifierManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientChunkCache;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundLevelChunkPacketData;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import org.spongepowered.asm.mixin.Final;
@@ -21,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 @Mixin(ClientChunkCache.class)
@@ -94,7 +94,7 @@ public abstract class ClientChunkCacheMixin {
     }
 
     @Inject(method = "replaceWithPacketData", at = @At(value = "HEAD"), cancellable = true)
-    private void freeCameraAPI$onReplace(int x, int z, FriendlyByteBuf buffer, CompoundTag tag, Consumer<ClientboundLevelChunkPacketData.BlockEntityTagOutput> consumer, CallbackInfoReturnable<LevelChunk> cir) {
+    private void freeCameraAPI$onReplace(int x, int z, FriendlyByteBuf buffer, Map<Heightmap.Types, long[]> heightmaps, Consumer<ClientboundLevelChunkPacketData.BlockEntityTagOutput> consumer, CallbackInfoReturnable<LevelChunk> cir) {
         // 更新区块数据
         ClientChunkCache.Storage cameraStorage = ModifierManager.INSTANCE.cameraStorage();
 
@@ -108,10 +108,11 @@ public abstract class ClientChunkCacheMixin {
 
         if (!isValidChunk(chunk, x, z)) {
             chunk = new LevelChunk(level, chunkPos);
-            chunk.replaceWithPacketData(buffer, tag, consumer);
+            chunk.replaceWithPacketData(buffer, heightmaps, consumer);
             cameraStorage.replace(index, chunk);
         } else {
-            chunk.replaceWithPacketData(buffer, tag, consumer);
+            chunk.replaceWithPacketData(buffer, heightmaps, consumer);
+            cameraStorage.refreshEmptySections(chunk);
         }
 
         level.onChunkLoaded(chunkPos);

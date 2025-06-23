@@ -6,7 +6,6 @@
   "mixins": [
     "ChunkMapMixin",
     "PlayerListMixin",
-    "ServerChunkCacheMixin",
     "TrackedEntityMixin"
   ],
   "client": [
