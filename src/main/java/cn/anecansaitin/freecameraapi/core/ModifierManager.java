@@ -22,25 +22,18 @@ public class ModifierManager {
     public static final ModifierManager INSTANCE = new ModifierManager();
     private final Vector3f
             pos,// 坐标
-            rot,// 旋转
-            posO,// 上一帧坐标
-            rotO;// 上一帧旋转
+            rot;// 旋转
     private float
-            fov,
-            fovO;// 上一帧fov
+            fov;// 视角
     private int
-            state,// 状态
-            stateO;// 上一帧状态
+            state;// 状态
 
     private ModifierManager() {
         pos = new Vector3f();
         rot = new Vector3f();
-        posO = new Vector3f();
-        rotO = new Vector3f();
     }
 
     public void modify() {
-        saveToOld();
         setToVanilla();
         applyToCamera();
     }
@@ -51,13 +44,6 @@ public class ModifierManager {
         pos.set(cameraPos.x, cameraPos.y, cameraPos.z);
         rot.set(camera.getXRot(), camera.getYRot() % 360, camera.getRoll());
         this.fov = camera().getFov();
-    }
-
-    private void saveToOld() {
-        posO.set(pos);
-        rotO.set(rot);
-        fovO = fov;
-        stateO = state;
     }
 
     private void applyToCamera() {
@@ -74,7 +60,6 @@ public class ModifierManager {
         applyFov(modifier);
         applyGlobal(modifier);
         applyObstacle(modifier);
-        applyLerp(modifier);
         setCamera();
     }
 
@@ -160,34 +145,6 @@ public class ModifierManager {
         pos.set(direction.normalize(max).add(origin));
     }
 
-    private void applyLerp(ICameraModifier modifier) {
-        if (!modifier.isStateEnabledOr(LERP) || !isStateEnabledOr(stateO, LERP)) {
-            return;
-        }
-
-        float delta = camera().getPartialTickTime();
-
-        if (isStateEnabledOr(stateO, POS)) {
-            pos.set(
-                    Mth.lerp(delta, posO.x, pos.x),
-                    Mth.lerp(delta, posO.y, pos.y),
-                    Mth.lerp(delta, posO.z, pos.z)
-            );
-        }
-
-        if (isStateEnabledOr(stateO, ROT)) {
-            rot.set(
-                    Mth.lerp(delta, rotO.x, rot.x),
-                    Mth.lerp(delta, rotO.y, rot.y),
-                    Mth.lerp(delta, rotO.z, rot.z)
-            );
-        }
-
-        if (isStateEnabledOr(stateO, FOV)) {
-            fov = Mth.lerp(delta, fovO, fov);
-        }
-    }
-
     private void setCamera() {
         Camera camera = camera();
         camera.setRotation(rot.y, rot.x, rot.z);
@@ -203,11 +160,23 @@ public class ModifierManager {
         return Minecraft.getInstance().player;
     }
 
-    public boolean isStateEnabledAnd(int state, int mask) {
+    public Vector3f pos() {
+        return pos;
+    }
+
+    public Vector3f rot() {
+        return rot;
+    }
+
+    public float fov() {
+        return fov;
+    }
+
+    public boolean isStateEnabledAnd(int mask) {
         return (state & mask) == mask;
     }
 
-    private boolean isStateEnabledOr(int state, int mask) {
+    public boolean isStateEnabledOr(int mask) {
         return (state & mask) != 0;
     }
 
@@ -230,7 +199,7 @@ public class ModifierManager {
     }
 
     public void updateChunkLoader() {
-        if (!isStateEnabledAnd(state, CHUNK_LOADER | ENABLE)) {
+        if (!isStateEnabledAnd(CHUNK_LOADER | ENABLE)) {
             if (chunkLoaderPrepared) {
                 chunkLoaderPrepared = false;
                 PacketDistributor.sendToServer(new CameraPoseUpdate(false, true, 0, 0, 0, 0));

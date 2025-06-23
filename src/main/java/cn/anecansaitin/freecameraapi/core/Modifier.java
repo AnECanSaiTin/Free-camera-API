@@ -189,18 +189,6 @@ public class Modifier implements ICameraModifier {
     }
 
     @Override
-    public Modifier enableLerp() {
-        state |= ModifierStates.LERP;
-        return this;
-    }
-
-    @Override
-    public Modifier disableLerp() {
-        state &= ~ModifierStates.LERP;
-        return this;
-    }
-
-    @Override
     public ICameraModifier enableObstacle() {
         state |= ModifierStates.OBSTACLE;
         return this;

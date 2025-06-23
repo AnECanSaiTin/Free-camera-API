@@ -128,12 +128,6 @@ public interface ICameraModifier {
     /// Disables global mode.
     ICameraModifier disableGlobalMode();
 
-    /// Enables interpolation calculation.
-    ICameraModifier enableLerp();
-
-    /// Disables interpolation calculation.
-    ICameraModifier disableLerp();
-
     /// Enables default obstacle avoidance.
     ICameraModifier enableObstacle();
 

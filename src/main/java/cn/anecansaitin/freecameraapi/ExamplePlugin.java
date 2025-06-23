@@ -22,6 +22,9 @@ public class ExamplePlugin implements ICameraPlugin {
 
     @Override
     public void update() {
-        modifier.setPos(-30, 64, -314).setRotationYXZ(90, 180, 0);
+        modifier
+                .disable()
+                .setPos(-0, 64, -314)
+                .setRotationYXZ(90, 180, 0);
     }
 }
