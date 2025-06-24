@@ -42,7 +42,7 @@ Full example: [ExamplePlugin](src/main/java/cn/anecansaitin/freecameraapi/Exampl
                 .setRotationYXZ(90f, 15f, 25f) // Set camera rotation to (90f, 15f, 25f)
                 .move(0, 0, -5) // Move camera based on current rotation
                 .enableGlobalMode() // Enable global mode, all coordinates and rotations will be modified according to world coordinates
-                .enableChunkLoader() // Enable chunk loader, load chunks around the camera
+                .enableChunkLoader() // Enable chunk loader, load chunks around the camera. An additional Free Camera API Addition mod needs to be installed to enable this feature, otherwise it will have no effect
                 .enableObstacle() // Enable collision detection
     ```
 

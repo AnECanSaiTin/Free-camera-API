@@ -41,6 +41,6 @@
                 .setRotationYXZ(90f, 15f, 25f) //设置相机旋转为 (90f, 15f, 25f)
                 .move(0, 0, -5) //根据当前旋转情况移动相机
                 .enableGlobalMode() //启用全局模式，所有坐标与选装将按照世界坐标修改
-                .enableChunkLoader() //启用区块加载，加载当前相机附近的区块
+                .enableChunkLoader() //启用区块加载，加载当前相机附近的区块，需要安装额外的Free Camera API Addition模组来启用该功能，否则无任何效果
                 .enableObstacle() //启用碰撞检测
     ```
