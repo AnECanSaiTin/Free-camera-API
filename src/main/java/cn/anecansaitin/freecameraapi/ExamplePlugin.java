@@ -3,8 +3,7 @@ package cn.anecansaitin.freecameraapi;
 import cn.anecansaitin.freecameraapi.api.CameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
-import cn.anecansaitin.freecameraapi.core.ModifierPriority;
-import net.minecraft.client.Minecraft;
+import cn.anecansaitin.freecameraapi.api.ModifierPriority;
 
 @CameraPlugin(value = "example", priority = ModifierPriority.LOWEST)
 public class ExamplePlugin implements ICameraPlugin {
@@ -23,8 +22,8 @@ public class ExamplePlugin implements ICameraPlugin {
     @Override
     public void update() {
         modifier
-                .disable()
-                .setPos(-0, 64, -314)
+                .enable()
+                .setPos(-40, 64, -314)
                 .setRotationYXZ(90, 180, 0);
     }
 }

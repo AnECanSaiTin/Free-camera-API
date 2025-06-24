@@ -1,19 +1,13 @@
 package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
-import cn.anecansaitin.freecameraapi.core.network.CameraPos;
-import cn.anecansaitin.freecameraapi.core.network.CameraPoseUpdate;
-import cn.anecansaitin.freecameraapi.core.network.CameraState;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientChunkCache;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.SectionPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
 
 import static cn.anecansaitin.freecameraapi.core.ModifierStates.*;
@@ -178,70 +172,5 @@ public class ModifierManager {
 
     public boolean isStateEnabledOr(int mask) {
         return (state & mask) != 0;
-    }
-
-    /* ------------------------------------额外区块加载功能---------------------------------------- */
-    private ClientChunkCache.Storage cameraStorage;
-    // todo 临时半径
-    private int radius = 2;
-    private boolean chunkLoaderPrepared;
-
-    public ClientChunkCache.Storage cameraStorage() {
-        return cameraStorage;
-    }
-
-    public void cameraStorage(ClientChunkCache.Storage storage) {
-        cameraStorage = storage;
-    }
-
-    public boolean loadingChunk() {
-        return chunkLoaderPrepared;
-    }
-
-    public void updateChunkLoader() {
-        if (!isStateEnabledAnd(CHUNK_LOADER | ENABLE)) {
-            if (chunkLoaderPrepared) {
-                chunkLoaderPrepared = false;
-                PacketDistributor.sendToServer(new CameraPoseUpdate(false, true, 0, 0, 0, 0));
-                cameraStorage.viewCenterX = Integer.MAX_VALUE;
-                cameraStorage.viewCenterZ = Integer.MAX_VALUE;
-            }
-
-            return;
-        }
-
-        if (!chunkLoaderPrepared) {
-            PacketDistributor.sendToServer(new CameraPoseUpdate(true, true, pos.x, pos.y, pos.z, radius));
-            chunkLoaderPrepared = true;
-            return;
-        }
-
-        int vx = cameraStorage.viewCenterX;
-        int vz = cameraStorage.viewCenterZ;
-        int nvx = SectionPos.blockToSectionCoord(pos.x);
-        int nvz = SectionPos.blockToSectionCoord(pos.z);
-
-        if (vx == nvx && vz == nvz) {
-            PacketDistributor.sendToServer(new CameraPoseUpdate(true, false, pos.x, pos.y, pos.z, radius));
-            return;
-        }
-
-        cameraStorage.viewCenterX = nvx;
-        cameraStorage.viewCenterZ = nvz;
-        PacketDistributor.sendToServer(new CameraPoseUpdate(true, true, pos.x, pos.y, pos.z, radius));
-    }
-
-    public void updateStorage() {
-        chunkLoaderPrepared = true;
-        int nvx = SectionPos.blockToSectionCoord(pos.x);
-        int nvz = SectionPos.blockToSectionCoord(pos.z);
-        cameraStorage.viewCenterX = nvx;
-        cameraStorage.viewCenterZ = nvz;
-    }
-
-    public void end() {
-        chunkLoaderPrepared = false;
-        cameraStorage.viewCenterX = Integer.MAX_VALUE;
-        cameraStorage.viewCenterZ = Integer.MAX_VALUE;
     }
 }

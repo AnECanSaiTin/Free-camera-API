@@ -3,7 +3,7 @@ package cn.anecansaitin.freecameraapi.starup;
 import cn.anecansaitin.freecameraapi.FreeCamera;
 import cn.anecansaitin.freecameraapi.api.CameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
-import cn.anecansaitin.freecameraapi.core.ModifierPriority;
+import cn.anecansaitin.freecameraapi.api.ModifierPriority;
 import cn.anecansaitin.freecameraapi.core.ModifierRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.ModList;
@@ -29,9 +29,9 @@ public final class PluginFinder {
         List<ModFileScanData> allScanData = ModList.get().getAllScanData();
 
         for (int i = 0, allScanDataSize = allScanData.size(); i < allScanDataSize; i++) {
-            /*if (ModList.get().getMods().get(i).getModId().equals(FreeCamera.MODID)) {
+            if (ModList.get().getMods().get(i).getModId().equals(FreeCamera.MODID)) {
                 continue;
-            }*/
+            }
 
             ModFileScanData data = allScanData.get(i);
 

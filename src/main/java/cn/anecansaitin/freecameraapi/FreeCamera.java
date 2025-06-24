@@ -1,7 +1,6 @@
 package cn.anecansaitin.freecameraapi;
 
 import cn.anecansaitin.freecameraapi.core.CameraConfig;
-import cn.anecansaitin.freecameraapi.core.attachment.ModAttachment;
 import cn.anecansaitin.freecameraapi.starup.PluginFinder;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -18,6 +17,5 @@ public class FreeCamera {
         PluginFinder.loadPlugin();
         modContainer.registerConfig(ModConfig.Type.CLIENT, CameraConfig.SPEC);
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-        ModAttachment.ATTACHMENT_TYPES.register(modEventBus);
     }
 }

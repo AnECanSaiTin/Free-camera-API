@@ -1,4 +1,4 @@
-package cn.anecansaitin.freecameraapi.core;
+package cn.anecansaitin.freecameraapi.api;
 
 public enum ModifierPriority {
     HIGHEST, //First to execute

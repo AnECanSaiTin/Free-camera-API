@@ -2,6 +2,7 @@ package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
+import cn.anecansaitin.freecameraapi.api.ModifierPriority;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;

@@ -4,14 +4,9 @@
   "package": "cn.anecansaitin.freecameraapi.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ChunkMapMixin",
-    "PlayerListMixin",
-    "TrackedEntityMixin"
   ],
   "client": [
-    "CameraMixin",
-    "ClientChunkCacheMixin",
-    "LevelRendererMixin"
+    "CameraMixin"
   ],
   "injectors": {
     "defaultRequire": 1
