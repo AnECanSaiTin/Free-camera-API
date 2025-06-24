@@ -6,7 +6,7 @@ import java.lang.annotation.Target;
 /// All {@link ICameraPlugin} must have this annotation and a constructor with no arguments.
 @Target(ElementType.TYPE)
 public @interface CameraPlugin {
-    /// Id.
+    /// Plugin id. If id is "dev", it will only be loaded in dev environment.
     String value();
 
     /// Priority.

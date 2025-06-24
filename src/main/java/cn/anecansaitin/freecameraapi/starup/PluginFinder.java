@@ -7,6 +7,7 @@ import cn.anecansaitin.freecameraapi.api.ModifierPriority;
 import cn.anecansaitin.freecameraapi.core.ModifierRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.modscan.ModAnnotation;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
@@ -27,14 +28,9 @@ public final class PluginFinder {
         Type type = Type.getType(CameraPlugin.class);
         ArrayList<Triplet<ResourceLocation, ICameraPlugin, ModifierPriority>> plugins = new ArrayList<>();
         List<ModFileScanData> allScanData = ModList.get().getAllScanData();
+        boolean dev = !FMLEnvironment.production;
 
         for (int i = 0, allScanDataSize = allScanData.size(); i < allScanDataSize; i++) {
-            String modId = ModList.get().getMods().get(i).getModId();
-
-            if (modId.equals(FreeCamera.MODID) || modId.equals("free_camera_api_addition")) {
-                continue;
-            }
-
             ModFileScanData data = allScanData.get(i);
 
             for (ModFileScanData.AnnotationData annotation : data.getAnnotations()) {
@@ -45,8 +41,14 @@ public final class PluginFinder {
                 String name = null;
 
                 try {
+                    String value = annotation.annotationData().get("value").toString();
+
+                    if (!dev && value.equals("dev")) {
+                        continue;
+                    }
+
                     String namespace = ModList.get().getMods().get(i).getNamespace();
-                    ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, annotation.annotationData().get("value").toString());
+                    ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, value);
                     ModAnnotation.EnumHolder priorityHolder = (ModAnnotation.EnumHolder) annotation.annotationData().get("priority");
                     ModifierPriority priority = ModifierPriority.NORMAL;
 

@@ -18,9 +18,13 @@ public class CameraConfig {
     private static final ModConfigSpec.ConfigValue<List<? extends String>> REMOVED;
 
     static {
-        PLAYER_ORDER = BUILDER.defineListAllowEmpty("order", defaultOrderList(), () -> "example:id", CameraConfig::validate);
+        PLAYER_ORDER = BUILDER
+                .comment("  The order of the camera modifiers.", "  If some plugins are not displayed, you can click \"Reset\" to refresh.")
+                .defineListAllowEmpty("order", defaultOrderList(), () -> "example:id", CameraConfig::validate);
 
-        REMOVED = BUILDER.defineListAllowEmpty("removed", new ArrayList<>(), () -> "example:id", CameraConfig::validate);
+        REMOVED = BUILDER
+                .comment("  The modifiers that are removed.")
+                .defineListAllowEmpty("removed", new ArrayList<>(), () -> "example:id", CameraConfig::validate);
     }
 
     public static final ModConfigSpec SPEC = BUILDER.build();
