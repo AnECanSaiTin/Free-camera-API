@@ -16,7 +16,8 @@ public class ExamplePlugin implements ICameraPlugin {
                 .enablePos()
                 .enableRotation()
                 .enableGlobalMode()
-                .enableChunkLoader();
+                .enableChunkLoader()
+                .enableObstacle();
     }
 
     @Override

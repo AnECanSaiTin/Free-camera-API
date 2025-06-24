@@ -37,11 +37,12 @@ Full example: [ExamplePlugin](src/main/java/cn/anecansaitin/freecameraapi/Exampl
                 .enablePos() // Enable position modification
                 .enableRotation() // Enable rotation modification
                 .enableFov() // Enable FOV modification
-                .enableLerp() // Enable linear interpolation
                 .setPos(1, 2, 3) // Set camera position to (1,2,3), default is local coordinates centered on player
                 .addPos(1, 2, 3)
                 .setRotationYXZ(90f, 15f, 25f) // Set camera rotation to (90f, 15f, 25f)
                 .move(0, 0, -5) // Move camera based on current rotation
-                .enableGlobalMode(); // Enable global mode, all coordinates and rotations will be modified according to world coordinates
+                .enableGlobalMode() // Enable global mode, all coordinates and rotations will be modified according to world coordinates
+                .enableChunkLoader() // Enable chunk loader, load chunks around the camera
+                .enableObstacle() // Enable collision detection
     ```
 
