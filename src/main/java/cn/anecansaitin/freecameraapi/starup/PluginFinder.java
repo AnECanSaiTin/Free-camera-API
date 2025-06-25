@@ -1,6 +1,5 @@
 package cn.anecansaitin.freecameraapi.starup;
 
-import cn.anecansaitin.freecameraapi.FreeCamera;
 import cn.anecansaitin.freecameraapi.api.CameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ModifierPriority;
