@@ -1,12 +1,8 @@
-<div style="text-align: center;">
-
 # 自由相机API
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/AnECanSaiTin/Free-camera-API)
 [![Modrinth Downloads](https://img.shields.io/modrinth/dt/KCR6bnbY?logo=modrinth)](https://modrinth.com/mod/free-camera-api)
 [![CurseForge Downloads](https://img.shields.io/curseforge/dt/1091599?logo=curseforge)](https://www.curseforge.com/minecraft/mc-mods/free-camera-api)
-
-</div>
 
 ![logo](https://cdn.modrinth.com/data/KCR6bnbY/images/41d032a0a6bcfcf92ae30d7c2fa8d68f92ad752c.png)
 
