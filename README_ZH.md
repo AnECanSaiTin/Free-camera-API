@@ -1,11 +1,16 @@
+<div style="text-align: center;">
+
 # 自由相机API
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/AnECanSaiTin/Free-camera-API)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/KCR6bnbY?logo=modrinth)](https://modrinth.com/mod/free-camera-api)
+[![CurseForge Downloads](https://img.shields.io/curseforge/dt/1091599?logo=curseforge)](https://www.curseforge.com/minecraft/mc-mods/free-camera-api)
+
+</div>
+
+![logo](https://cdn.modrinth.com/data/KCR6bnbY/images/41d032a0a6bcfcf92ae30d7c2fa8d68f92ad752c.png)
 
 **让相机操作更简单灵活！**
-
-![Dolly zoom](md_resource/zoom.gif)
-![Roll](md_resource/roll.gif)
 
 ## 如何注册与使用插件
 
@@ -44,3 +49,6 @@
                 .enableChunkLoader() //启用区块加载，加载当前相机附近的区块，需要安装额外的Free Camera API Addition模组来启用该功能，否则无任何效果
                 .enableObstacle() //启用碰撞检测
     ```
+
+![Dolly zoom](https://cdn.modrinth.com/data/KCR6bnbY/images/0fd9ede2dfc1818fbb4638bbbf3bd6a0598df4bd.gif)
+![Roll](https://cdn.modrinth.com/data/KCR6bnbY/images/ee51dcdae13dc4714e8f6f1faa7a5e127b2abba1.gif)
