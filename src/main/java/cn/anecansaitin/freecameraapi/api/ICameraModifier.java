@@ -137,12 +137,6 @@ public interface ICameraModifier {
     /// Reverts to vanilla camera settings.
     ICameraModifier setToVanilla();
 
-    /// Enables chunk loading.
-    ICameraModifier enableChunkLoader();
-
-    /// Disables chunk loading.
-    ICameraModifier disableChunkLoader();
-
     /// Sets position, rotation, and FOV to zero.
     ICameraModifier clean();
 
@@ -184,6 +178,13 @@ public interface ICameraModifier {
     default boolean isActive() {
         int state = getState();
         return state >= 1 && isStateEnabledOr(ModifierStates.ENABLE) && isStateEnabledOr(ModifierStates.POS | ModifierStates.ROT | ModifierStates.FOV);
+    }
+
+    /// Gets the modifier as an extension.
+    ///
+    /// Extended features only take effect after the extension plugin is installed. If the plugin is not installed, no error will be reported, but these features will have no effect.
+    default ICameraModifierExtension asExtension() {
+        return (ICameraModifierExtension) this;
     }
 
     /// Gets the unique identifier of the modifier.

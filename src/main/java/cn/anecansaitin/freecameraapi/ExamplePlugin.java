@@ -14,17 +14,16 @@ public class ExamplePlugin implements ICameraPlugin {
         this.modifier = modifier;
         modifier.disable()
                 .enablePos()
-                .enableRotation()
-                .enableGlobalMode()
-                .enableChunkLoader()
-                .enableObstacle();
+                .enableRotation();
     }
 
     @Override
     public void update() {
         modifier
-                .disable()
-                .setPos(-40, 64, -314)
-                .setRotationYXZ(90, 180, 0);
+                .enable()
+                .enableRotation()
+                .enablePos()
+                .setToVanilla()
+                .addPos(0,0,-1);
     }
 }

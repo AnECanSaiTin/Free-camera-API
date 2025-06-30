@@ -1,6 +1,8 @@
 package cn.anecansaitin.freecameraapi.core;
 
+import cn.anecansaitin.freecameraapi.api.ControlScheme;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
+import cn.anecansaitin.freecameraapi.api.ICameraModifierExtension;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -11,7 +13,7 @@ import org.joml.Math;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class Modifier implements ICameraModifier {
+public class Modifier implements ICameraModifier, ICameraModifierExtension {
     private final ResourceLocation id;
     private final Vector3f pos = new Vector3f();
     private final Vector3f rot = new Vector3f();
@@ -213,23 +215,11 @@ public class Modifier implements ICameraModifier {
             Vec3 playerPos = player.getPosition(camera.getPartialTickTime());
             float viewYRot = player.getViewYRot(camera.getPartialTickTime()) % 360;
             pos.set(position.x - playerPos.x, position.y - playerPos.y, position.z - playerPos.z)
-                    .rotateY(viewYRot * Mth.DEG_TO_RAD);
-            rot.set(camera.getXRot(), camera.getYRot() + viewYRot, camera.getRoll());
+                    .rotateY(-viewYRot * Mth.DEG_TO_RAD);
+            rot.set(camera.getXRot(), camera.getYRot() - viewYRot, camera.getRoll());
         }
 
         fov = camera.getFov();
-        return this;
-    }
-
-    @Override
-    public ICameraModifier enableChunkLoader() {
-        state |= ModifierStates.CHUNK_LOADER;
-        return this;
-    }
-
-    @Override
-    public ICameraModifier disableChunkLoader() {
-        state &= ~ModifierStates.CHUNK_LOADER;
         return this;
     }
 
@@ -262,5 +252,31 @@ public class Modifier implements ICameraModifier {
     @Override
     public ResourceLocation getId() {
         return id;
+    }
+
+    //----------------------------------------EXTENSION--------------------------------------------------------
+    private ControlScheme controlScheme = ControlScheme.VANILLA;
+
+    @Override
+    public ICameraModifierExtension enableChunkLoader() {
+        state |= ModifierStates.CHUNK_LOADER;
+        return this;
+    }
+
+    @Override
+    public ICameraModifierExtension disableChunkLoader() {
+        state &= ~ModifierStates.CHUNK_LOADER;
+        return this;
+    }
+
+    @Override
+    public ICameraModifierExtension setControlScheme(ControlScheme controlScheme) {
+        this.controlScheme = controlScheme;
+        return this;
+    }
+
+    @Override
+    public ControlScheme getControlScheme() {
+        return controlScheme;
     }
 }
