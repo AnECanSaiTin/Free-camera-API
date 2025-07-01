@@ -1,13 +1,13 @@
 package cn.anecansaitin.freecameraapi.api.extension;
 
-public sealed interface ControlScheme permits ControlScheme.PlayerRelative, ControlScheme.CameraRelative, ControlScheme.Vanilla {
-    Vanilla VANILLA = new Vanilla();
-    CameraRelative CAMERA_RELATIVE = new CameraRelative();
-    static PlayerRelative PLAYER_RELATIVE(int angle) {
-        return new PlayerRelative(angle);
+public sealed interface ControlScheme permits ControlScheme.PLAYER_RELATIVE, ControlScheme.CAMERA_RELATIVE, ControlScheme.VANILLA {
+    VANILLA VANILLA = new VANILLA();
+    CAMERA_RELATIVE CAMERA_RELATIVE = new CAMERA_RELATIVE();
+    static PLAYER_RELATIVE PLAYER_RELATIVE(int angle) {
+        return new PLAYER_RELATIVE(angle);
     }
 
-    final class Vanilla implements ControlScheme {}
-    final class CameraRelative implements ControlScheme {}
-    record PlayerRelative(int angle) implements ControlScheme {}
+    record VANILLA() implements ControlScheme {}
+    record CAMERA_RELATIVE() implements ControlScheme {}
+    record PLAYER_RELATIVE(int angle) implements ControlScheme {}
 }
