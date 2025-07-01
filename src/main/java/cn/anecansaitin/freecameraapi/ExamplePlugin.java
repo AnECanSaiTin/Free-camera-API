@@ -19,11 +19,9 @@ public class ExamplePlugin implements ICameraPlugin {
 
     @Override
     public void update() {
-        modifier
-                .enable()
-                .enableRotation()
-                .enablePos()
+        modifier.enableGlobalMode()
                 .setToVanilla()
-                .addPos(0,0,-1);
+                .move(1,0,1)
+                .aimAt(1, 57, -317);
     }
 }

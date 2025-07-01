@@ -86,15 +86,9 @@ public class ModifierManager {
             return;
         }
 
-        float yRot = player().getViewYRot(camera().getPartialTickTime()) % 360;
-
         if (modifier.isStateEnabledOr(POS)) {
             Vec3 playerPos = player().getPosition(camera().getPartialTickTime());
-            pos.rotateY(yRot * Mth.DEG_TO_RAD).add((float) playerPos.x, (float) playerPos.y, (float) playerPos.z);
-        }
-
-        if (modifier.isStateEnabledOr(ROT)) {
-            rot.add(0, yRot, 0);
+            pos.add((float) playerPos.x, (float) playerPos.y, (float) playerPos.z);
         }
     }
 
