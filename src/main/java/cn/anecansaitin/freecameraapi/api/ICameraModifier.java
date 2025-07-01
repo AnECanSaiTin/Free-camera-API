@@ -1,5 +1,6 @@
 package cn.anecansaitin.freecameraapi.api;
 
+import cn.anecansaitin.freecameraapi.api.extension.ICameraModifierExtension;
 import cn.anecansaitin.freecameraapi.core.ModifierStates;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector3f;

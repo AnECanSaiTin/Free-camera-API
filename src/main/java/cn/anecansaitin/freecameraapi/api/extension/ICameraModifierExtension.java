@@ -1,4 +1,6 @@
-package cn.anecansaitin.freecameraapi.api;
+package cn.anecansaitin.freecameraapi.api.extension;
+
+import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 
 public interface ICameraModifierExtension {
     /// Enables chunk loading.
