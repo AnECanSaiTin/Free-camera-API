@@ -5,8 +5,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -111,5 +113,13 @@ public final class ClientUtil {
      */
     public static void resetBobView() {
         MC.options.bobView().set(bobView);
+    }
+
+    public static int fov() {
+        return MC.options.fov().get();
+    }
+
+    public static ClientLevel clientLevel() {
+        return MC.level;
     }
 }

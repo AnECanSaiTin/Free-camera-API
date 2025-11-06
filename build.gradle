@@ -18,6 +18,19 @@ version = 'neo-' + minecraft_version + '-' + mod_version
 group = mod_group_id
 
 repositories {
+    clear()
+    maven {
+        url = "https://libraries.minecraft.net/"
+    }
+
+    maven {
+        url = "https://neoforged.forgecdn.net/releases"
+    }
+
+    maven {
+        url = "https://neoforged.forgecdn.net/mojang-meta"
+    }
+
     // Add here additional repositories if required by some of the dependencies below.
     mavenLocal()
 
@@ -44,7 +57,7 @@ repositories {
         }
     }
 
-    maven {url 'https://maven.wispforest.io/releases/'}
+    maven { url 'https://maven.wispforest.io/releases/' }
 }
 
 base {

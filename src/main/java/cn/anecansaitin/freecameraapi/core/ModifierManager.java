@@ -1,5 +1,7 @@
 package cn.anecansaitin.freecameraapi.core;
 
+import cn.anecansaitin.freecameraapi.ClientUtil;
+import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
 import cn.anecansaitin.freecameraapi.api.extension.ControlScheme;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import net.minecraft.client.Camera;
@@ -17,7 +19,7 @@ public class ModifierManager {
     public static final ModifierManager INSTANCE = new ModifierManager();
     private final Vector3f pos;// 坐标
     private final Vector3f rot;// 旋转
-    private float fov;// 视角
+    private float fov;// 视场
     private int state;// 状态
 
     private ModifierManager() {
@@ -92,11 +94,28 @@ public class ModifierManager {
         }
     }
 
+    private final float[] fovDest = new float[1];
+
     private void applyObstacle(ICameraModifier modifier) {
         if (!modifier.isStateEnabledOr(OBSTACLE)) {
             return;
         }
 
+        ObstacleHandler obstacleHandler = modifier.getObstacleHandler();
+        fovDest[0] = fov;
+
+        switch (obstacleHandler.obstacleAvoid(pos, rot, fovDest)) {
+            case PASS -> defaultObstacle(obstacleHandler);
+            case COLLIDE -> {
+                fov = fovDest[0];
+                obstacleHandler.onCollision(pos, rot, fov);
+            }
+            case NO_COLLIDE -> {
+            }
+        }
+    }
+
+    private void defaultObstacle(ObstacleHandler obstacleHandler) {
         Vector3f
                 origin = player().getEyePosition(camera().getPartialTickTime()).toVector3f(),
                 direction = pos.sub(origin, new Vector3f());
@@ -131,6 +150,7 @@ public class ModifierManager {
         }
 
         pos.set(direction.normalize(max).add(origin));
+        obstacleHandler.onCollision(pos, rot, fov);
     }
 
     private void setCamera() {

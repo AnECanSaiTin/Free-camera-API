@@ -1,5 +1,6 @@
 package cn.anecansaitin.freecameraapi.core;
 
+import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
 import cn.anecansaitin.freecameraapi.api.extension.ControlScheme;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import cn.anecansaitin.freecameraapi.api.extension.ICameraModifierExtension;
@@ -9,6 +10,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Math;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -19,6 +21,7 @@ public class Modifier implements ICameraModifier, ICameraModifierExtension {
     private final Vector3f rot = new Vector3f();
     private float fov;
     private int state;
+    private ObstacleHandler obstacleHandler;
 
     public Modifier(ResourceLocation id) {
         this.id = id;
@@ -193,6 +196,14 @@ public class Modifier implements ICameraModifier, ICameraModifierExtension {
     @Override
     public ICameraModifier enableObstacle() {
         state |= ModifierStates.OBSTACLE;
+        obstacleHandler = ObstacleHandler.NULL;
+        return this;
+    }
+
+    @Override
+    public ICameraModifier enableObstacle(@NotNull ObstacleHandler handler) {
+        state |= ModifierStates.OBSTACLE;
+        obstacleHandler = handler;
         return this;
     }
 
@@ -200,6 +211,11 @@ public class Modifier implements ICameraModifier, ICameraModifierExtension {
     public ICameraModifier disableObstacle() {
         state &= ~ModifierStates.OBSTACLE;
         return this;
+    }
+
+    @Override
+    public ObstacleHandler getObstacleHandler() {
+        return obstacleHandler;
     }
 
     @Override

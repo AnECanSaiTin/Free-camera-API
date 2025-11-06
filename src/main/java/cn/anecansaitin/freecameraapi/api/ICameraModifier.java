@@ -5,6 +5,8 @@ import cn.anecansaitin.freecameraapi.core.ModifierStates;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector3f;
 
+import java.util.function.Consumer;
+
 /// Camera modifier interface, used to define various camera modification operations.
 public interface ICameraModifier {
     /// Enables position modification.
@@ -131,6 +133,12 @@ public interface ICameraModifier {
 
     /// Enables default obstacle avoidance.
     ICameraModifier enableObstacle();
+
+    /// Enables default obstacle avoidance.
+    ///@param handler When the obstacle is hit, this handler will be called.
+    ICameraModifier enableObstacle(ObstacleHandler handler);
+
+    ObstacleHandler getObstacleHandler();
 
     /// Disables default obstacle avoidance.
     ICameraModifier disableObstacle();
