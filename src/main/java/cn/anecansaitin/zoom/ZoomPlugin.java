@@ -6,6 +6,7 @@ import cn.anecansaitin.freecameraapi.api.CameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Input;
@@ -41,40 +42,7 @@ public class ZoomPlugin implements ICameraPlugin {
         modifier.disable()
                 .enablePos()
                 .enableFov()
-                .enableGlobalMode()
-                .enableObstacle(new ObstacleHandler() {
-                    @Override
-                    public ObstacleResult obstacleAvoid(Vector3f position, Vector3f rotation, float[] fieldOfView) {
-                        BlockHitResult result = ClientUtil.clientLevel().clipIncludingBorder(new ClipContext(new Vec3(posO), new Vec3(position), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
-
-                        if (result.getType() == HitResult.Type.BLOCK) {
-                            Vec3 location = result.getLocation();
-                            float length = 0.15f;
-                            float x = (float) location.x;
-                            float y = (float) location.y;
-                            float z = (float) location.z;
-
-                            switch (result.getDirection()) {
-                                case DOWN -> y -= length;
-                                case UP -> y += length;
-                                case NORTH -> z -= length;
-                                case SOUTH -> z += length;
-                                case WEST -> x -= length;
-                                case EAST -> x += length;
-                            }
-
-                            position.set(x, y, z);
-                            return ObstacleResult.COLLIDE;
-                        }
-
-                        return ObstacleResult.NO_COLLIDE;
-                    }
-
-                    @Override
-                    public void onCollision(Vector3f position, Vector3f rotation, float fov) {
-                        pos.set(position);
-                    }
-                });
+                .enableGlobalMode();
     }
 
     @Override
@@ -145,7 +113,57 @@ public class ZoomPlugin implements ICameraPlugin {
         }
 
         instance.forward.rotateY(-ClientUtil.playerYHeadRot() * Mth.DEG_TO_RAD).mul(0.4f);
-        instance.posO.set(instance.pos);
-        instance.pos.add(instance.forward);
+        Vector3f oldPos = instance.posO;
+        Vector3f newPos = instance.pos;
+        oldPos.set(newPos);
+        newPos.add(instance.forward);
+
+        if (oldPos.equals(newPos)) {
+            return;
+        }
+
+        ClientLevel level = ClientUtil.clientLevel();
+        float length = 0.1f;
+        Vec3 from = new Vec3(oldPos),
+                to = new Vec3(newPos);// todo 每次设置newPos都要额外在其方向上添加一个length长度
+
+        for (int i = 0; i < 2; i++) {
+            BlockHitResult blockHitResult = level.clipIncludingBorder(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
+
+            if (blockHitResult.getType() != HitResult.Type.BLOCK) {
+                return;
+            }
+
+            Vec3 hitPoint = blockHitResult.getLocation();
+
+            switch (blockHitResult.getDirection()) {
+                case DOWN -> {
+                    from = new Vec3(hitPoint.x, hitPoint.y - length, hitPoint.z);
+                    to = new Vec3(to.x, hitPoint.y - length, to.z);
+                }
+                case UP -> {
+                    from = new Vec3(hitPoint.x, hitPoint.y + length, hitPoint.z);
+                    to = new Vec3(to.x, hitPoint.y + length, to.z);
+                }
+                case NORTH -> {
+                    from = new Vec3(hitPoint.x, hitPoint.y, hitPoint.z - length);
+                    to = new Vec3(to.x, to.y, hitPoint.z - length);
+                }
+                case SOUTH -> {
+                    from = new Vec3(hitPoint.x, hitPoint.y, hitPoint.z + length);
+                    to = new Vec3(to.x, to.y, hitPoint.z + length);
+                }
+                case WEST -> {
+                    from = new Vec3(hitPoint.x - length, hitPoint.y, hitPoint.z);
+                    to = new Vec3(hitPoint.x - length, to.y, to.z);
+                }
+                case EAST -> {
+                    from = new Vec3(hitPoint.x + length, hitPoint.y, hitPoint.z);
+                    to = new Vec3(hitPoint.x + length, to.y, to.z);
+                }
+            }
+
+            newPos.set(to.x, to.y, to.z);
+        }
     }
 }
