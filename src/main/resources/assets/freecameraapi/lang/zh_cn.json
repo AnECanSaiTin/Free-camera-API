@@ -1,4 +1,6 @@
 {
   "free_camera_api.configuration.order": "优先级",
-  "free_camera_api.configuration.removed": "移除"
+  "free_camera_api.configuration.removed": "移除",
+  "zoom.gui_layer.enabled": "自由视角启动",
+  "zoom.gui_layer.disabled": "自由视角关闭"
 }

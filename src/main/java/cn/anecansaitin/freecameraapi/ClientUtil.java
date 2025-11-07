@@ -122,4 +122,8 @@ public final class ClientUtil {
     public static ClientLevel clientLevel() {
         return MC.level;
     }
+
+    public static boolean hasScreen() {
+        return MC.screen != null;
+    }
 }

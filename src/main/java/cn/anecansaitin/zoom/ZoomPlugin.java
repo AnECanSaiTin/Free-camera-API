@@ -5,7 +5,6 @@ import cn.anecansaitin.freecameraapi.FreeCamera;
 import cn.anecansaitin.freecameraapi.api.CameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
-import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.util.Mth;
@@ -19,6 +18,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
@@ -27,12 +27,13 @@ import org.joml.Vector3f;
 @CameraPlugin(value = "zoom")
 @EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
 public class ZoomPlugin implements ICameraPlugin {
-    private static ZoomPlugin instance;
+    static ZoomPlugin instance;
     private boolean enabled = false;
     private final Vector3f forward = new Vector3f();
     private final Vector3f pos = new Vector3f();
     private final Vector3f posO = new Vector3f();
     private float fov = 0;
+    private float speed = 0.4f;
     private ICameraModifier modifier;
 
     @Override
@@ -52,7 +53,7 @@ public class ZoomPlugin implements ICameraPlugin {
         modifier.setFov(fov);
     }
 
-    private void enable() {
+    void enable() {
         enabled = true;
         modifier.enable();
         ClientUtil.playerEyePos(pos);
@@ -62,7 +63,7 @@ public class ZoomPlugin implements ICameraPlugin {
         ClientUtil.toThirdView();
     }
 
-    private void disable() {
+    void disable() {
         enabled = false;
         modifier.disable();
         ClientUtil.resetBobView();
@@ -97,12 +98,26 @@ public class ZoomPlugin implements ICameraPlugin {
         clientInput.keyPresses = Input.EMPTY;
     }
 
+    private static boolean disabled() {
+        return !instance.enabled || ClientUtil.hasScreen();
+    }
+
     @SubscribeEvent
-    public static void mouseInput(InputEvent.MouseButton.Pre event) {
-        if (!instance.enabled) {
+    public static void mouseClicking(InputEvent.MouseButton.Pre event) {
+        if (disabled()) {
             return;
         }
 
+        event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void mouseScrolling(InputEvent.MouseScrollingEvent event) {
+        if (disabled()) {
+            return;
+        }
+
+        instance.speed = Mth.clamp(instance.speed + (float) (event.getScrollDeltaY() * 0.01f), 0.1f, 1f);
         event.setCanceled(true);
     }
 
@@ -112,7 +127,7 @@ public class ZoomPlugin implements ICameraPlugin {
             return;
         }
 
-        instance.forward.rotateY(-ClientUtil.playerYHeadRot() * Mth.DEG_TO_RAD).mul(0.4f);
+        instance.forward.rotateY(-ClientUtil.playerYHeadRot() * Mth.DEG_TO_RAD).mul(instance.speed);
         Vector3f oldPos = instance.posO;
         Vector3f newPos = instance.pos;
         oldPos.set(newPos);
@@ -125,7 +140,7 @@ public class ZoomPlugin implements ICameraPlugin {
         ClientLevel level = ClientUtil.clientLevel();
         float length = 0.1f;
         Vec3 from = new Vec3(oldPos),
-                to = new Vec3(newPos);// todo 每次设置newPos都要额外在其方向上添加一个length长度
+                to = new Vec3(extend(oldPos, newPos, length));
 
         for (int i = 0; i < 2; i++) {
             BlockHitResult blockHitResult = level.clipIncludingBorder(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
@@ -139,31 +154,53 @@ public class ZoomPlugin implements ICameraPlugin {
             switch (blockHitResult.getDirection()) {
                 case DOWN -> {
                     from = new Vec3(hitPoint.x, hitPoint.y - length, hitPoint.z);
-                    to = new Vec3(to.x, hitPoint.y - length, to.z);
+                    to = new Vec3(extend((float) from.x, (float) from.y, (float) from.z, (float) to.x, (float) from.y, (float) to.z, length));
                 }
                 case UP -> {
                     from = new Vec3(hitPoint.x, hitPoint.y + length, hitPoint.z);
-                    to = new Vec3(to.x, hitPoint.y + length, to.z);
+                    to = new Vec3(extend((float) from.x, (float) from.y, (float) from.z, (float) to.x, (float) from.y, (float) to.z, length));
                 }
                 case NORTH -> {
                     from = new Vec3(hitPoint.x, hitPoint.y, hitPoint.z - length);
-                    to = new Vec3(to.x, to.y, hitPoint.z - length);
+                    to = new Vec3(extend((float) from.x, (float) from.y, (float) from.z, (float) to.x, (float) to.y, (float) from.z, length));
                 }
                 case SOUTH -> {
                     from = new Vec3(hitPoint.x, hitPoint.y, hitPoint.z + length);
-                    to = new Vec3(to.x, to.y, hitPoint.z + length);
+                    to = new Vec3(extend((float) from.x, (float) from.y, (float) from.z, (float) to.x, (float) to.y, (float) from.z, length));
                 }
                 case WEST -> {
                     from = new Vec3(hitPoint.x - length, hitPoint.y, hitPoint.z);
-                    to = new Vec3(hitPoint.x - length, to.y, to.z);
+                    to = new Vec3(extend((float) from.x, (float) from.y, (float) from.z, (float) from.x, (float) to.y, (float) to.z, length));
                 }
                 case EAST -> {
                     from = new Vec3(hitPoint.x + length, hitPoint.y, hitPoint.z);
-                    to = new Vec3(hitPoint.x + length, to.y, to.z);
+                    to = new Vec3(extend((float) from.x, (float) from.y, (float) from.z, (float) from.x, (float) to.y, (float) to.z, length));
                 }
+            }
+
+            if (Double.isNaN(to.x)) {
+                newPos.set(from.x, from.y, from.z);
+                return;
             }
 
             newPos.set(to.x, to.y, to.z);
         }
+    }
+
+    private static Vector3f extend(Vector3f from, Vector3f to, float length) {
+        return new Vector3f(to).sub(from).normalize(length).add(to);
+    }
+
+    private static Vector3f extend(float x1, float y1, float z1, float x2, float y2, float z2, float length) {
+        return new Vector3f(x2, y2, z2).sub(x1, y1, z1).normalize(length).add(x2, y2, z2);
+    }
+
+    @SubscribeEvent
+    public static void loggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        instance.disable();
+    }
+
+    static boolean enabled() {
+        return instance.enabled;
     }
 }

@@ -1,4 +1,7 @@
 {
   "free_camera_api.configuration.order": "Order",
-  "free_camera_api.configuration.removed": "Removed"
+  "free_camera_api.configuration.removed": "Removed",
+
+  "zoom.gui_layer.enabled": "Zoom camera enabled",
+  "zoom.gui_layer.disabled": "Zoom camera disabled"
 }

@@ -2,7 +2,7 @@ package cn.anecansaitin.freecameraapi.api;
 
 /// IPlugin must have the {@link CameraPlugin} annotation to get loaded by FreeCameraAPI.
 ///
-/// Example :{@link cn.anecansaitin.freecameraapi.ExamplePlugin}
+/// Example :{@link cn.anecansaitin.zoom.ZoomPlugin}
 public interface ICameraPlugin {
     void initialize(ICameraModifier modifier);
 
