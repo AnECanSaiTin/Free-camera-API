@@ -27,7 +27,7 @@ public final class PluginFinder {
         Type type = Type.getType(CameraPlugin.class);
         ArrayList<Triplet<ResourceLocation, ICameraPlugin, ModifierPriority>> plugins = new ArrayList<>();
         List<ModFileScanData> allScanData = ModList.get().getAllScanData();
-        boolean dev = !FMLEnvironment.production;
+        boolean dev = !FMLEnvironment.isProduction();
 
         for (int i = 0, allScanDataSize = allScanData.size(); i < allScanDataSize; i++) {
             ModFileScanData data = allScanData.get(i);
