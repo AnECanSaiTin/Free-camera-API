@@ -6,7 +6,8 @@
   "mixins": [
   ],
   "client": [
-    "CameraMixin"
+    "CameraMixin",
+    "LocalPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

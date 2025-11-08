@@ -1,6 +1,6 @@
 package cn.anecansaitin.freecameraapi.core;
 
-import cn.anecansaitin.freecameraapi.FreeCamera;
+import cn.anecansaitin.freecameraapi.FreeCameraClient;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -11,7 +11,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = FreeCamera.MODID)
+@EventBusSubscriber(modid = FreeCameraClient.MODID)
 public class CameraConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     private static final ModConfigSpec.ConfigValue<List<? extends String>> PLAYER_ORDER;

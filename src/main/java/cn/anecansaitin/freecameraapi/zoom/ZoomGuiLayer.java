@@ -1,7 +1,7 @@
-package cn.anecansaitin.zoom;
+package cn.anecansaitin.freecameraapi.zoom;
 
 import cn.anecansaitin.freecameraapi.ClientUtil;
-import cn.anecansaitin.freecameraapi.FreeCamera;
+import cn.anecansaitin.freecameraapi.FreeCameraClient;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -14,7 +14,7 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.GuiLayer;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
-@EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = FreeCameraClient.MODID, value = Dist.CLIENT)
 public class ZoomGuiLayer implements GuiLayer {
     private static final Component enabled = Component.translatable("zoom.gui_layer.enabled");
     private static final Component disabled = Component.translatable("zoom.gui_layer.disabled");
@@ -38,7 +38,7 @@ public class ZoomGuiLayer implements GuiLayer {
 
     @SubscribeEvent
     public static void register(RegisterGuiLayersEvent event) {
-        event.registerAbove(VanillaGuiLayers.TITLE, ResourceLocation.fromNamespaceAndPath(FreeCamera.MODID, "zoom"), new ZoomGuiLayer());
+        event.registerAbove(VanillaGuiLayers.TITLE, ResourceLocation.fromNamespaceAndPath(FreeCameraClient.MODID, "zoom"), new ZoomGuiLayer());
     }
 
     @SubscribeEvent

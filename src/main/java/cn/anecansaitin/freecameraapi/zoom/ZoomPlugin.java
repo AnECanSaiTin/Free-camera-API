@@ -1,7 +1,7 @@
-package cn.anecansaitin.zoom;
+package cn.anecansaitin.freecameraapi.zoom;
 
 import cn.anecansaitin.freecameraapi.ClientUtil;
-import cn.anecansaitin.freecameraapi.FreeCamera;
+import cn.anecansaitin.freecameraapi.FreeCameraClient;
 import cn.anecansaitin.freecameraapi.api.CameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
@@ -25,15 +25,13 @@ import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import org.joml.Vector3f;
 
 @CameraPlugin(value = "zoom")
-@EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = FreeCameraClient.MODID, value = Dist.CLIENT)
 public class ZoomPlugin implements ICameraPlugin {
-    static ZoomPlugin instance;
+    public static ZoomPlugin instance;
     private boolean enabled = false;
     private final Vector3f forward = new Vector3f();
     private final Vector3f pos = new Vector3f();
     private final Vector3f posO = new Vector3f();
-    private float fov = 0;
-    private float speed = 0.4f;
     private ICameraModifier modifier;
 
     @Override
@@ -50,7 +48,7 @@ public class ZoomPlugin implements ICameraPlugin {
     public void update() {
         float f = ClientUtil.partialTicks();
         modifier.setPos(Mth.lerp(f, posO.x, pos.x), Mth.lerp(f, posO.y, pos.y), Mth.lerp(f, posO.z, pos.z));
-        modifier.setFov(fov);
+        modifier.setFov(ZoomConfig.Client.fov());
     }
 
     void enable() {
@@ -58,12 +56,11 @@ public class ZoomPlugin implements ICameraPlugin {
         modifier.enable();
         ClientUtil.playerEyePos(pos);
         posO.set(pos);
-        fov = ClientUtil.fov();
         ClientUtil.disableBobView();
         ClientUtil.toThirdView();
     }
 
-    void disable() {
+    public void disable() {
         enabled = false;
         modifier.disable();
         ClientUtil.resetBobView();
@@ -117,7 +114,6 @@ public class ZoomPlugin implements ICameraPlugin {
             return;
         }
 
-        instance.speed = Mth.clamp(instance.speed + (float) (event.getScrollDeltaY() * 0.01f), 0.1f, 1f);
         event.setCanceled(true);
     }
 
@@ -127,13 +123,13 @@ public class ZoomPlugin implements ICameraPlugin {
             return;
         }
 
-        instance.forward.rotateY(-ClientUtil.playerYHeadRot() * Mth.DEG_TO_RAD).mul(instance.speed);
+        instance.forward.rotateY(-ClientUtil.playerYHeadRot() * Mth.DEG_TO_RAD).mul(ZoomConfig.Client.speed());
         Vector3f oldPos = instance.posO;
         Vector3f newPos = instance.pos;
         oldPos.set(newPos);
         newPos.add(instance.forward);
 
-        if (oldPos.equals(newPos)) {
+        if (!ZoomConfig.Server.blockCollision() || oldPos.equals(newPos)) {
             return;
         }
 
@@ -142,7 +138,7 @@ public class ZoomPlugin implements ICameraPlugin {
         Vec3 from = new Vec3(oldPos),
                 to = new Vec3(extend(oldPos, newPos, length));
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             BlockHitResult blockHitResult = level.clipIncludingBorder(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
 
             if (blockHitResult.getType() != HitResult.Type.BLOCK) {
@@ -200,7 +196,7 @@ public class ZoomPlugin implements ICameraPlugin {
         instance.disable();
     }
 
-    static boolean enabled() {
+    public static boolean enabled() {
         return instance.enabled;
     }
 }

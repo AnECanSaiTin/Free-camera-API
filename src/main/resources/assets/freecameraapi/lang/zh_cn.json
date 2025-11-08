@@ -1,6 +1,16 @@
 {
+  "free_camera_api.configuration.title": "自由相机配置",
+  "free_camera_api.configuration.section.free.camera.api.client.toml": "自由相机客户端设置",
+  "free_camera_api.configuration.section.zoom.client.toml": "Zoom客户端设置",
+  "free_camera_api.configuration.section.zoom.server.toml": "Zoom服务端设置",
+  "zoom.gui_layer.enabled": "自由视角启动",
   "free_camera_api.configuration.order": "优先级",
   "free_camera_api.configuration.removed": "移除",
-  "zoom.gui_layer.enabled": "自由视角启动",
-  "zoom.gui_layer.disabled": "自由视角关闭"
+  "zoom.gui_layer.disabled": "自由视角关闭",
+  "zoom.configuration.hurt_exit": "受伤退出",
+  "zoom.configuration.speed": "相机速度",
+  "zoom.configuration.fov": "相机视场",
+  "zoom.configuration.block_collision": "方块碰撞",
+  "key.categories.zoom": "Zoom",
+  "key.zoom.free_mode": "自由视角"
 }

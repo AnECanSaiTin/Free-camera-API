@@ -1,7 +1,19 @@
 {
+  "free_camera_api.configuration.title": "Free Camera API config",
+  "free_camera_api.configuration.section.free.camera.api.client.toml": "Free camera api client config",
+  "free_camera_api.configuration.section.zoom.client.toml": "Zoom client config",
+  "free_camera_api.configuration.section.zoom.server.toml": "Zoom server config",
+
+  "zoom.gui_layer.enabled": "Zoom camera enabled",
   "free_camera_api.configuration.order": "Order",
   "free_camera_api.configuration.removed": "Removed",
 
-  "zoom.gui_layer.enabled": "Zoom camera enabled",
-  "zoom.gui_layer.disabled": "Zoom camera disabled"
+  "zoom.gui_layer.disabled": "Free camera disabled",
+  "zoom.configuration.hurt_exit": "Hurt exit",
+  "zoom.configuration.speed": "Camera speed",
+  "zoom.configuration.fov": "Camera fov",
+  "zoom.configuration.block_collision": "Block collision",
+
+  "key.categories.zoom": "Zoom",
+  "key.zoom.free_mode": "Free mode"
 }

@@ -1,6 +1,6 @@
 package cn.anecansaitin.freecameraapi.core;
 
-import cn.anecansaitin.freecameraapi.FreeCamera;
+import cn.anecansaitin.freecameraapi.FreeCameraClient;
 import net.minecraft.client.Camera;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
@@ -8,7 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 
-@EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = FreeCameraClient.MODID, value = Dist.CLIENT)
 public class ManagerTicker {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void framesTick(ViewportEvent.ComputeFov event) {

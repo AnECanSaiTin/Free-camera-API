@@ -1,6 +1,6 @@
-package cn.anecansaitin.zoom;
+package cn.anecansaitin.freecameraapi.zoom;
 
-import cn.anecansaitin.freecameraapi.FreeCamera;
+import cn.anecansaitin.freecameraapi.FreeCameraClient;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;
@@ -12,7 +12,7 @@ import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.util.Lazy;
 import org.lwjgl.glfw.GLFW;
 
-@EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = FreeCameraClient.MODID, value = Dist.CLIENT)
 public class ModKeyMapping {
     public static final Lazy<KeyMapping> ZOOM_MODE = Lazy.of(() -> new KeyMapping(
             "key." + "zoom" + ".free_mode",
