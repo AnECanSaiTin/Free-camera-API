@@ -1,6 +1,5 @@
 package cn.anecansaitin.freecameraapi.core;
 
-import cn.anecansaitin.freecameraapi.ClientUtil;
 import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
 import cn.anecansaitin.freecameraapi.api.extension.ControlScheme;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;

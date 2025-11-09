@@ -14,8 +14,8 @@ import net.neoforged.neoforge.common.util.Lazy;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = FreeCameraClient.MODID, value = Dist.CLIENT)
-public class ModKeyMapping {
-    private static final KeyMapping.Category CATEGORY = new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath("zoom", "zoom"));
+public class ZoomKeyMapping {
+    private static final KeyMapping.Category CATEGORY = new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath("zoom", "key"));
 
     public static final Lazy<KeyMapping> ZOOM_MODE = Lazy.of(() -> new KeyMapping(
             "key." + "zoom" + ".free_mode",
@@ -37,7 +37,7 @@ public class ModKeyMapping {
 
     @SubscribeEvent
     public static void keyPress(ClientTickEvent.Post event) {
-        while (ModKeyMapping.ZOOM_MODE.get().consumeClick()) {
+        while (ZoomKeyMapping.ZOOM_MODE.get().consumeClick()) {
             if (ZoomPlugin.enabled()) {
                 ZoomPlugin.instance.disable();
                 ZoomGuiLayer.flash();

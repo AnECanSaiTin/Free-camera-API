@@ -69,7 +69,7 @@ public class ZoomPlugin implements ICameraPlugin {
 
     @SubscribeEvent
     public static void keyPress(ClientTickEvent.Post event) {
-        while (ModKeyMapping.ZOOM_MODE.get().consumeClick()) {
+        while (ZoomKeyMapping.ZOOM_MODE.get().consumeClick()) {
             if (instance.enabled) {
                 instance.disable();
             } else {

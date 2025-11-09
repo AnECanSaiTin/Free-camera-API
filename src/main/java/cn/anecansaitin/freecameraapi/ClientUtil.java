@@ -1,5 +1,6 @@
 package cn.anecansaitin.freecameraapi;
 
+import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -7,6 +8,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -125,5 +127,17 @@ public final class ClientUtil {
 
     public static boolean hasScreen() {
         return MC.screen != null;
+    }
+
+    public static Camera camera() {
+        return MC.gameRenderer.getMainCamera();
+    }
+
+    public static GameRenderer gameRenderer() {
+        return MC.gameRenderer;
+    }
+
+    public static float fovEffectScale() {
+        return MC.options.fovEffectScale().get().floatValue();
     }
 }
