@@ -119,7 +119,7 @@ public class ZoomPlugin implements ICameraPlugin {
 
     @SubscribeEvent
     public static void clientTick(ClientTickEvent.Pre event) {
-        if (!instance.enabled) {
+        if (!instance.enabled || ClientUtil.gamePaused()) {
             return;
         }
 
