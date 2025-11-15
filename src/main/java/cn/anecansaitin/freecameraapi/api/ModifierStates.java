@@ -1,4 +1,4 @@
-package cn.anecansaitin.freecameraapi.core;
+package cn.anecansaitin.freecameraapi.api;
 
 public class ModifierStates {
     //相机状态常量
@@ -9,5 +9,6 @@ public class ModifierStates {
     public static final int OBSTACLE = 1 << 4;
     public static final int GLOBAL_MODE = 1 << 5;
 //    public static final int LERP = 1 << 6;
+    @Deprecated(since = "4.0.0", forRemoval = true)
     public static final int CHUNK_LOADER = 1 << 7;
 }

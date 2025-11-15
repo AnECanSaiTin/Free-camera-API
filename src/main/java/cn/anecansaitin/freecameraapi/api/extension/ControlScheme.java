@@ -1,5 +1,6 @@
 package cn.anecansaitin.freecameraapi.api.extension;
 
+@Deprecated(since = "4.0.0", forRemoval = true)
 public sealed interface ControlScheme permits
         ControlScheme.PLAYER_RELATIVE,
         ControlScheme.CAMERA_RELATIVE_STRAFE,

@@ -2,6 +2,7 @@ package cn.anecansaitin.freecameraapi.api.extension;
 
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 
+@Deprecated(since = "4.0.0", forRemoval = true)
 public interface ICameraModifierExtension {
     /// Enables chunk loading.
     ICameraModifierExtension enableChunkLoader();

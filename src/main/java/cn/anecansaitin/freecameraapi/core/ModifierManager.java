@@ -1,6 +1,5 @@
 package cn.anecansaitin.freecameraapi.core;
 
-import cn.anecansaitin.freecameraapi.ClientUtil;
 import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
 import cn.anecansaitin.freecameraapi.api.extension.ControlScheme;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
@@ -13,7 +12,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
-import static cn.anecansaitin.freecameraapi.core.ModifierStates.*;
+import static cn.anecansaitin.freecameraapi.api.ModifierStates.*;
 
 public class ModifierManager {
     public static final ModifierManager INSTANCE = new ModifierManager();
