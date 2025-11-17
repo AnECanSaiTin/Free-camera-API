@@ -1,13 +1,11 @@
 package cn.anecansaitin.freecameraapi.core;
 
+import cn.anecansaitin.freecameraapi.ClientUtil;
 import cn.anecansaitin.freecameraapi.api.ModifierStates;
 import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
-import cn.anecansaitin.freecameraapi.api.extension.ControlScheme;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
-import cn.anecansaitin.freecameraapi.api.extension.ICameraModifierExtension;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -16,7 +14,7 @@ import org.joml.Math;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class Modifier implements ICameraModifier, ICameraModifierExtension {
+public class Modifier implements ICameraModifier{
     private final ResourceLocation id;
     private final Vector3f pos = new Vector3f();
     private final Vector3f rot = new Vector3f();
@@ -228,8 +226,7 @@ public class Modifier implements ICameraModifier, ICameraModifierExtension {
             pos.set(position.x, position.y, position.z);
             rot.set(camera.getXRot(), camera.getYRot(), camera.getRoll());
         } else {
-            LocalPlayer player = Minecraft.getInstance().player;
-            Vec3 playerPos = player.getPosition(camera.getPartialTickTime());
+            Vec3 playerPos = ClientUtil.player().getPosition(camera.getPartialTickTime());
             pos.set(position.x - playerPos.x, position.y - playerPos.y, position.z - playerPos.z);
             rot.set(camera.getXRot(), camera.getYRot(), camera.getRoll());
         }
@@ -267,31 +264,5 @@ public class Modifier implements ICameraModifier, ICameraModifierExtension {
     @Override
     public ResourceLocation getId() {
         return id;
-    }
-
-    //----------------------------------------EXTENSION--------------------------------------------------------
-    private ControlScheme controlScheme = ControlScheme.VANILLA;
-
-    @Override
-    public ICameraModifierExtension enableChunkLoader() {
-        state |= ModifierStates.CHUNK_LOADER;
-        return this;
-    }
-
-    @Override
-    public ICameraModifierExtension disableChunkLoader() {
-        state &= ~ModifierStates.CHUNK_LOADER;
-        return this;
-    }
-
-    @Override
-    public ICameraModifierExtension setControlScheme(ControlScheme controlScheme) {
-        this.controlScheme = controlScheme;
-        return this;
-    }
-
-    @Override
-    public ControlScheme getControlScheme() {
-        return controlScheme;
     }
 }
