@@ -2,13 +2,25 @@ package cn.anecansaitin.freecameraapi.api;
 
 public class ModifierStates {
     //相机状态常量
-    public static final int ENABLE = 1;
-    public static final int POS = 1 << 1;
-    public static final int ROT = 1 << 2;
-    public static final int FOV = 1 << 3;
-    public static final int OBSTACLE = 1 << 4;
-    public static final int GLOBAL_MODE = 1 << 5;
-//    public static final int LERP = 1 << 6;
-    @Deprecated(since = "4.0.0", forRemoval = true)
-    public static final int CHUNK_LOADER = 1 << 7;
+    public static final int ENABLE;
+    public static final int POS;
+    public static final int ROT;
+    public static final int FOV;
+    public static final int OBSTACLE;
+    public static final int GLOBAL_MODE;
+
+    private static int STATE = 1;
+
+    static {
+        ENABLE = 1;
+        POS = nextState();
+        ROT = nextState();
+        FOV = nextState();
+        OBSTACLE = nextState();
+        GLOBAL_MODE = nextState();
+    }
+
+    public static int nextState() {
+        return STATE <<= 1;
+    }
 }

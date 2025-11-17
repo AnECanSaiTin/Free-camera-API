@@ -10,8 +10,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 @SuppressWarnings("unused")
@@ -129,15 +127,15 @@ public final class ClientUtil {
         return MC.screen != null;
     }
 
-    public static Camera camera() {
-        return MC.gameRenderer.getMainCamera();
-    }
-
     public static GameRenderer gameRenderer() {
         return MC.gameRenderer;
     }
 
     public static float fovEffectScale() {
         return MC.options.fovEffectScale().get().floatValue();
+    }
+
+    public static Camera camera() {
+        return MC.gameRenderer.getMainCamera();
     }
 }

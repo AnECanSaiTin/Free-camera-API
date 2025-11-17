@@ -1,9 +1,9 @@
 package cn.anecansaitin.freecameraapi.api;
 
-import cn.anecansaitin.freecameraapi.api.extension.ICameraModifierExtension;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector3f;
 
+@SuppressWarnings("unused")
 /// Camera modifier interface, used to define various camera modification operations.
 public interface ICameraModifier {
     /// Enables position modification.
@@ -184,14 +184,6 @@ public interface ICameraModifier {
     default boolean isActive() {
         int state = getState();
         return state >= 1 && isStateEnabledOr(ModifierStates.ENABLE) && isStateEnabledOr(ModifierStates.POS | ModifierStates.ROT | ModifierStates.FOV);
-    }
-
-    /// Gets the modifier as an extension.
-    ///
-    /// Extended features only take effect after the extension plugin is installed. If the plugin is not installed, no error will be reported, but these features will have no effect.
-    @Deprecated(since = "4.0.0", forRemoval = true)
-    default ICameraModifierExtension asExtension() {
-        return (ICameraModifierExtension) this;
     }
 
     /// Gets the unique identifier of the modifier.

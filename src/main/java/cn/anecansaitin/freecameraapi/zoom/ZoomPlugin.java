@@ -123,6 +123,11 @@ public class ZoomPlugin implements ICameraPlugin {
             return;
         }
 
+        if (instance.forward.lengthSquared() <= 0) {
+            instance.posO.set(instance.pos);
+            return;
+        }
+
         instance.forward.rotateY(-ClientUtil.playerYHeadRot() * Mth.DEG_TO_RAD).mul(ZoomConfig.Client.speed());
         Vector3f oldPos = instance.posO;
         Vector3f newPos = instance.pos;

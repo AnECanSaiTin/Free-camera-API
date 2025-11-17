@@ -1,7 +1,6 @@
 package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
-import cn.anecansaitin.freecameraapi.api.extension.ControlScheme;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -37,7 +36,6 @@ public class ModifierManager {
         pos.set(cameraPos.x, cameraPos.y, cameraPos.z);
         rot.set(camera.getXRot(), camera.getYRot() % 360, camera.getRoll());
         this.fov = camera().getFov();
-        resetExtension();
     }
 
     private void applyToCamera() {
@@ -54,7 +52,6 @@ public class ModifierManager {
         applyFov(modifier);
         applyGlobal(modifier);
         applyObstacle(modifier);
-        applyExtension(modifier);
         setCamera();
     }
 
@@ -185,24 +182,5 @@ public class ModifierManager {
 
     public boolean isStateEnabledOr(int mask) {
         return (state & mask) != 0;
-    }
-
-    //--------------------------------------------------EXTENSION---------------------------------------------------
-    private ControlScheme controlScheme = ControlScheme.VANILLA;// 控制模式
-
-    private void applyExtension(ICameraModifier modifier) {
-        applyControlScheme(modifier);
-    }
-
-    private void resetExtension() {
-        controlScheme = ControlScheme.VANILLA;
-    }
-
-    private void applyControlScheme(ICameraModifier modifier) {
-        controlScheme = modifier.asExtension().getControlScheme();
-    }
-
-    public ControlScheme controlScheme() {
-        return controlScheme;
     }
 }
