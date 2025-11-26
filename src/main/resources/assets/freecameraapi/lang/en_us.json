@@ -1,4 +1,11 @@
 {
+  "free_camera_api.state.undefined": "Undefined",
+  "free_camera_api.state.enable": "Enable",
+  "free_camera_api.state.pos": "Pos",
+  "free_camera_api.state.rot": "Rotation",
+  "free_camera_api.state.fov": "Fov",
+  "free_camera_api.state.obstacle": "Avoid Obstacle",
+  "free_camera_api.state.global_mode": "Global Mode",
   "free_camera_api.configuration.title": "Free Camera API config",
   "free_camera_api.configuration.section.free.camera.api.client.toml": "Free camera api client config",
   "free_camera_api.configuration.section.zoom.client.toml": "Zoom client config",
@@ -14,6 +21,6 @@
   "zoom.configuration.fov": "Camera fov",
   "zoom.configuration.block_collision": "Block collision",
 
-  "key.categories.zoom": "Zoom",
+  "key.categories.zoom": "Zoom Free camera",
   "key.zoom.free_mode": "Free mode"
 }

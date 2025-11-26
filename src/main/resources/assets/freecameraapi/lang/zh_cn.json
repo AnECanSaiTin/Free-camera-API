@@ -1,4 +1,11 @@
 {
+  "free_camera_api.state.undefined": "未定义",
+  "free_camera_api.state.enable": "启用",
+  "free_camera_api.state.pos": "坐标",
+  "free_camera_api.state.rot": "旋转",
+  "free_camera_api.state.fov": "视场",
+  "free_camera_api.state.obstacle": "避障",
+  "free_camera_api.state.global_mode": "全局模式",
   "free_camera_api.configuration.title": "自由相机配置",
   "free_camera_api.configuration.section.free.camera.api.client.toml": "自由相机客户端设置",
   "free_camera_api.configuration.section.zoom.client.toml": "Zoom客户端设置",
@@ -11,6 +18,6 @@
   "zoom.configuration.speed": "相机速度",
   "zoom.configuration.fov": "相机视场",
   "zoom.configuration.block_collision": "方块碰撞",
-  "key.categories.zoom": "Zoom",
+  "key.categories.zoom": "Zoom自由相机",
   "key.zoom.free_mode": "自由视角"
 }

@@ -2,6 +2,8 @@ package cn.anecansaitin.freecameraapi.api;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 @SuppressWarnings("unused")
 public class ModifierStates {
@@ -18,6 +20,8 @@ public class ModifierStates {
     private static int COUNTER = 1;
 
     static {
+        NAME_STATE.defaultReturnValue(-1);
+        STATE_NAMES.defaultReturnValue("Undefined");
         ENABLE = 1;
         NAME_STATE.put("enable", ENABLE);
         STATE_NAMES.put(ENABLE, "enable");
@@ -45,5 +49,13 @@ public class ModifierStates {
 
     public static String getName(int state) {
         return STATE_NAMES.get(state);
+    }
+
+    public static MutableComponent getTranslation(String name) {
+        return Component.translatable("free_camera_api.state." + name);
+    }
+
+    public static MutableComponent getTranslation(int state) {
+        return getTranslation(getName(state));
     }
 }
