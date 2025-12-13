@@ -1,6 +1,6 @@
 package cn.anecansaitin.freecameraapi.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.joml.Vector3f;
 
 @SuppressWarnings("unused")
@@ -189,5 +189,5 @@ public interface ICameraModifier {
     /// Gets the unique identifier of the modifier.
     ///
     /// @return Returns the resource location.
-    ResourceLocation getId();
+    Identifier getId();
 }

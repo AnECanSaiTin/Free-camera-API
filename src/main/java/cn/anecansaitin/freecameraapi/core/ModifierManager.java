@@ -32,9 +32,9 @@ public class ModifierManager {
 
     private void setToVanilla() {
         Camera camera = camera();
-        Vec3 cameraPos = camera.getPosition();
+        Vec3 cameraPos = camera.position();
         pos.set(cameraPos.x, cameraPos.y, cameraPos.z);
-        rot.set(camera.getXRot(), camera.getYRot() % 360, camera.getRoll());
+        rot.set(camera.xRot(), camera.yRot() % 360, camera.getRoll());
         this.fov = camera().getFov();
     }
 

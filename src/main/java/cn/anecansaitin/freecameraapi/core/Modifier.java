@@ -6,7 +6,7 @@ import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -15,14 +15,14 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class Modifier implements ICameraModifier{
-    private final ResourceLocation id;
+    private final Identifier id;
     private final Vector3f pos = new Vector3f();
     private final Vector3f rot = new Vector3f();
     private float fov;
     private int state;
     private ObstacleHandler obstacleHandler;
 
-    public Modifier(ResourceLocation id) {
+    public Modifier(Identifier id) {
         this.id = id;
     }
 
@@ -220,15 +220,15 @@ public class Modifier implements ICameraModifier{
     @Override
     public ICameraModifier setToVanilla() {
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        Vec3 position = camera.getPosition();
+        Vec3 position = camera.position();
 
         if (isStateEnabledOr(CameraStates.GLOBAL_MODE)) {
             pos.set(position.x, position.y, position.z);
-            rot.set(camera.getXRot(), camera.getYRot(), camera.getRoll());
+            rot.set(camera.xRot(), camera.yRot(), camera.getRoll());
         } else {
             Vec3 playerPos = ClientUtil.player().getPosition(camera.getPartialTickTime());
             pos.set(position.x - playerPos.x, position.y - playerPos.y, position.z - playerPos.z);
-            rot.set(camera.getXRot(), camera.getYRot(), camera.getRoll());
+            rot.set(camera.xRot(), camera.yRot(), camera.getRoll());
         }
 
         fov = camera.getFov();
@@ -262,7 +262,7 @@ public class Modifier implements ICameraModifier{
     }
 
     @Override
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return id;
     }
 }

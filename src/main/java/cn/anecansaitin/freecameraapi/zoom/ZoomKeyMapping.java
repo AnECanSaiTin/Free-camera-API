@@ -3,7 +3,7 @@ package cn.anecansaitin.freecameraapi.zoom;
 import cn.anecansaitin.freecameraapi.FreeCamera;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,7 +20,7 @@ public class ZoomKeyMapping {
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_UNKNOWN,
-            new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath(FreeCamera.MODID, "zoom"))
+            new KeyMapping.Category(Identifier.fromNamespaceAndPath(FreeCamera.MODID, "zoom"))
     ));
 
     @SubscribeEvent

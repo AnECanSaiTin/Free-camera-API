@@ -5,7 +5,7 @@ import cn.anecansaitin.freecameraapi.FreeCamera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -38,7 +38,7 @@ public class ZoomGuiLayer implements GuiLayer {
 
     @SubscribeEvent
     public static void register(RegisterGuiLayersEvent event) {
-        event.registerAbove(VanillaGuiLayers.TITLE, ResourceLocation.fromNamespaceAndPath(FreeCamera.MODID, "zoom"), new ZoomGuiLayer());
+        event.registerAbove(VanillaGuiLayers.TITLE, Identifier.fromNamespaceAndPath(FreeCamera.MODID, "zoom"), new ZoomGuiLayer());
     }
 
     @SubscribeEvent

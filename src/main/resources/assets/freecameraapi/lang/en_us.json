@@ -21,6 +21,6 @@
   "zoom.configuration.fov": "Camera fov",
   "zoom.configuration.block_collision": "Block collision",
 
-  "key.categories.free_camera_api.zoom": "Zoom Free camera",
+  "key.category.free_camera_api.zoom": "Zoom Free camera",
   "key.zoom.free_mode": "Free mode"
 }

@@ -2,7 +2,7 @@ package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.FreeCamera;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -88,7 +88,7 @@ public class CameraConfig {
                 continue;
             }
 
-            if (!ResourceLocation.isValidNamespace(split[0]) || !ResourceLocation.isValidPath(split[1])) {
+            if (!Identifier.isValidNamespace(split[0]) || !Identifier.isValidPath(split[1])) {
                 ids.remove(i);
             }
         }

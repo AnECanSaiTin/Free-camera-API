@@ -23,17 +23,15 @@ public class ManagerTicker {
     }
 
     private static float getFov(Camera camera) {
-        float f;
         float partialTick = camera.getPartialTickTime();
         GameRenderer gameRenderer = ClientUtil.gameRenderer();
-        f = ClientUtil.fov();
+        float f = ClientUtil.fov();
         f *= Mth.lerp(partialTick, gameRenderer.oldFovModifier, gameRenderer.fovModifier);
 
-        if (camera.getEntity() instanceof LivingEntity living) {
-            if (living.isDeadOrDying()) {
-                float f1 = Math.min((float) living.deathTime + partialTick, 20.0F);
-                f /= (1.0F - 500.0F / (f1 + 500.0F)) * 2.0F + 1.0F;
-            }
+
+        if (camera.entity() instanceof LivingEntity livingentity && livingentity.isDeadOrDying()) {
+            float f1 = Math.min(livingentity.deathTime + partialTick, 20.0F);
+            f /= (1.0F - 500.0F / (f1 + 500.0F)) * 2.0F + 1.0F;
         }
 
         FogType fogtype = camera.getFluidInCamera();

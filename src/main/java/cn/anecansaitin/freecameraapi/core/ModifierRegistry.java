@@ -3,7 +3,7 @@ package cn.anecansaitin.freecameraapi.core;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ModifierPriority;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -11,7 +11,7 @@ import java.util.*;
 public class ModifierRegistry {
     public static final ModifierRegistry INSTANCE = new ModifierRegistry();
     private final Map<ModifierPriority, List<ICameraModifier>> priorityMap;
-    private final Map<ResourceLocation, ICameraModifier> modifierMap;
+    private final Map<Identifier, ICameraModifier> modifierMap;
     private final List<ICameraModifier> modifierList;
     private final List<ICameraModifier> removedList;
     private final Map<ICameraModifier, ICameraPlugin> plugins;
@@ -29,11 +29,11 @@ public class ModifierRegistry {
         }
     }
 
-    public void register(ResourceLocation id, ICameraPlugin plugin) {
+    public void register(Identifier id, ICameraPlugin plugin) {
         register(id, plugin, ModifierPriority.NORMAL);
     }
 
-    public void register(ResourceLocation id, ICameraPlugin plugin, ModifierPriority priority) {
+    public void register(Identifier id, ICameraPlugin plugin, ModifierPriority priority) {
         register(plugin, priority, new Modifier(id));
     }
 
@@ -78,7 +78,7 @@ public class ModifierRegistry {
         ArrayList<ICameraModifier> removedList = new ArrayList<>();
 
         for (String id : order) {
-            ICameraModifier modifier = modifierMap.get(ResourceLocation.parse(id));
+            ICameraModifier modifier = modifierMap.get(Identifier.parse(id));
 
             if (modifier == null) {
                 continue;
@@ -88,7 +88,7 @@ public class ModifierRegistry {
         }
 
         for (String id : removed) {
-            ICameraModifier modifier = modifierMap.get(ResourceLocation.parse(id));
+            ICameraModifier modifier = modifierMap.get(Identifier.parse(id));
 
             if (modifier == null) {
                 continue;
