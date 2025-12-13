@@ -3,6 +3,7 @@ package cn.anecansaitin.freecameraapi.zoom;
 import cn.anecansaitin.freecameraapi.FreeCamera;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -13,13 +14,13 @@ import net.neoforged.neoforge.common.util.Lazy;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
-public class ModKeyMapping {
+public class ZoomKeyMapping {
     public static final Lazy<KeyMapping> ZOOM_MODE = Lazy.of(() -> new KeyMapping(
-            "key." + "zoom" + ".free_mode",
+            "key.zoom.free_mode",
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_UNKNOWN,
-            "key.categories." + "zoom"
+            new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath(FreeCamera.MODID, "zoom"))
     ));
 
     @SubscribeEvent
@@ -29,7 +30,7 @@ public class ModKeyMapping {
 
     @SubscribeEvent
     public static void keyPress(ClientTickEvent.Post event) {
-        while (ModKeyMapping.ZOOM_MODE.get().consumeClick()) {
+        while (ZoomKeyMapping.ZOOM_MODE.get().consumeClick()) {
             if (ZoomPlugin.enabled()) {
                 ZoomPlugin.instance.disable();
                 ZoomGuiLayer.flash();

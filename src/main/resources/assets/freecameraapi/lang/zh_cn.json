@@ -18,6 +18,6 @@
   "zoom.configuration.speed": "相机速度",
   "zoom.configuration.fov": "相机视场",
   "zoom.configuration.block_collision": "方块碰撞",
-  "key.categories.zoom": "Zoom自由相机",
+  "key.categories.free_camera_api.zoom": "Zoom自由相机",
   "key.zoom.free_mode": "自由视角"
 }
