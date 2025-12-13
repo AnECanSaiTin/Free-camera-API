@@ -1,8 +1,8 @@
 package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.ClientUtil;
-import cn.anecansaitin.freecameraapi.FreeCameraClient;
-import cn.anecansaitin.freecameraapi.api.ModifierStates;
+import cn.anecansaitin.freecameraapi.FreeCamera;
+import cn.anecansaitin.freecameraapi.api.CameraStates;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
@@ -13,7 +13,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 
-@EventBusSubscriber(modid = FreeCameraClient.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
 public class ManagerTicker {
     public static void tick() {
         Camera camera = ClientUtil.camera();
@@ -47,7 +47,7 @@ public class ManagerTicker {
 
     @SubscribeEvent
     public static void computeFov(ViewportEvent.ComputeFov event) {
-        if (!ModifierManager.INSTANCE.isStateEnabledAnd(ModifierStates.FOV | ModifierStates.ENABLE)) {
+        if (!ModifierManager.INSTANCE.isStateEnabledAnd(CameraStates.FOV | CameraStates.ENABLE)) {
             return;
         }
 

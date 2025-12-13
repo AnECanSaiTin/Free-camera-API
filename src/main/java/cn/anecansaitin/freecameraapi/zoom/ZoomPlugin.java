@@ -1,7 +1,7 @@
 package cn.anecansaitin.freecameraapi.zoom;
 
 import cn.anecansaitin.freecameraapi.ClientUtil;
-import cn.anecansaitin.freecameraapi.FreeCameraClient;
+import cn.anecansaitin.freecameraapi.FreeCamera;
 import cn.anecansaitin.freecameraapi.api.CameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
@@ -25,7 +25,7 @@ import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import org.joml.Vector3f;
 
 @CameraPlugin(value = "zoom")
-@EventBusSubscriber(modid = FreeCameraClient.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
 public class ZoomPlugin implements ICameraPlugin {
     public static ZoomPlugin instance;
     private boolean enabled = false;

@@ -1,7 +1,7 @@
 package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.ClientUtil;
-import cn.anecansaitin.freecameraapi.api.ModifierStates;
+import cn.anecansaitin.freecameraapi.api.CameraStates;
 import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
 import cn.anecansaitin.freecameraapi.api.ICameraModifier;
 import net.minecraft.client.Camera;
@@ -28,13 +28,13 @@ public class Modifier implements ICameraModifier{
 
     @Override
     public Modifier enablePos() {
-        state |= ModifierStates.POS;
+        state |= CameraStates.POS;
         return this;
     }
 
     @Override
     public Modifier disablePos() {
-        state &= ~ModifierStates.POS;
+        state &= ~CameraStates.POS;
         return this;
     }
 
@@ -62,13 +62,13 @@ public class Modifier implements ICameraModifier{
 
     @Override
     public Modifier enableRotation() {
-        state |= ModifierStates.ROT;
+        state |= CameraStates.ROT;
         return this;
     }
 
     @Override
     public Modifier disableRotation() {
-        state &= ~ModifierStates.ROT;
+        state &= ~CameraStates.ROT;
         return this;
     }
 
@@ -112,13 +112,13 @@ public class Modifier implements ICameraModifier{
 
     @Override
     public Modifier enableFov() {
-        state |= ModifierStates.FOV;
+        state |= CameraStates.FOV;
         return this;
     }
 
     @Override
     public Modifier disableFov() {
-        state &= ~ModifierStates.FOV;
+        state &= ~CameraStates.FOV;
         return this;
     }
 
@@ -164,13 +164,13 @@ public class Modifier implements ICameraModifier{
 
     @Override
     public Modifier enable() {
-        state |= ModifierStates.ENABLE;
+        state |= CameraStates.ENABLE;
         return this;
     }
 
     @Override
     public Modifier disable() {
-        state &= ~ModifierStates.ENABLE;
+        state &= ~CameraStates.ENABLE;
         return this;
     }
 
@@ -182,33 +182,33 @@ public class Modifier implements ICameraModifier{
 
     @Override
     public Modifier enableGlobalMode() {
-        state |= ModifierStates.GLOBAL_MODE;
+        state |= CameraStates.GLOBAL_MODE;
         return this;
     }
 
     @Override
     public Modifier disableGlobalMode() {
-        state &= ~ModifierStates.GLOBAL_MODE;
+        state &= ~CameraStates.GLOBAL_MODE;
         return this;
     }
 
     @Override
     public ICameraModifier enableObstacle() {
-        state |= ModifierStates.OBSTACLE;
+        state |= CameraStates.OBSTACLE;
         obstacleHandler = ObstacleHandler.NULL;
         return this;
     }
 
     @Override
     public ICameraModifier enableObstacle(@NotNull ObstacleHandler handler) {
-        state |= ModifierStates.OBSTACLE;
+        state |= CameraStates.OBSTACLE;
         obstacleHandler = handler;
         return this;
     }
 
     @Override
     public ICameraModifier disableObstacle() {
-        state &= ~ModifierStates.OBSTACLE;
+        state &= ~CameraStates.OBSTACLE;
         return this;
     }
 
@@ -222,7 +222,7 @@ public class Modifier implements ICameraModifier{
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         Vec3 position = camera.getPosition();
 
-        if (isStateEnabledOr(ModifierStates.GLOBAL_MODE)) {
+        if (isStateEnabledOr(CameraStates.GLOBAL_MODE)) {
             pos.set(position.x, position.y, position.z);
             rot.set(camera.getXRot(), camera.getYRot(), camera.getRoll());
         } else {
