@@ -1,6 +1,7 @@
 package cn.anecansaitin.freecameraapi.starup;
 
 import cn.anecansaitin.freecameraapi.api.CameraPlugin;
+import cn.anecansaitin.freecameraapi.api.CameraState;
 import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ModifierPriority;
 import cn.anecansaitin.freecameraapi.core.ModifierRegistry;
@@ -14,16 +15,60 @@ import oshi.util.tuples.Triplet;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.TreeMap;
 
-public final class PluginFinder {
-    public static void loadPlugin() {
-        for (Triplet<ResourceLocation, ICameraPlugin, ModifierPriority> triplet : PluginFinder.find()) {
+public final class AnnotationFinder {
+    public static void clientLoading() {
+        loadState();
+        loadPlugin();
+    }
+
+    public static void commonLoading() {
+        loadState();
+    }
+
+    private static void loadState() {
+        try {
+            for (String clazz : findState()) {
+                Class.forName(clazz);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Collection<String> findState() {
+        Type type = Type.getType(CameraState.class);
+        TreeMap<String, String> stateClass = new TreeMap<>();
+        List<ModFileScanData> allScanData = ModList.get().getAllScanData();
+
+        for (int i = 0, allScanDataSize = allScanData.size(); i < allScanDataSize; i++) {
+            ModFileScanData data = allScanData.get(i);
+
+            for (var annotation : data.getAnnotations()) {
+                if (!annotation.annotationType().equals(type)) {
+                    continue;
+                }
+
+                String namespace = ModList.get().getMods().get(i).getNamespace();
+                String className = annotation.memberName();
+                stateClass.put(namespace, className);
+                break;
+            }
+        }
+
+        return stateClass.values();
+    }
+
+    private static void loadPlugin() {
+        for (Triplet<ResourceLocation, ICameraPlugin, ModifierPriority> triplet : AnnotationFinder.findPlugin()) {
             ModifierRegistry.INSTANCE.register(triplet.getA(), triplet.getB(), triplet.getC());
         }
     }
 
-    private static List<Triplet<ResourceLocation, ICameraPlugin, ModifierPriority>> find() {
+    private static List<Triplet<ResourceLocation, ICameraPlugin, ModifierPriority>> findPlugin() {
         Type type = Type.getType(CameraPlugin.class);
         ArrayList<Triplet<ResourceLocation, ICameraPlugin, ModifierPriority>> plugins = new ArrayList<>();
         List<ModFileScanData> allScanData = ModList.get().getAllScanData();
@@ -70,6 +115,8 @@ public final class PluginFinder {
                 } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
                     throw CameraPluginInitializeException.invocationTarget(name);
                 }
+
+                break;
             }
         }
 

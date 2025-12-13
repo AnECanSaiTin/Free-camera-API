@@ -183,7 +183,7 @@ public interface ICameraModifier {
     /// @return Returns true if the modifier is active.
     default boolean isActive() {
         int state = getState();
-        return state >= 1 && isStateEnabledOr(ModifierStates.ENABLE) && isStateEnabledOr(ModifierStates.POS | ModifierStates.ROT | ModifierStates.FOV);
+        return state >= 1 && isStateEnabledOr(CameraStates.ENABLE) && isStateEnabledOr(CameraStates.POS | CameraStates.ROT | CameraStates.FOV);
     }
 
     /// Gets the unique identifier of the modifier.

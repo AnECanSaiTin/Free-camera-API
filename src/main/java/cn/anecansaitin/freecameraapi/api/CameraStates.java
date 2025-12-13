@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 @SuppressWarnings("unused")
-public class ModifierStates {
+public class CameraStates {
     //相机状态常量
     public static final int ENABLE;
     public static final int POS;
