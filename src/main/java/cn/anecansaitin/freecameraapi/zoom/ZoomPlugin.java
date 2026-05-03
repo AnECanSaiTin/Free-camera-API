@@ -46,6 +46,10 @@ public class ZoomPlugin implements ICameraPlugin {
 
     @Override
     public void update() {
+        if (!enabled) {
+            return;
+        }
+
         float f = ClientUtil.partialTicks();
         modifier.setPos(Mth.lerp(f, posO.x, pos.x), Mth.lerp(f, posO.y, pos.y), Mth.lerp(f, posO.z, pos.z));
         modifier.setFov(ZoomConfig.Client.fov());

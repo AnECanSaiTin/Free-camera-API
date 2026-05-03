@@ -2,6 +2,7 @@ package cn.anecansaitin.freecameraapi;
 
 import cn.anecansaitin.freecameraapi.starup.AnnotationFinder;
 import cn.anecansaitin.freecameraapi.zoom.Zoom;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;

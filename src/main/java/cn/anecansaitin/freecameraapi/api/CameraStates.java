@@ -1,61 +1,11 @@
 package cn.anecansaitin.freecameraapi.api;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-
-@SuppressWarnings("unused")
 public class CameraStates {
     //相机状态常量
-    public static final int ENABLE;
-    public static final int POS;
-    public static final int ROT;
-    public static final int FOV;
-    public static final int OBSTACLE;
-    public static final int GLOBAL_MODE;
-    public static final Object2IntOpenHashMap<String> NAME_STATE = new Object2IntOpenHashMap<>();
-    public static final Int2ObjectOpenHashMap<String> STATE_NAMES = new Int2ObjectOpenHashMap<>();
-
-    private static int COUNTER = 1;
-
-    static {
-        NAME_STATE.defaultReturnValue(-1);
-        STATE_NAMES.defaultReturnValue("Undefined");
-        ENABLE = 1;
-        NAME_STATE.put("enable", ENABLE);
-        STATE_NAMES.put(ENABLE, "enable");
-        POS = nextState("pos");
-        ROT = nextState("rot");
-        FOV = nextState("fov");
-        OBSTACLE = nextState("obstacle");
-        GLOBAL_MODE = nextState("global_mode");
-    }
-
-    public static int nextState(String name) {
-        if (NAME_STATE.containsKey(name)) {
-            throw new IllegalArgumentException("State name already exists: " + name);
-        }
-
-        COUNTER <<= 1;
-        NAME_STATE.put(name, COUNTER);
-        STATE_NAMES.put(COUNTER, name);
-        return COUNTER;
-    }
-
-    public static int getState(String name) {
-        return NAME_STATE.getInt(name);
-    }
-
-    public static String getName(int state) {
-        return STATE_NAMES.get(state);
-    }
-
-    public static MutableComponent getTranslation(String name) {
-        return Component.translatable("free_camera_api.state." + name);
-    }
-
-    public static MutableComponent getTranslation(int state) {
-        return getTranslation(getName(state));
-    }
+    public static final int ENABLE = 1;
+    public static final int POS = 1 << 1;
+    public static final int ROT = 1 << 2;
+    public static final int FOV = 1 << 3;
+    public static final int OBSTACLE = 1 << 4;
+    public static final int GLOBAL_MODE = 1 << 5;
 }

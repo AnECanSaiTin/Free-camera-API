@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;pop()V", ordinal = 0))
-    public void free_camera_api$render(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
+    @Inject(method = "updateCamera", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setup(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;ZZF)V", shift = At.Shift.AFTER))
+    public void free_camera_api$updateCamera(DeltaTracker deltaTracker, CallbackInfo ci) {
         ManagerTicker.tick();
     }
 }
