@@ -3,100 +3,103 @@ package cn.anecansaitin.freecameraapi.api;
 import net.minecraft.resources.Identifier;
 import org.joml.Vector3f;
 
-@SuppressWarnings("unused")
 /// Camera modifier interface, used to define various camera modification operations.
-public interface ICameraModifier {
+///
+/// Must have a constructor with an Identifier parameter.
+/// Example :{@link cn.anecansaitin.freecameraapi.core.Modifier}
+@SuppressWarnings("unused")
+public interface CameraModifier {
     /// Enables position modification.
-    ICameraModifier enablePos();
+    CameraModifier enablePos();
 
     /// Disables position modification.
-    ICameraModifier disablePos();
+    CameraModifier disablePos();
 
     /// Sets the camera position.
     ///
     /// @param x X-axis coordinate.
     /// @param y Y-axis coordinate.
     /// @param z Z-axis coordinate.
-    ICameraModifier setPos(float x, float y, float z);
+    CameraModifier setPos(float x, float y, float z);
 
     /// Sets the camera position.
     ///
     /// @param pos Position vector.
-    ICameraModifier setPos(Vector3f pos);
+    CameraModifier setPos(Vector3f pos);
 
     /// Adds a position offset to the camera.
     ///
     /// @param x X-axis offset.
     /// @param y Y-axis offset.
     /// @param z Z-axis offset.
-    ICameraModifier addPos(float x, float y, float z);
+    CameraModifier addPos(float x, float y, float z);
 
     /// Adds a position offset to the camera.
     ///
     /// @param pos Offset vector.
-    ICameraModifier addPos(Vector3f pos);
+    CameraModifier addPos(Vector3f pos);
 
     /// Enables rotation modification.
-    ICameraModifier enableRotation();
+    CameraModifier enableRotation();
 
     /// Disables rotation modification.
-    ICameraModifier disableRotation();
+    CameraModifier disableRotation();
 
     /// Sets the rotation angles in YXZ order.
     ///
     /// @param xRot X-axis rotation angle.
     /// @param yRot Y-axis rotation angle.
     /// @param zRot Z-axis rotation angle.
-    ICameraModifier setRotationYXZ(float xRot, float yRot, float zRot);
+    CameraModifier setRotationYXZ(float xRot, float yRot, float zRot);
 
     /// Sets the rotation angles in YXZ order.
     ///
     /// @param rot Rotation vector.
-    ICameraModifier setRotationYXZ(Vector3f rot);
+    CameraModifier setRotationYXZ(Vector3f rot);
 
     /// Sets the rotation angles in ZYX order.
     ///
     /// @param xRot X-axis rotation angle.
     /// @param yRot Y-axis rotation angle.
     /// @param zRot Z-axis rotation angle.
-    ICameraModifier setRotationZYX(float xRot, float yRot, float zRot);
+    CameraModifier setRotationZYX(float xRot, float yRot, float zRot);
 
     /// Sets the rotation angles in ZYX order.
     ///
     /// @param rot Rotation vector.
-    ICameraModifier setRotationZYX(Vector3f rot);
+    CameraModifier setRotationZYX(Vector3f rot);
 
     /// Rotates the camera in YXZ order.
     ///
     /// @param xRot X-axis rotation angle.
     /// @param yRot Y-axis rotation angle.
     /// @param zRot Z-axis rotation angle.
-    ICameraModifier rotateYXZ(float xRot, float yRot, float zRot);
+    CameraModifier rotateYXZ(float xRot, float yRot, float zRot);
 
     /// Enables field-of-view (FOV) modification.
-    ICameraModifier enableFov();
+    CameraModifier enableFov();
 
     /// Disables field-of-view (FOV) modification.
-    ICameraModifier disableFov();
+    CameraModifier disableFov();
 
     /// Sets the field-of-view (FOV) angle.
     ///
     /// @param fov Field-of-view angle.
-    ICameraModifier setFov(float fov);
+    CameraModifier setFov(float fov);
 
     /// Moves the camera position.
     ///
     /// @param x X-axis movement.
     /// @param y Y-axis movement.
     /// @param z Z-axis movement.
-    ICameraModifier move(float x, float y, float z);
+    CameraModifier move(float x, float y, float z);
 
     /// Aims the camera at a specified point.
     ///
     /// @param x X-axis coordinate of the target point.
     /// @param y Y-axis coordinate of the target point.
     /// @param z Z-axis coordinate of the target point.
-    ICameraModifier aimAt(float x, float y, float z);
+    CameraModifier aimAt(float x, float y, float z);
 
     /// Gets the current camera position.
     ///
@@ -114,42 +117,42 @@ public interface ICameraModifier {
     float getFov();
 
     /// Enables the modifier.
-    ICameraModifier enable();
+    CameraModifier enable();
 
     /// Disables the modifier.
-    ICameraModifier disable();
+    CameraModifier disable();
 
     /// Disables all states.
-    ICameraModifier disableAll();
+    CameraModifier disableAll();
 
     /// Enables global mode.
-    ICameraModifier enableGlobalMode();
+    CameraModifier enableGlobalMode();
 
     /// Disables global mode.
-    ICameraModifier disableGlobalMode();
+    CameraModifier disableGlobalMode();
 
     /// Enables default obstacle avoidance.
-    ICameraModifier enableObstacle();
+    CameraModifier enableObstacle();
 
     /// Enables default obstacle avoidance.
     ///@param handler When the obstacle is hit, this handler will be called.
-    ICameraModifier enableObstacle(ObstacleHandler handler);
+    CameraModifier enableObstacle(ObstacleHandler handler);
 
     ObstacleHandler getObstacleHandler();
 
     /// Disables default obstacle avoidance.
-    ICameraModifier disableObstacle();
+    CameraModifier disableObstacle();
 
     /// Reverts to vanilla camera settings.
-    ICameraModifier setToVanilla();
+    CameraModifier setToVanilla();
 
     /// Sets position, rotation, and FOV to zero.
-    ICameraModifier clean();
+    CameraModifier clean();
 
     /// Resets all parameters and states.
     ///
     /// Disables all states. Sets position, rotation, and FOV to zero.
-    ICameraModifier reset();
+    CameraModifier reset();
 
     /// Sets the modifier state via an integer bitmask.
     ///
@@ -163,7 +166,7 @@ public interface ICameraModifier {
     /// </pre>
     ///
     /// @param state State bitmask.
-    ICameraModifier setState(int state);
+    CameraModifier setState(int state);
 
     /// Gets the current state bitmask.
     ///

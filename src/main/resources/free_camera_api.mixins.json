@@ -7,7 +7,6 @@
   ],
   "client": [
     "CameraMixin",
-    "GameRendererMixin",
     "LocalPlayerMixin"
   ],
   "injectors": {

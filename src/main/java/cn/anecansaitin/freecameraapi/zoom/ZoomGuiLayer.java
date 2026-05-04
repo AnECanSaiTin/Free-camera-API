@@ -3,7 +3,7 @@ package cn.anecansaitin.freecameraapi.zoom;
 import cn.anecansaitin.freecameraapi.ClientUtil;
 import cn.anecansaitin.freecameraapi.FreeCamera;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
@@ -22,7 +22,7 @@ public class ZoomGuiLayer implements GuiLayer {
     private static final int maxCountdown = 60;
 
     @Override
-    public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public void render(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         int color;
 
         if (countdown > 40) {
@@ -33,7 +33,7 @@ public class ZoomGuiLayer implements GuiLayer {
             color = 0;
         }
 
-        guiGraphics.drawCenteredString(ClientUtil.font(), ZoomPlugin.enabled() ? enabled : disabled, guiGraphics.guiWidth() / 2, guiGraphics.guiHeight() - 70, color);
+        guiGraphics.centeredText(ClientUtil.font(), ZoomPlugin.enabled() ? enabled : disabled, guiGraphics.guiWidth() / 2, guiGraphics.guiHeight() - 70, color);
     }
 
     @SubscribeEvent

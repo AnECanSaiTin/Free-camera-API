@@ -12,7 +12,6 @@ public class FreeCamera {
     public static final String MODID = "free_camera_api";
 
     public FreeCamera(IEventBus modEventBus, ModContainer modContainer) {
-        AnnotationFinder.commonLoading();
         Zoom.serverInit(modContainer);
     }
 }

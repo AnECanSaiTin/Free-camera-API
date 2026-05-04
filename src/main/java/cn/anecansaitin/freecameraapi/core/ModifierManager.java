@@ -1,10 +1,10 @@
 package cn.anecansaitin.freecameraapi.core;
 
+import cn.anecansaitin.freecameraapi.ClientUtil;
 import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
-import cn.anecansaitin.freecameraapi.api.ICameraModifier;
+import cn.anecansaitin.freecameraapi.api.CameraModifier;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
@@ -39,7 +39,7 @@ public class ModifierManager {
     }
 
     private void applyToCamera() {
-        ICameraModifier modifier = ModifierRegistry.INSTANCE.getActiveModifier();
+        CameraModifier modifier = ModifierRegistry.INSTANCE.getActiveModifier();
 
         if (modifier == null) {
             state = 0;
@@ -55,7 +55,7 @@ public class ModifierManager {
         setCamera();
     }
 
-    private void applyPos(ICameraModifier modifier) {
+    private void applyPos(CameraModifier modifier) {
         if (!modifier.isStateEnabledOr(POS)) {
             return;
         }
@@ -63,7 +63,7 @@ public class ModifierManager {
         pos.set(modifier.getPos());
     }
 
-    private void applyRot(ICameraModifier modifier) {
+    private void applyRot(CameraModifier modifier) {
         if (!modifier.isStateEnabledOr(ROT)) {
             return;
         }
@@ -71,7 +71,7 @@ public class ModifierManager {
         rot.set(modifier.getRot());
     }
 
-    private void applyFov(ICameraModifier modifier) {
+    private void applyFov(CameraModifier modifier) {
         if (!modifier.isStateEnabledOr(FOV)) {
             return;
         }
@@ -79,20 +79,20 @@ public class ModifierManager {
         fov = modifier.getFov();
     }
 
-    private void applyGlobal(ICameraModifier modifier) {
+    private void applyGlobal(CameraModifier modifier) {
         if (modifier.isStateEnabledOr(GLOBAL_MODE)) {
             return;
         }
 
         if (modifier.isStateEnabledOr(POS)) {
-            Vec3 playerPos = player().getPosition(camera().getPartialTickTime());
+            Vec3 playerPos = ClientUtil.player().getPosition(ClientUtil.partialTicks());
             pos.add((float) playerPos.x, (float) playerPos.y, (float) playerPos.z);
         }
     }
 
     private final float[] fovDest = new float[1];
 
-    private void applyObstacle(ICameraModifier modifier) {
+    private void applyObstacle(CameraModifier modifier) {
         if (!modifier.isStateEnabledOr(OBSTACLE)) {
             return;
         }
@@ -113,7 +113,7 @@ public class ModifierManager {
 
     private void defaultObstacle(ObstacleHandler obstacleHandler) {
         Vector3f
-                origin = player().getEyePosition(camera().getPartialTickTime()).toVector3f(),
+                origin = ClientUtil.player().getEyePosition(ClientUtil.partialTicks()).toVector3f(),
                 direction = pos.sub(origin, new Vector3f());
         float
                 size = 0.1F,
@@ -130,7 +130,7 @@ public class ModifierManager {
                     begin = new Vec3(origin.x + x, origin.y + y, origin.z + z),
                     end = new Vec3(pos.x + x, pos.y + y, pos.z + z);
 
-            HitResult hitresult = player().level().clip(new ClipContext(begin, end, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, player()));
+            HitResult hitresult = ClientUtil.player().level().clip(new ClipContext(begin, end, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, ClientUtil.player()));
 
             if (hitresult.getType() != HitResult.Type.MISS) {
                 float distance = (float) hitresult.getLocation().distanceToSqr(origin.x, origin.y, origin.z);
@@ -158,10 +158,6 @@ public class ModifierManager {
 
     private Camera camera() {
         return Minecraft.getInstance().gameRenderer.getMainCamera();
-    }
-
-    private LocalPlayer player() {
-        return Minecraft.getInstance().player;
     }
 
     public Vector3f pos() {

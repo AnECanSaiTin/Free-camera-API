@@ -1,7 +1,7 @@
 package cn.anecansaitin.freecameraapi.core;
 
-import cn.anecansaitin.freecameraapi.api.ICameraModifier;
-import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
+import cn.anecansaitin.freecameraapi.api.CameraModifier;
+import cn.anecansaitin.freecameraapi.api.CameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ModifierPriority;
 import net.minecraft.resources.Identifier;
 
@@ -10,11 +10,11 @@ import java.util.*;
 
 public class ModifierRegistry {
     public static final ModifierRegistry INSTANCE = new ModifierRegistry();
-    private final Map<ModifierPriority, List<ICameraModifier>> priorityMap;
-    private final Map<Identifier, ICameraModifier> modifierMap;
-    private final List<ICameraModifier> modifierList;
-    private final List<ICameraModifier> removedList;
-    private final Map<ICameraModifier, ICameraPlugin> plugins;
+    private final Map<ModifierPriority, List<CameraModifier>> priorityMap;
+    private final Map<Identifier, CameraModifier> modifierMap;
+    private final List<CameraModifier> modifierList;
+    private final List<CameraModifier> removedList;
+    private final Map<CameraModifier, CameraPlugin> plugins;
     private boolean frozen = false;
 
     private ModifierRegistry() {
@@ -29,15 +29,15 @@ public class ModifierRegistry {
         }
     }
 
-    public void register(Identifier id, ICameraPlugin plugin) {
+    public void register(Identifier id, CameraPlugin plugin) {
         register(id, plugin, ModifierPriority.NORMAL);
     }
 
-    public void register(Identifier id, ICameraPlugin plugin, ModifierPriority priority) {
+    public void register(Identifier id, CameraPlugin plugin, ModifierPriority priority) {
         register(plugin, priority, new Modifier(id));
     }
 
-    public void register(ICameraPlugin plugin, ModifierPriority priority, ICameraModifier modifier) {
+    public void register(CameraPlugin plugin, ModifierPriority priority, CameraModifier modifier) {
         if (frozen) {
             throw new IllegalStateException("ModifierRegistry is frozen");
         }
@@ -49,7 +49,6 @@ public class ModifierRegistry {
         modifierMap.put(modifier.getId(), modifier);
         priorityMap.get(priority).add(modifier);
         plugins.put(modifier, plugin);
-        plugin.initialize(modifier);
     }
 
     public void freeze(List<String> order, List<String> removed) {
@@ -74,11 +73,11 @@ public class ModifierRegistry {
     }
 
     private void setOrderById(List<String> order, List<String> removed) {
-        ArrayList<ICameraModifier> orderList = new ArrayList<>();
-        ArrayList<ICameraModifier> removedList = new ArrayList<>();
+        ArrayList<CameraModifier> orderList = new ArrayList<>();
+        ArrayList<CameraModifier> removedList = new ArrayList<>();
 
         for (String id : order) {
-            ICameraModifier modifier = modifierMap.get(Identifier.parse(id));
+            CameraModifier modifier = modifierMap.get(Identifier.parse(id));
 
             if (modifier == null) {
                 continue;
@@ -88,7 +87,7 @@ public class ModifierRegistry {
         }
 
         for (String id : removed) {
-            ICameraModifier modifier = modifierMap.get(Identifier.parse(id));
+            CameraModifier modifier = modifierMap.get(Identifier.parse(id));
 
             if (modifier == null) {
                 continue;
@@ -119,25 +118,25 @@ public class ModifierRegistry {
         modifierList.add(newIndex, modifierList.remove(index));
     }
 
-    public List<ICameraModifier> getAllMoModifiers() {
-        ArrayList<ICameraModifier> modifiers = new ArrayList<>();
+    public List<CameraModifier> getAllMoModifiers() {
+        ArrayList<CameraModifier> modifiers = new ArrayList<>();
 
-        for (List<ICameraModifier> value : priorityMap.values()) {
+        for (List<CameraModifier> value : priorityMap.values()) {
             modifiers.addAll(value);
         }
 
         return modifiers;
     }
 
-    public void updateController() {
-        for (ICameraModifier modifier : modifierList) {
-            plugins.get(modifier).update();
+    public void updateController(float partialTicks) {
+        for (CameraModifier modifier : modifierList) {
+            plugins.get(modifier).update(partialTicks);
         }
     }
 
     @Nullable
-    public ICameraModifier getActiveModifier() {
-        for (ICameraModifier modifier : modifierList) {
+    public CameraModifier getActiveModifier() {
+        for (CameraModifier modifier : modifierList) {
             if (modifier.isActive()) {
                 return modifier;
             }

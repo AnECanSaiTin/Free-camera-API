@@ -2,9 +2,9 @@ package cn.anecansaitin.freecameraapi.zoom;
 
 import cn.anecansaitin.freecameraapi.ClientUtil;
 import cn.anecansaitin.freecameraapi.FreeCamera;
+import cn.anecansaitin.freecameraapi.api.Plugin;
+import cn.anecansaitin.freecameraapi.api.CameraModifier;
 import cn.anecansaitin.freecameraapi.api.CameraPlugin;
-import cn.anecansaitin.freecameraapi.api.ICameraModifier;
-import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.util.Mth;
@@ -24,18 +24,17 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import org.joml.Vector3f;
 
-@CameraPlugin(value = "zoom")
+@Plugin("zoom")
 @EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
-public class ZoomPlugin implements ICameraPlugin {
+public class ZoomPlugin implements CameraPlugin {
     public static ZoomPlugin instance;
     private boolean enabled = false;
     private final Vector3f forward = new Vector3f();
     private final Vector3f pos = new Vector3f();
     private final Vector3f posO = new Vector3f();
-    private ICameraModifier modifier;
+    private final CameraModifier modifier;
 
-    @Override
-    public void initialize(ICameraModifier modifier) {
+    public ZoomPlugin(CameraModifier modifier) {
         instance = this;
         this.modifier = modifier;
         modifier.disable()
@@ -45,13 +44,12 @@ public class ZoomPlugin implements ICameraPlugin {
     }
 
     @Override
-    public void update() {
+    public void update(float partialTicks) {
         if (!enabled) {
             return;
         }
 
-        float f = ClientUtil.partialTicks();
-        modifier.setPos(Mth.lerp(f, posO.x, pos.x), Mth.lerp(f, posO.y, pos.y), Mth.lerp(f, posO.z, pos.z));
+        modifier.setPos(Mth.lerp(partialTicks, posO.x, pos.x), Mth.lerp(partialTicks, posO.y, pos.y), Mth.lerp(partialTicks, posO.z, pos.z));
         modifier.setFov(ZoomConfig.Client.fov());
     }
 
@@ -202,6 +200,10 @@ public class ZoomPlugin implements ICameraPlugin {
 
     @SubscribeEvent
     public static void loggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        if (event.getPlayer() == null) {
+            return;
+        }
+
         instance.disable();
     }
 

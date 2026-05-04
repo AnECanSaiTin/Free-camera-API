@@ -3,7 +3,7 @@ package cn.anecansaitin.freecameraapi.core;
 import cn.anecansaitin.freecameraapi.ClientUtil;
 import cn.anecansaitin.freecameraapi.api.CameraStates;
 import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
-import cn.anecansaitin.freecameraapi.api.ICameraModifier;
+import cn.anecansaitin.freecameraapi.api.CameraModifier;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
@@ -14,7 +14,7 @@ import org.joml.Math;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class Modifier implements ICameraModifier{
+public class Modifier implements CameraModifier {
     private final Identifier id;
     private final Vector3f pos = new Vector3f();
     private final Vector3f rot = new Vector3f();
@@ -175,7 +175,7 @@ public class Modifier implements ICameraModifier{
     }
 
     @Override
-    public ICameraModifier disableAll() {
+    public CameraModifier disableAll() {
         state = 0;
         return this;
     }
@@ -193,21 +193,21 @@ public class Modifier implements ICameraModifier{
     }
 
     @Override
-    public ICameraModifier enableObstacle() {
+    public CameraModifier enableObstacle() {
         state |= CameraStates.OBSTACLE;
         obstacleHandler = ObstacleHandler.NULL;
         return this;
     }
 
     @Override
-    public ICameraModifier enableObstacle(@NotNull ObstacleHandler handler) {
+    public CameraModifier enableObstacle(@NotNull ObstacleHandler handler) {
         state |= CameraStates.OBSTACLE;
         obstacleHandler = handler;
         return this;
     }
 
     @Override
-    public ICameraModifier disableObstacle() {
+    public CameraModifier disableObstacle() {
         state &= ~CameraStates.OBSTACLE;
         return this;
     }
@@ -218,7 +218,7 @@ public class Modifier implements ICameraModifier{
     }
 
     @Override
-    public ICameraModifier setToVanilla() {
+    public CameraModifier setToVanilla() {
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         Vec3 position = camera.position();
 
@@ -226,7 +226,7 @@ public class Modifier implements ICameraModifier{
             pos.set(position.x, position.y, position.z);
             rot.set(camera.xRot(), camera.yRot(), camera.getRoll());
         } else {
-            Vec3 playerPos = ClientUtil.player().getPosition(camera.getPartialTickTime());
+            Vec3 playerPos = ClientUtil.player().getPosition(ClientUtil.partialTicks());
             pos.set(position.x - playerPos.x, position.y - playerPos.y, position.z - playerPos.z);
             rot.set(camera.xRot(), camera.yRot(), camera.getRoll());
         }
@@ -236,7 +236,7 @@ public class Modifier implements ICameraModifier{
     }
 
     @Override
-    public ICameraModifier clean() {
+    public CameraModifier clean() {
         pos.zero();
         rot.zero();
         fov = 0;
@@ -244,14 +244,14 @@ public class Modifier implements ICameraModifier{
     }
 
     @Override
-    public ICameraModifier reset() {
+    public CameraModifier reset() {
         disableAll();
         clean();
         return this;
     }
 
     @Override
-    public ICameraModifier setState(int state) {
+    public CameraModifier setState(int state) {
         this.state = state;
         return this;
     }

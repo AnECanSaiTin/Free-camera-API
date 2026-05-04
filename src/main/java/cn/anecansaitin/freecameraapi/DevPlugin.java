@@ -1,20 +1,19 @@
 package cn.anecansaitin.freecameraapi;
 
+import cn.anecansaitin.freecameraapi.api.CameraModifier;
 import cn.anecansaitin.freecameraapi.api.CameraPlugin;
-import cn.anecansaitin.freecameraapi.api.ICameraModifier;
-import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
+import cn.anecansaitin.freecameraapi.api.Plugin;
 
-//@CameraPlugin(value = "dev")
-public class DevPlugin implements ICameraPlugin {
-    private ICameraModifier modifier;
+//@Plugin(value = "dev", modifier = "cn.anecansaitin.freecameraapi.core.Modifier")
+public class DevPlugin implements CameraPlugin {
+    private final CameraModifier modifier;
 
-    @Override
-    public void initialize(ICameraModifier modifier) {
+    public DevPlugin(CameraModifier modifier) {
         this.modifier = modifier;
     }
 
     @Override
-    public void update() {
+    public void update(float partialTicks) {
         modifier.enable().enablePos().enableRotation()
                 .setToVanilla()
                 .addPos(0,1,0);

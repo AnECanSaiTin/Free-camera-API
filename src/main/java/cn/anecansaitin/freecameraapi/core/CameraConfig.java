@@ -1,7 +1,7 @@
 package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.FreeCamera;
-import cn.anecansaitin.freecameraapi.api.ICameraModifier;
+import cn.anecansaitin.freecameraapi.api.CameraModifier;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -95,10 +95,10 @@ public class CameraConfig {
     }
 
     private static List<String> defaultOrderList() {
-        List<ICameraModifier> list = ModifierRegistry.INSTANCE.getAllMoModifiers();
+        List<CameraModifier> list = ModifierRegistry.INSTANCE.getAllMoModifiers();
         ArrayList<String> defaultList = new ArrayList<>();
 
-        for (ICameraModifier modifier : list) {
+        for (CameraModifier modifier : list) {
             defaultList.add(modifier.getId().toString());
         }
 

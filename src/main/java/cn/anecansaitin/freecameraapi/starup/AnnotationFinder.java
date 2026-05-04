@@ -1,9 +1,10 @@
 package cn.anecansaitin.freecameraapi.starup;
 
+import cn.anecansaitin.freecameraapi.api.CameraModifier;
+import cn.anecansaitin.freecameraapi.api.Plugin;
 import cn.anecansaitin.freecameraapi.api.CameraPlugin;
-import cn.anecansaitin.freecameraapi.api.CameraState;
-import cn.anecansaitin.freecameraapi.api.ICameraPlugin;
 import cn.anecansaitin.freecameraapi.api.ModifierPriority;
+import cn.anecansaitin.freecameraapi.core.Modifier;
 import cn.anecansaitin.freecameraapi.core.ModifierRegistry;
 import net.minecraft.resources.Identifier;
 import net.neoforged.fml.ModList;
@@ -15,62 +16,22 @@ import oshi.util.tuples.Triplet;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.TreeMap;
 
 public final class AnnotationFinder {
     public static void clientLoading() {
-        loadState();
         loadPlugin();
     }
 
-    public static void commonLoading() {
-        loadState();
-    }
-
-    private static void loadState() {
-        try {
-            for (String clazz : findState()) {
-                Class.forName(clazz);
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Collection<String> findState() {
-        Type type = Type.getType(CameraState.class);
-        TreeMap<String, String> stateClass = new TreeMap<>();
-        List<ModFileScanData> allScanData = ModList.get().getAllScanData();
-
-        for (int i = 0, allScanDataSize = allScanData.size(); i < allScanDataSize; i++) {
-            ModFileScanData data = allScanData.get(i);
-
-            for (var annotation : data.getAnnotations()) {
-                if (!annotation.annotationType().equals(type)) {
-                    continue;
-                }
-
-                String namespace = ModList.get().getMods().get(i).getNamespace();
-                String className = annotation.memberName();
-                stateClass.put(namespace, className);
-                break;
-            }
-        }
-
-        return stateClass.values();
-    }
-
     private static void loadPlugin() {
-        for (Triplet<Identifier, ICameraPlugin, ModifierPriority> triplet : AnnotationFinder.findPlugin()) {
-            ModifierRegistry.INSTANCE.register(triplet.getA(), triplet.getB(), triplet.getC());
+        for (Triplet<CameraModifier, CameraPlugin, ModifierPriority> triplet : AnnotationFinder.findPlugin()) {
+            ModifierRegistry.INSTANCE.register(triplet.getB(), triplet.getC(), triplet.getA());
         }
     }
 
-    private static List<Triplet<Identifier, ICameraPlugin, ModifierPriority>> findPlugin() {
-        Type type = Type.getType(CameraPlugin.class);
-        ArrayList<Triplet<Identifier, ICameraPlugin, ModifierPriority>> plugins = new ArrayList<>();
+    private static List<Triplet<CameraModifier, CameraPlugin, ModifierPriority>> findPlugin() {
+        Type type = Type.getType(Plugin.class);
+        ArrayList<Triplet<CameraModifier, CameraPlugin, ModifierPriority>> plugins = new ArrayList<>();
         List<ModFileScanData> allScanData = ModList.get().getAllScanData();
         boolean dev = !FMLEnvironment.isProduction();
 
@@ -85,6 +46,7 @@ public final class AnnotationFinder {
                 String name = null;
 
                 try {
+                    // region 读取id
                     String value = annotation.annotationData().get("value").toString();
 
                     if (!dev && value.equals("dev")) {
@@ -93,30 +55,52 @@ public final class AnnotationFinder {
 
                     String namespace = ModList.get().getMods().get(i).getNamespace();
                     Identifier id = Identifier.fromNamespaceAndPath(namespace, value);
+                    // endregion
+                    // region 读取优先级
                     ModAnnotation.EnumHolder priorityHolder = (ModAnnotation.EnumHolder) annotation.annotationData().get("priority");
                     ModifierPriority priority = ModifierPriority.NORMAL;
 
                     if (priorityHolder != null) {
                         priority = ModifierPriority.valueOf(priorityHolder.value());
                     }
+                    // endregion
+                    // region 读取modifier
+                    String modifierClass = (String) annotation.annotationData().get("modifier");
+                    CameraModifier modifier;
+
+                    if (modifierClass != null) {
+                        try {
+                            modifier = Class.forName(modifierClass)
+                                    .asSubclass(CameraModifier.class)
+                                    .getConstructor(Identifier.class)
+                                    .newInstance(id);
+                        }  catch (ClassNotFoundException e) {
+                            throw CameraPluginInitializeException.modifierClassNotFound(name);
+                        } catch (NoSuchMethodException e) {
+                            throw CameraPluginInitializeException.modifierNoSuchConstructor(name);
+                        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+                            throw CameraPluginInitializeException.modifierInvocationTarget(name);
+                        }
+                    } else {
+                        modifier = new Modifier(id);
+                    }
+                    // endregion
 
                     name = annotation.memberName();
-                    ICameraPlugin plugin = Class
+                    CameraPlugin plugin = Class
                             .forName(name)
-                            .asSubclass(ICameraPlugin.class)
-                            .getDeclaredConstructor()
-                            .newInstance();
-                    plugins.add(new Triplet<>(id, plugin, priority));
+                            .asSubclass(CameraPlugin.class)
+                            .getConstructor(CameraModifier.class)
+                            .newInstance(modifier);
+                    plugins.add(new Triplet<>(modifier, plugin, priority));
 
                 } catch (ClassNotFoundException e) {
-                    throw CameraPluginInitializeException.classNotFound(name);
+                    throw CameraPluginInitializeException.pluginClassNotFound(name);
                 } catch (NoSuchMethodException e) {
-                    throw CameraPluginInitializeException.noSuchMethod(name);
+                    throw CameraPluginInitializeException.pluginNoSuchConstructor(name);
                 } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                    throw CameraPluginInitializeException.invocationTarget(name);
+                    throw CameraPluginInitializeException.pluginInvocationTarget(name);
                 }
-
-                break;
             }
         }
 
