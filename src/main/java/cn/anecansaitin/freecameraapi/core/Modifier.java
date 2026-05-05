@@ -1,6 +1,7 @@
 package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.ClientUtil;
+import cn.anecansaitin.freecameraapi.api.CameraDataType;
 import cn.anecansaitin.freecameraapi.api.CameraStates;
 import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
 import cn.anecansaitin.freecameraapi.api.CameraModifier;
@@ -14,6 +15,8 @@ import org.joml.Math;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.HashMap;
+
 public class Modifier implements CameraModifier {
     private final Identifier id;
     private final Vector3f pos = new Vector3f();
@@ -21,6 +24,7 @@ public class Modifier implements CameraModifier {
     private float fov;
     private int state;
     private ObstacleHandler obstacleHandler;
+    private final HashMap<Class<?>, Object> cameraData = new HashMap<>();
 
     public Modifier(Identifier id) {
         this.id = id;
@@ -264,5 +268,17 @@ public class Modifier implements CameraModifier {
     @Override
     public Identifier getId() {
         return id;
+    }
+
+    @Override
+    public <T> T getData(CameraDataType<T> dataType) {
+        Object data = this.cameraData.get(dataType.type());
+
+        if (data == null) {
+            data = dataType.create();
+            this.cameraData.put(dataType.type(), data);
+        }
+
+        return dataType.type().cast(data);
     }
 }

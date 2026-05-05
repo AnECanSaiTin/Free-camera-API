@@ -193,4 +193,9 @@ public interface CameraModifier {
     ///
     /// @return Returns the resource location.
     Identifier getId();
+
+    /// Gets the camera data of the given type.
+    ///
+    /// @return Returns the camera data.
+    <T> T getData(CameraDataType<T> dataType);
 }
