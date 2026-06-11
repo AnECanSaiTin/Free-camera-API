@@ -1,11 +1,16 @@
 package cn.anecansaitin.freecameraapi.api;
 
-public class CameraStates {
-    //相机状态常量
-    public static final int ENABLE = 1;
-    public static final int POS = 1 << 1;
-    public static final int ROT = 1 << 2;
-    public static final int FOV = 1 << 3;
-    public static final int OBSTACLE = 1 << 4;
-    public static final int GLOBAL_MODE = 1 << 5;
+public enum CameraStates {
+    ENABLE(1),
+    POS(1 << 1),
+    ROT(1 << 2),
+    FOV(1 << 3),
+    OBSTACLE(1 << 4),
+    GLOBAL_MODE(1 << 5);
+
+    public final int code;
+
+    CameraStates(int code) {
+        this.code = code;
+    }
 }

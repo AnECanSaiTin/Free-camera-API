@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin {
     @Inject(method = "hurtTo", at = @At("HEAD"))
-    public void hurtTo(float health, CallbackInfo ci) {
+    public void hurtTo(float newHealth, CallbackInfo ci) {
         if (!ZoomPlugin.enabled() || !ZoomConfig.Client.hurtExit()) {
             return;
         }

@@ -1,10 +1,7 @@
 package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.ClientUtil;
-import cn.anecansaitin.freecameraapi.api.CameraDataType;
-import cn.anecansaitin.freecameraapi.api.CameraStates;
-import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
-import cn.anecansaitin.freecameraapi.api.CameraModifier;
+import cn.anecansaitin.freecameraapi.api.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
@@ -24,7 +21,7 @@ public class Modifier implements CameraModifier {
     private float fov;
     private int state;
     private ObstacleHandler obstacleHandler;
-    private final HashMap<Class<?>, Object> cameraData = new HashMap<>();
+    private final HashMap<Class<?>, CameraData> cameraData = new HashMap<>();
 
     public Modifier(Identifier id) {
         this.id = id;
@@ -32,13 +29,13 @@ public class Modifier implements CameraModifier {
 
     @Override
     public Modifier enablePos() {
-        state |= CameraStates.POS;
+        state |= CameraStates.POS.code;
         return this;
     }
 
     @Override
     public Modifier disablePos() {
-        state &= ~CameraStates.POS;
+        state &= ~CameraStates.POS.code;
         return this;
     }
 
@@ -66,13 +63,13 @@ public class Modifier implements CameraModifier {
 
     @Override
     public Modifier enableRotation() {
-        state |= CameraStates.ROT;
+        state |= CameraStates.ROT.code;
         return this;
     }
 
     @Override
     public Modifier disableRotation() {
-        state &= ~CameraStates.ROT;
+        state &= ~CameraStates.ROT.code;
         return this;
     }
 
@@ -116,13 +113,13 @@ public class Modifier implements CameraModifier {
 
     @Override
     public Modifier enableFov() {
-        state |= CameraStates.FOV;
+        state |= CameraStates.FOV.code;
         return this;
     }
 
     @Override
     public Modifier disableFov() {
-        state &= ~CameraStates.FOV;
+        state &= ~CameraStates.FOV.code;
         return this;
     }
 
@@ -168,13 +165,13 @@ public class Modifier implements CameraModifier {
 
     @Override
     public Modifier enable() {
-        state |= CameraStates.ENABLE;
+        state |= CameraStates.ENABLE.code;
         return this;
     }
 
     @Override
     public Modifier disable() {
-        state &= ~CameraStates.ENABLE;
+        state &= ~CameraStates.ENABLE.code;
         return this;
     }
 
@@ -186,33 +183,33 @@ public class Modifier implements CameraModifier {
 
     @Override
     public Modifier enableGlobalMode() {
-        state |= CameraStates.GLOBAL_MODE;
+        state |= CameraStates.GLOBAL_MODE.code;
         return this;
     }
 
     @Override
     public Modifier disableGlobalMode() {
-        state &= ~CameraStates.GLOBAL_MODE;
+        state &= ~CameraStates.GLOBAL_MODE.code;
         return this;
     }
 
     @Override
     public CameraModifier enableObstacle() {
-        state |= CameraStates.OBSTACLE;
+        state |= CameraStates.OBSTACLE.code;
         obstacleHandler = ObstacleHandler.NULL;
         return this;
     }
 
     @Override
     public CameraModifier enableObstacle(@NotNull ObstacleHandler handler) {
-        state |= CameraStates.OBSTACLE;
+        state |= CameraStates.OBSTACLE.code;
         obstacleHandler = handler;
         return this;
     }
 
     @Override
     public CameraModifier disableObstacle() {
-        state &= ~CameraStates.OBSTACLE;
+        state &= ~CameraStates.OBSTACLE.code;
         return this;
     }
 
@@ -226,7 +223,7 @@ public class Modifier implements CameraModifier {
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         Vec3 position = camera.position();
 
-        if (isStateEnabledOr(CameraStates.GLOBAL_MODE)) {
+        if (isStateEnabledOr(CameraStates.GLOBAL_MODE.code)) {
             pos.set(position.x, position.y, position.z);
             rot.set(camera.xRot(), camera.yRot(), camera.getRoll());
         } else {
@@ -271,8 +268,8 @@ public class Modifier implements CameraModifier {
     }
 
     @Override
-    public <T> T getData(CameraDataType<T> dataType) {
-        Object data = this.cameraData.get(dataType.type());
+    public <T extends CameraData> T getData(CameraDataType<T> dataType) {
+        CameraData data = this.cameraData.get(dataType.type());
 
         if (data == null) {
             data = dataType.create();
@@ -280,5 +277,10 @@ public class Modifier implements CameraModifier {
         }
 
         return dataType.type().cast(data);
+    }
+
+    @Override
+    public HashMap<Class<?>, CameraData> getAllData() {
+        return cameraData;
     }
 }

@@ -2,7 +2,7 @@ package cn.anecansaitin.freecameraapi.api;
 
 import java.util.function.Supplier;
 
-public class CameraDataType<T> {
+public class CameraDataType<T extends CameraData> {
     private final Class<T> type;
     private final Supplier<T> create;
 

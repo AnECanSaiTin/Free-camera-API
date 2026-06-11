@@ -3,6 +3,8 @@ package cn.anecansaitin.freecameraapi.api;
 import net.minecraft.resources.Identifier;
 import org.joml.Vector3f;
 
+import java.util.HashMap;
+
 /// Camera modifier interface, used to define various camera modification operations.
 ///
 /// Must have a constructor with an Identifier parameter.
@@ -186,7 +188,7 @@ public interface CameraModifier {
     /// @return Returns true if the modifier is active.
     default boolean isActive() {
         int state = getState();
-        return state >= 1 && isStateEnabledOr(CameraStates.ENABLE) && isStateEnabledOr(CameraStates.POS | CameraStates.ROT | CameraStates.FOV);
+        return state >= 1 && isStateEnabledOr(CameraStates.ENABLE.code) && isStateEnabledOr(CameraStates.POS.code | CameraStates.ROT.code | CameraStates.FOV.code);
     }
 
     /// Gets the unique identifier of the modifier.
@@ -197,5 +199,7 @@ public interface CameraModifier {
     /// Gets the camera data of the given type.
     ///
     /// @return Returns the camera data.
-    <T> T getData(CameraDataType<T> dataType);
+    <T extends CameraData> T getData(CameraDataType<T> dataType);
+
+    HashMap<Class<?>, CameraData> getAllData();
 }

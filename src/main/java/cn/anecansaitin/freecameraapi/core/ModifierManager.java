@@ -1,6 +1,8 @@
 package cn.anecansaitin.freecameraapi.core;
 
 import cn.anecansaitin.freecameraapi.ClientUtil;
+import cn.anecansaitin.freecameraapi.api.CameraData;
+import cn.anecansaitin.freecameraapi.api.CameraDataType;
 import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
 import cn.anecansaitin.freecameraapi.api.CameraModifier;
 import net.minecraft.client.Camera;
@@ -11,6 +13,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
+import java.util.HashMap;
+
 import static cn.anecansaitin.freecameraapi.api.CameraStates.*;
 
 public class ModifierManager {
@@ -19,6 +23,7 @@ public class ModifierManager {
     private final Vector3f rot;// 旋转
     private float fov;// 视场
     private int state;// 状态
+    private HashMap<Class<?>, CameraData> cameraData = new HashMap<>();
 
     private ModifierManager() {
         pos = new Vector3f();
@@ -28,6 +33,7 @@ public class ModifierManager {
     public void modify() {
         setToVanilla();
         applyToCamera();
+        updateCamera();
     }
 
     private void setToVanilla() {
@@ -52,11 +58,11 @@ public class ModifierManager {
         applyFov(modifier);
         applyGlobal(modifier);
         applyObstacle(modifier);
-        setCamera();
+        applyCameraData(modifier);
     }
 
     private void applyPos(CameraModifier modifier) {
-        if (!modifier.isStateEnabledOr(POS)) {
+        if (!modifier.isStateEnabledOr(POS.code)) {
             return;
         }
 
@@ -64,7 +70,7 @@ public class ModifierManager {
     }
 
     private void applyRot(CameraModifier modifier) {
-        if (!modifier.isStateEnabledOr(ROT)) {
+        if (!modifier.isStateEnabledOr(ROT.code)) {
             return;
         }
 
@@ -72,7 +78,7 @@ public class ModifierManager {
     }
 
     private void applyFov(CameraModifier modifier) {
-        if (!modifier.isStateEnabledOr(FOV)) {
+        if (!modifier.isStateEnabledOr(FOV.code)) {
             return;
         }
 
@@ -80,11 +86,11 @@ public class ModifierManager {
     }
 
     private void applyGlobal(CameraModifier modifier) {
-        if (modifier.isStateEnabledOr(GLOBAL_MODE)) {
+        if (modifier.isStateEnabledOr(GLOBAL_MODE.code)) {
             return;
         }
 
-        if (modifier.isStateEnabledOr(POS)) {
+        if (modifier.isStateEnabledOr(POS.code)) {
             Vec3 playerPos = ClientUtil.player().getPosition(ClientUtil.partialTicks());
             pos.add((float) playerPos.x, (float) playerPos.y, (float) playerPos.z);
         }
@@ -93,7 +99,7 @@ public class ModifierManager {
     private final float[] fovDest = new float[1];
 
     private void applyObstacle(CameraModifier modifier) {
-        if (!modifier.isStateEnabledOr(OBSTACLE)) {
+        if (!modifier.isStateEnabledOr(OBSTACLE.code)) {
             return;
         }
 
@@ -149,6 +155,21 @@ public class ModifierManager {
         obstacleHandler.onCollision(pos, rot, fov);
     }
 
+    private void applyCameraData(CameraModifier modifier) {
+        cameraData = modifier.getAllData();
+    }
+
+    private void updateCamera() {
+        updateCameraData();
+        setCamera();
+    }
+
+    private void updateCameraData() {
+        for (CameraData data : cameraData.values()) {
+            data.update();
+        }
+    }
+
     private void setCamera() {
         Camera camera = camera();
         camera.setRotation(rot.y, rot.x, rot.z);
@@ -178,5 +199,17 @@ public class ModifierManager {
 
     public boolean isStateEnabledOr(int mask) {
         return (state & mask) != 0;
+    }
+
+    public <T extends CameraData> T getData(CameraDataType<T> dataType) {
+        Class<T> type = dataType.type();
+        CameraData data = cameraData.get(type);
+
+        if (data == null) {
+            data = dataType.create();
+            cameraData.put(type, data);
+        }
+
+        return type.cast(data);
     }
 }
