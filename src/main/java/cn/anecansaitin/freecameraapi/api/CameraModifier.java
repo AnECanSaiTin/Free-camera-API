@@ -2,6 +2,7 @@ package cn.anecansaitin.freecameraapi.api;
 
 import net.minecraft.resources.Identifier;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.HashMap;
 
@@ -103,15 +104,19 @@ public interface CameraModifier {
     /// @param z Z-axis coordinate of the target point.
     CameraModifier aimAt(float x, float y, float z);
 
-    /// Gets the current camera position.
+    /// Gets the current camera position (read-only view).
     ///
-    /// @return Returns the camera position vector.
-    Vector3f getPos();
+    /// 调用方不得修改返回值；如需写入使用 [setPos] 或先复制为 [Vector3f]。
+    ///
+    /// @return Returns the camera position vector (read-only).
+    Vector3fc getPos();
 
-    /// Gets the current camera rotation angles.
+    /// Gets the current camera rotation angles (read-only view).
     ///
-    /// @return Returns the rotation vector.
-    Vector3f getRot();
+    /// 调用方不得修改返回值；如需写入使用 [setRotationYXZ] / [setRotationZYX] 或先复制为 [Vector3f]。
+    ///
+    /// @return Returns the rotation vector (read-only).
+    Vector3fc getRot();
 
     /// Gets the current field-of-view (FOV) angle.
     ///

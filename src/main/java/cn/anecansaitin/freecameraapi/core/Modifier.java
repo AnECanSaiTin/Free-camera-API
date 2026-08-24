@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Math;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.HashMap;
 
@@ -149,12 +150,12 @@ public class Modifier implements CameraModifier {
     }
 
     @Override
-    public Vector3f getPos() {
+    public Vector3fc getPos() {
         return pos;
     }
 
     @Override
-    public Vector3f getRot() {
+    public Vector3fc getRot() {
         return rot;
     }
 
