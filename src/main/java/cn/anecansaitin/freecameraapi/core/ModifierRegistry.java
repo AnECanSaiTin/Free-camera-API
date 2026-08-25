@@ -73,8 +73,8 @@ public class ModifierRegistry {
     }
 
     private void setOrderById(List<String> order, List<String> removed) {
-        ArrayList<CameraModifier> orderList = new ArrayList<>();
-        ArrayList<CameraModifier> removedList = new ArrayList<>();
+        ArrayList<CameraModifier> ordered = new ArrayList<>();
+        ArrayList<CameraModifier> toRemove = new ArrayList<>();
 
         for (String id : order) {
             CameraModifier modifier = modifierMap.get(Identifier.parse(id));
@@ -83,7 +83,7 @@ public class ModifierRegistry {
                 continue;
             }
 
-            orderList.add(modifier);
+            ordered.add(modifier);
         }
 
         for (String id : removed) {
@@ -93,14 +93,14 @@ public class ModifierRegistry {
                 continue;
             }
 
-            removedList.add(modifier);
+            toRemove.add(modifier);
         }
 
-        modifierList.removeAll(orderList);
-        modifierList.addAll(0, orderList);
-        modifierList.removeAll(removedList);
+        modifierList.removeAll(ordered);
+        modifierList.addAll(0, ordered);
+        modifierList.removeAll(toRemove);
         this.removedList.clear();
-        this.removedList.addAll(removedList);
+        this.removedList.addAll(toRemove);
     }
 
     /// 移动一个修改器到新位置
@@ -113,9 +113,9 @@ public class ModifierRegistry {
         removedList.add(modifierList.remove(index));
     }
 
-    /// 从已移除取回修改器
+    /// 从已移除列表取回修改器，放回 active modifierList 的 newIndex 位置
     public void moveBack(int index, int newIndex) {
-        modifierList.add(newIndex, modifierList.remove(index));
+        modifierList.add(newIndex, removedList.remove(index));
     }
 
     public List<CameraModifier> getAllMoModifiers() {

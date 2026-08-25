@@ -12,11 +12,32 @@ import java.util.HashMap;
 /// Example :{@link cn.anecansaitin.freecameraapi.core.Modifier}
 @SuppressWarnings("unused")
 public interface CameraModifier {
-    /// Enables position modification.
+    /// Enables all three position components (X + Y + Z).
+    ///
+    /// Equivalent to enabling {@link CameraStates#POS_X}, {@link CameraStates#POS_Y},
+    /// {@link CameraStates#POS_Z} simultaneously.
     CameraModifier enablePos();
 
-    /// Disables position modification.
+    /// Disables all three position components.
     CameraModifier disablePos();
+
+    /// Enables only the X position component.
+    CameraModifier enablePosX();
+
+    /// Disables only the X position component.
+    CameraModifier disablePosX();
+
+    /// Enables only the Y position component.
+    CameraModifier enablePosY();
+
+    /// Disables only the Y position component.
+    CameraModifier disablePosY();
+
+    /// Enables only the Z position component.
+    CameraModifier enablePosZ();
+
+    /// Disables only the Z position component.
+    CameraModifier disablePosZ();
 
     /// Sets the camera position.
     ///
@@ -42,11 +63,50 @@ public interface CameraModifier {
     /// @param pos Offset vector.
     CameraModifier addPos(Vector3f pos);
 
-    /// Enables rotation modification.
+    /// Sets only the X position component.
+    CameraModifier setPosX(float x);
+
+    /// Sets only the Y position component.
+    CameraModifier setPosY(float y);
+
+    /// Sets only the Z position component.
+    CameraModifier setPosZ(float z);
+
+    /// Adds an offset to the X position component.
+    CameraModifier addPosX(float x);
+
+    /// Adds an offset to the Y position component.
+    CameraModifier addPosY(float y);
+
+    /// Adds an offset to the Z position component.
+    CameraModifier addPosZ(float z);
+
+    /// Enables all three rotation components (X + Y + Z).
+    ///
+    /// Equivalent to enabling {@link CameraStates#ROT_X}, {@link CameraStates#ROT_Y},
+    /// {@link CameraStates#ROT_Z} simultaneously.
     CameraModifier enableRotation();
 
-    /// Disables rotation modification.
+    /// Disables all three rotation components.
     CameraModifier disableRotation();
+
+    /// Enables only the X rotation component.
+    CameraModifier enableRotX();
+
+    /// Disables only the X rotation component.
+    CameraModifier disableRotX();
+
+    /// Enables only the Y rotation component.
+    CameraModifier enableRotY();
+
+    /// Disables only the Y rotation component.
+    CameraModifier disableRotY();
+
+    /// Enables only the Z rotation component.
+    CameraModifier enableRotZ();
+
+    /// Disables only the Z rotation component.
+    CameraModifier disableRotZ();
 
     /// Sets the rotation angles in YXZ order.
     ///
@@ -78,6 +138,24 @@ public interface CameraModifier {
     /// @param yRot Y-axis rotation angle.
     /// @param zRot Z-axis rotation angle.
     CameraModifier rotateYXZ(float xRot, float yRot, float zRot);
+
+    /// Sets only the X rotation component (degrees).
+    CameraModifier setRotX(float xRot);
+
+    /// Sets only the Y rotation component (degrees).
+    CameraModifier setRotY(float yRot);
+
+    /// Sets only the Z rotation component (degrees).
+    CameraModifier setRotZ(float zRot);
+
+    /// Adds a delta to the X rotation component (degrees).
+    CameraModifier rotateX(float xRot);
+
+    /// Adds a delta to the Y rotation component (degrees).
+    CameraModifier rotateY(float yRot);
+
+    /// Adds a delta to the Z rotation component (degrees).
+    CameraModifier rotateZ(float zRot);
 
     /// Enables field-of-view (FOV) modification.
     CameraModifier enableFov();
@@ -188,12 +266,20 @@ public interface CameraModifier {
         return (getState() & state) != 0;
     }
 
+    /// Checks if all bits in the given mask are enabled.
+    ///
+    /// @param mask State bitmask.
+    /// @return Returns true if every bit in mask is set.
+    default boolean isStateEnabledAnd(int mask) {
+        return (getState() & mask) == mask;
+    }
+
     /// Determines whether the modifier is active.
     ///
-    /// @return Returns true if the modifier is active.
+    /// @return Returns true if ENABLE is on and at least one of POS/ROT/FOV component bits is set.
     default boolean isActive() {
-        int state = getState();
-        return state >= 1 && isStateEnabledOr(CameraStates.ENABLE.code) && isStateEnabledOr(CameraStates.POS.code | CameraStates.ROT.code | CameraStates.FOV.code);
+        return isStateEnabledOr(CameraStates.ENABLE.code)
+                && isStateEnabledOr(CameraStates.POS.code | CameraStates.ROT.code | CameraStates.FOV.code);
     }
 
     /// Gets the unique identifier of the modifier.

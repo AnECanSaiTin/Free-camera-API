@@ -24,7 +24,7 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import org.joml.Vector3f;
 
-@Plugin("zoom")
+@Plugin(value = "zoom", modid = FreeCamera.MODID)
 @EventBusSubscriber(modid = FreeCamera.MODID, value = Dist.CLIENT)
 public class ZoomPlugin implements CameraPlugin {
     public static ZoomPlugin instance;
@@ -60,6 +60,10 @@ public class ZoomPlugin implements CameraPlugin {
         posO.set(pos);
         ClientUtil.disableBobView();
         ClientUtil.toThirdView();
+        // TODO: Zoom 当前不启用 rotation 分量（enableRotation），保持 vanilla 视角。
+        //   若未来需要 zoom 自行控制旋转（如自由视角 zoom），需在此同步玩家当前视角：
+        //   modifier.setRotationYXZ(player.getXRot(), player.getYRot(), 0);
+        //   并在构造器中 modifier.enableRotation()。
     }
 
     public void disable() {

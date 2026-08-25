@@ -17,6 +17,10 @@ public class CameraPluginInitializeException extends RuntimeException {
         return new CameraPluginInitializeException("Plugin class \"" + className + "\" execute constructor failed");
     }
 
+    public static CameraPluginInitializeException pluginMissingModid(String className) {
+        return new CameraPluginInitializeException("Plugin class \"" + className + "\" missing required @Plugin(modid = ...)");
+    }
+
     public static CameraPluginInitializeException modifierClassNotFound(String className) {
         return new CameraPluginInitializeException("Modifier class \"" + className + "\" not found");
     }

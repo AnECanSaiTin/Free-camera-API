@@ -41,6 +41,42 @@ public class Modifier implements CameraModifier {
     }
 
     @Override
+    public Modifier enablePosX() {
+        state |= CameraStates.POS_X.code;
+        return this;
+    }
+
+    @Override
+    public Modifier disablePosX() {
+        state &= ~CameraStates.POS_X.code;
+        return this;
+    }
+
+    @Override
+    public Modifier enablePosY() {
+        state |= CameraStates.POS_Y.code;
+        return this;
+    }
+
+    @Override
+    public Modifier disablePosY() {
+        state &= ~CameraStates.POS_Y.code;
+        return this;
+    }
+
+    @Override
+    public Modifier enablePosZ() {
+        state |= CameraStates.POS_Z.code;
+        return this;
+    }
+
+    @Override
+    public Modifier disablePosZ() {
+        state &= ~CameraStates.POS_Z.code;
+        return this;
+    }
+
+    @Override
     public Modifier setPos(float x, float y, float z) {
         pos.set(x, y, z);
         return this;
@@ -63,6 +99,42 @@ public class Modifier implements CameraModifier {
     }
 
     @Override
+    public Modifier setPosX(float x) {
+        pos.x = x;
+        return this;
+    }
+
+    @Override
+    public Modifier setPosY(float y) {
+        pos.y = y;
+        return this;
+    }
+
+    @Override
+    public Modifier setPosZ(float z) {
+        pos.z = z;
+        return this;
+    }
+
+    @Override
+    public Modifier addPosX(float x) {
+        pos.x += x;
+        return this;
+    }
+
+    @Override
+    public Modifier addPosY(float y) {
+        pos.y += y;
+        return this;
+    }
+
+    @Override
+    public Modifier addPosZ(float z) {
+        pos.z += z;
+        return this;
+    }
+
+    @Override
     public Modifier enableRotation() {
         state |= CameraStates.ROT.code;
         return this;
@@ -71,6 +143,42 @@ public class Modifier implements CameraModifier {
     @Override
     public Modifier disableRotation() {
         state &= ~CameraStates.ROT.code;
+        return this;
+    }
+
+    @Override
+    public Modifier enableRotX() {
+        state |= CameraStates.ROT_X.code;
+        return this;
+    }
+
+    @Override
+    public Modifier disableRotX() {
+        state &= ~CameraStates.ROT_X.code;
+        return this;
+    }
+
+    @Override
+    public Modifier enableRotY() {
+        state |= CameraStates.ROT_Y.code;
+        return this;
+    }
+
+    @Override
+    public Modifier disableRotY() {
+        state &= ~CameraStates.ROT_Y.code;
+        return this;
+    }
+
+    @Override
+    public Modifier enableRotZ() {
+        state |= CameraStates.ROT_Z.code;
+        return this;
+    }
+
+    @Override
+    public Modifier disableRotZ() {
+        state &= ~CameraStates.ROT_Z.code;
         return this;
     }
 
@@ -98,6 +206,42 @@ public class Modifier implements CameraModifier {
     @Override
     public Modifier rotateYXZ(float xRot, float yRot, float zRot) {
         rot.add(xRot, yRot, zRot);
+        return this;
+    }
+
+    @Override
+    public Modifier setRotX(float xRot) {
+        rot.x = xRot;
+        return this;
+    }
+
+    @Override
+    public Modifier setRotY(float yRot) {
+        rot.y = yRot;
+        return this;
+    }
+
+    @Override
+    public Modifier setRotZ(float zRot) {
+        rot.z = zRot;
+        return this;
+    }
+
+    @Override
+    public Modifier rotateX(float xRot) {
+        rot.x += xRot;
+        return this;
+    }
+
+    @Override
+    public Modifier rotateY(float yRot) {
+        rot.y += yRot;
+        return this;
+    }
+
+    @Override
+    public Modifier rotateZ(float zRot) {
+        rot.z += zRot;
         return this;
     }
 
@@ -197,7 +341,7 @@ public class Modifier implements CameraModifier {
     @Override
     public CameraModifier enableObstacle() {
         state |= CameraStates.OBSTACLE.code;
-        obstacleHandler = ObstacleHandler.NULL;
+        obstacleHandler = ObstacleHandler.DEFAULT;
         return this;
     }
 

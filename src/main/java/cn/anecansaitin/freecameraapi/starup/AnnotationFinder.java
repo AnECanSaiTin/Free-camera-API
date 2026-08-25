@@ -35,9 +35,7 @@ public final class AnnotationFinder {
         List<ModFileScanData> allScanData = ModList.get().getAllScanData();
         boolean dev = !FMLEnvironment.isProduction();
 
-        for (int i = 0, allScanDataSize = allScanData.size(); i < allScanDataSize; i++) {
-            ModFileScanData data = allScanData.get(i);
-
+        for (ModFileScanData data : allScanData) {
             for (ModFileScanData.AnnotationData annotation : data.getAnnotations()) {
                 if (!annotation.annotationType().equals(type)) {
                     continue;
@@ -53,8 +51,15 @@ public final class AnnotationFinder {
                         continue;
                     }
 
-                    String namespace = ModList.get().getMods().get(i).getNamespace();
-                    Identifier id = Identifier.fromNamespaceAndPath(namespace, value);
+                    // region 读取 modid（注解必须手动声明）
+                    Object modidObj = annotation.annotationData().get("modid");
+
+                    if (modidObj == null || modidObj.toString().isEmpty()) {
+                        throw CameraPluginInitializeException.pluginMissingModid(annotation.memberName());
+                    }
+
+                    String modid = modidObj.toString();
+                    Identifier id = Identifier.fromNamespaceAndPath(modid, value);
                     // endregion
                     // region 读取优先级
                     ModAnnotation.EnumHolder priorityHolder = (ModAnnotation.EnumHolder) annotation.annotationData().get("priority");
