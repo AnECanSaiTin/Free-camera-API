@@ -3,7 +3,6 @@ package cn.anecansaitin.freecameraapi.core;
 import cn.anecansaitin.freecameraapi.ClientUtil;
 import cn.anecansaitin.freecameraapi.api.CameraData;
 import cn.anecansaitin.freecameraapi.api.CameraDataType;
-import cn.anecansaitin.freecameraapi.api.ObstacleContext;
 import cn.anecansaitin.freecameraapi.api.ObstacleHandler;
 import cn.anecansaitin.freecameraapi.api.CameraModifier;
 import net.minecraft.client.Camera;
@@ -94,18 +93,17 @@ public class ModifierManager {
 
         if (modifier.isStateEnabledOr(POS.code)) {
             Vec3 playerPos = ClientUtil.player().getPosition(ClientUtil.partialTicks());
-            float px = (float) playerPos.x;
-            float py = (float) playerPos.y;
-            float pz = (float) playerPos.z;
 
-            // 分量级叠加：只对启用的分量加玩家位置，未启用分量保持 vanilla 相对值。
-            if (modifier.isStateEnabledOr(POS_X.code)) pos.x += px;
-            if (modifier.isStateEnabledOr(POS_Y.code)) pos.y += py;
-            if (modifier.isStateEnabledOr(POS_Z.code)) pos.z += pz;
+            // 分量级叠加：未启用分量设为0。
+            if (!modifier.isStateEnabledOr(POS_X.code)) pos.x = 0;
+            if (!modifier.isStateEnabledOr(POS_Y.code)) pos.y = 0;
+            if (!modifier.isStateEnabledOr(POS_Z.code)) pos.z = 0;
+
+            pos.add((float) playerPos.x, (float) playerPos.y, (float) playerPos.z);
         }
     }
 
-    private final ObstacleContext obstacleContext = new ObstacleContext();
+    private final Context obstacleContext = new Context();
 
     private void applyObstacle(CameraModifier modifier) {
         if (!modifier.isStateEnabledOr(OBSTACLE.code)) {
@@ -115,17 +113,19 @@ public class ModifierManager {
         ObstacleHandler obstacleHandler = modifier.getObstacleHandler();
 
         // Populate context with current manager state + enabled component mask.
-        obstacleContext.pos(pos);
-        obstacleContext.rot(rot);
-        obstacleContext.fov(fov);
-        obstacleContext.enabledMask(modifier.getState());
+        obstacleContext
+                .pos(pos)
+                .rot(rot)
+                .fov(fov)
+                .enabledMask(modifier.getState());
 
         switch (obstacleHandler.obstacleAvoid(obstacleContext)) {
-            case PASS -> defaultObstacle(modifier, obstacleHandler);
+            case PASS -> defaultObstacle(obstacleHandler);
             case COLLIDE -> {
                 // Handler fully resolved and claims a collision happened.
                 // Apply handler's full position / rotation / FOV changes back into manager state.
-                obstacleContext.copyTo(pos, rot);
+                pos.set(obstacleContext.pos());
+                rot.set(obstacleContext.rot());
                 fov = obstacleContext.fov();
                 obstacleHandler.onCollision(obstacleContext);
             }
@@ -144,7 +144,7 @@ public class ModifierManager {
     /// along the entire eye→camera vector. Callers that need per-component semantics must
     /// resolve it themselves in a custom ObstacleHandler (return COLLIDE or NO_COLLIDE).
     /// FOV is never touched by the built-in algorithm.
-    private void defaultObstacle(CameraModifier modifier, ObstacleHandler obstacleHandler) {
+    private void defaultObstacle(ObstacleHandler obstacleHandler) {
         Vector3f
                 origin = ClientUtil.player().getEyePosition(ClientUtil.partialTicks()).toVector3f(),
                 direction = pos.sub(origin, new Vector3f());
