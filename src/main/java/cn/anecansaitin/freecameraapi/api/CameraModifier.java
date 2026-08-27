@@ -184,14 +184,10 @@ public interface CameraModifier {
 
     /// Gets the current camera position (read-only view).
     ///
-    /// 调用方不得修改返回值；如需写入使用 [setPos] 或先复制为 [Vector3f]。
-    ///
     /// @return Returns the camera position vector (read-only).
     Vector3fc getPos();
 
     /// Gets the current camera rotation angles (read-only view).
-    ///
-    /// 调用方不得修改返回值；如需写入使用 [setRotationYXZ] / [setRotationZYX] 或先复制为 [Vector3f]。
     ///
     /// @return Returns the rotation vector (read-only).
     Vector3fc getRot();
