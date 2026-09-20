@@ -16,7 +16,7 @@ public abstract class CameraMixin implements CameraExtension {
     @Shadow
     private float fov;
 
-    @Inject(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;prepareCullFrustum(Lorg/joml/Matrix4fc;Lorg/joml/Matrix4f;Lnet/minecraft/world/phys/Vec3;)V"))
+    @Inject(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;calculateHudFov(F)F"))
     public void free_camera_api$update(DeltaTracker deltaTracker, CallbackInfo ci, @Local(name = "partialTicks") float partialTicks) {
         ManagerTicker.update(partialTicks);
     }
